@@ -3,10 +3,13 @@ import pymunk
 
 class ScratchSprite(pygame.sprite.Sprite):
     
-    def __init__(self, frames, pos, body_type=pymunk.Body.KINEMATIC):
+    def __init__(self, frame_dict, starting_mode, pos, body_type=pymunk.Body.KINEMATIC):
         # DYNAMIC, KINEMATIC, STATIC
+        # TODO: add all the properties here
         super().__init__()
-        self.frames = frames
+        self.frame_dict = frame_dict
+        
+        self.set_frame_mode(starting_mode)
         self.set_frame(0)
 
         self.body = pymunk.Body(1, 1, body_type=body_type)
@@ -14,6 +17,10 @@ class ScratchSprite(pygame.sprite.Sprite):
         
         self.scale(1)
         self.shape, self.new_shape = self.new_shape, None
+
+    def set_frame_mode(self, new_mode):
+        self.frame_mode = new_mode
+        self.frames = self.frame_dict[new_mode]
 
     def update(self, space):
         x, y = self.body.position
@@ -27,7 +34,10 @@ class ScratchSprite(pygame.sprite.Sprite):
     
     def scale(self, factor):
         # use with caution: this creates a new shape for the object
-        self.frames = [pygame.transform.scale_by(f, factor) for f in self.frames]
+        for k, frames in self.frame_dict.items():
+            self.frame_dict[k] = [pygame.transform.scale_by(f, factor) for f in frames]
+
+        self.set_frame_mode(self.frame_mode)
 
         self.rect = self.frames[self.frame_idx].get_rect()
         self.rect.move_ip(self.body.position)
@@ -40,7 +50,6 @@ class ScratchSprite(pygame.sprite.Sprite):
 
     def set_frame(self, idx):
         self.frame_idx = idx
-        #self.image = self.frames[self.frame_idx]
     
     def next_frame(self):
         self.set_frame((self.frame_idx+1) % len(self.frames))

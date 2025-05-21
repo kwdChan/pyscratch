@@ -3,12 +3,16 @@ from event import Event
 import pygame
 import pymunk
 from game import game # neccessary for image loading
-from helper import get_frame
+from helper import get_frame, get_frame_sequence, get_frame_dict
 sprite_sheet = pygame.image.load("assets/Sprout Lands - Sprites - Basic pack/Characters/Basic Charakter Actions.png").convert_alpha()
 
 
+frame_dict = get_frame_dict(sprite_sheet, 2, 12, {
+    "1": [0, 1], 
+    "2": [2, 3],
+})
 
-sprite1 = ScratchSprite([get_frame(sprite_sheet, 2, 12, i) for i in range(12)], (100,100), pymunk.Body.DYNAMIC)
+sprite1 = ScratchSprite(frame_dict,  "1", (100,100), pymunk.Body.KINEMATIC)
 game.add_sprite(sprite1)
 
 sprite1.scale(4)
@@ -31,7 +35,11 @@ keydown_event = Event.create_pygame_event(pygame.KEYDOWN)
 def when_key_down(e):
     if e.key  == pygame.key.key_code("w"):
         sprite1.body.velocity = sprite1.body.velocity[0], -1    
-    if e.key  == pygame.key.key_code("s"):
-        sprite1.scale(2)
+    if e.key  == pygame.key.key_code("1"):
+        sprite1.set_frame_mode("1")
+    if e.key  == pygame.key.key_code("2"):
+        sprite1.set_frame_mode("2")
+
+
 keydown_event.add_handler(when_key_down)
 
