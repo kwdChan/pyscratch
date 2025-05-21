@@ -24,17 +24,17 @@ class Game:
     def update_screen_mode(self, *arg, **kwargs):
         self.screen  = pygame.display.set_mode( *arg, **kwargs)
 
-    def start(self, framerate, debug_draw=True):
+    def start(self, framerate, sim_step_min=300, debug_draw=True):
 
 
         clock = pygame.time.Clock()
 
-        stim_factor = 5
-        count = 0
+        draw_every_n_step = sim_step_min//framerate
+        frame_count = 0
         while True:
-            count += 1
+            frame_count += 1
  
-            dt = clock.tick(framerate*stim_factor)
+            dt = clock.tick(framerate*draw_every_n_step)
             self.space.step(dt)
 
             time = pygame.time.get_ticks()
@@ -56,7 +56,8 @@ class Game:
             for e in Event.active_events:
                 e.handle_all()
 
-            if not count % stim_factor: 
+            if not frame_count % draw_every_n_step: 
+                frame_count = 0
                 self.screen.fill((30, 30, 30))
 
                 self.all_sprites.update(self.space)
