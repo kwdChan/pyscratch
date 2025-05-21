@@ -7,15 +7,16 @@ class Game:
     def __init__(self, screen_size=(1280, 720)):
         self.screen  = pygame.display.set_mode(screen_size, vsync=1)
         self.space = pymunk.Space()
+
+        self.draw_options = DrawOptions(self.screen)
+
+        # test only
         self.space.gravity=0,.0001
-
         seg = pymunk.Segment(self.space.static_body, (0, 200), (1000, 1000), 25)
-
-        self.draw_options = pymunk.pygame_util.DrawOptions(self.screen)
-
         self.space.add(seg)
         self.seg = seg
-       
+        # test only --end
+    
         self.all_sprites = pygame.sprite.Group()
 
         self.data = {}
@@ -23,7 +24,7 @@ class Game:
     def update_screen_mode(self, *arg, **kwargs):
         self.screen  = pygame.display.set_mode( *arg, **kwargs)
 
-    def start(self, framerate):
+    def start(self, framerate, debug_draw=True):
 
 
         clock = pygame.time.Clock()
@@ -61,8 +62,9 @@ class Game:
                 self.all_sprites.update(self.space)
                 self.all_sprites.draw(self.screen)
 
-
-                self.space.debug_draw(self.draw_options)
+                if debug_draw: 
+                    self.space.debug_draw(self.draw_options)
+                
                 pygame.display.flip()
 
     def add_sprite(self, sprite):
