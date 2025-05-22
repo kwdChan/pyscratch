@@ -3,9 +3,6 @@ import pymunk
 
 class Event:
     active_events = []
-    
-    
-
 
     def __init__(self, active=True):
         self.triggers = []

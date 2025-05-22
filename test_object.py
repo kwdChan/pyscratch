@@ -11,7 +11,7 @@ sprite_sheet = pygame.image.load("assets/Sprout Lands - Sprites - Basic pack/Cha
 frame_dict = get_frame_dict(sprite_sheet, 2, 12, {
     "1": [0, 1], 
     "2": [2, 3],
-})
+}, inset=0)
 
 sprite3 = rect_sprite((255, 0,0), 100, 20, (500, 500))
 game.add_sprite(sprite3)
@@ -19,7 +19,9 @@ game.add_sprite(sprite3)
 sprite2 = circle_sprite((255, 0,0), 50, (100, 100), body_type=pymunk.Body.DYNAMIC)
 game.add_sprite(sprite2)
 
-sprite1 = ScratchSprite(frame_dict,  "1", (100,100), pymunk.Body.DYNAMIC)
+sprite1 = ScratchSprite(frame_dict,  "1", (100,100), pymunk.Body.KINEMATIC)
+
+sprite1.set_shape('circle_width', shape_factor=.4)
 game.add_sprite(sprite1)
 import random
 
@@ -34,8 +36,9 @@ collision_event.add_handler(lambda a: print(random.random()))
 
 sprite1.scale(4)
 
-timer_event = Event.create_timer_event(.2)
-timer_event.add_handler(sprite1.next_frame)
+timer_event = Event.create_timer_event(.1)
+timer_event.add_handler(lambda: sprite1.add_rotation(3))
+timer_event.add_handler(lambda: sprite1.next_frame())
 
 
 # # timer_event2 = Event.create_timer_event(0)
@@ -51,8 +54,9 @@ keydown_event = Event.create_pygame_event(pygame.KEYDOWN)
 
 def when_key_down(e):
     if e.key  == pygame.key.key_code("w"):
-        sprite1.body.velocity = sprite1.body.velocity[0], -.5
-        sprite1.scale(1.1)
+        #sprite1.body.velocity = sprite1.body.velocity[0], -.5
+        game.schedule_job(2, lambda: sprite1.scale(1.2))
+        game.schedule_job(3, lambda: sprite1.scale(1.2))
 
     elif e.key  == pygame.key.key_code("d"):
         sprite1.body.velocity = .5, sprite1.body.velocity[1]

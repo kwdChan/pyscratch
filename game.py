@@ -27,8 +27,9 @@ class Game:
 
         self.contact_pairs_set = set() 
 
+        # the collision type of the shape will be changed to 1 when the event is created
         self.collision_handler = self.space.add_collision_handler(1, 1)
-        self.collision_handler.data['self'] =self
+        self.collision_handler.data['self'] = self
         self.collision_handler.begin = collision_begin
         self.collision_handler.separate = collision_separate
 
@@ -36,7 +37,7 @@ class Game:
 
         # test only
         self.space.gravity=0,.001
-        seg = pymunk.Segment(self.space.static_body, (0, 200), (1000, 1000), 25)
+        seg = pymunk.Segment(self.space.static_body, (0, 200), (1000, 1000), 2)
         self.space.add(seg)
         self.seg = seg
         # test only --end
@@ -45,25 +46,48 @@ class Game:
 
         self.data = {}
 
+
+        # scheduled jobs
+        self.pre_scheduled_jobs = []
+        self.scheduled_jobs = []
+        
+
+
         # edges
         edge_colour = (255, 0, 0)
         edge_body = pymunk.Body.KINEMATIC
         screen_w, screen_h = screen_size
 
+        self.top_edge = rect_sprite(edge_colour, screen_w, 4, (screen_w//2, 0),body_type= edge_body)
+        self.bottom_edge = rect_sprite(edge_colour, screen_w, 4, (screen_w//2, screen_h),body_type= edge_body)
+        self.left_edge = rect_sprite(edge_colour, 4, screen_h, (0, screen_h//2),body_type= edge_body)
+        self.right_edge = rect_sprite(edge_colour, 4, screen_h, (screen_w,  screen_h//2),body_type= edge_body)
 
-        top_edge = rect_sprite(edge_colour, screen_w, 4, (screen_w//2, 0),body_type= edge_body)
-        bottom_edge = rect_sprite(edge_colour, screen_w, 4, (screen_w//2, screen_h),body_type= edge_body)
-        left_edge = rect_sprite(edge_colour, 4, screen_h, (0, screen_h//2),body_type= edge_body)
-        right_edge = rect_sprite(edge_colour, 4, screen_h, (screen_w,  screen_h//2),body_type= edge_body)
-
-        self.add_sprite(top_edge)
-        self.add_sprite(bottom_edge)
-        self.add_sprite(left_edge)
-        self.add_sprite(right_edge)
+        self.add_sprite(self.top_edge)
+        self.add_sprite(self.bottom_edge)
+        self.add_sprite(self.left_edge)
+        self.add_sprite(self.right_edge)
         
 
     def update_screen_mode(self, *arg, **kwargs):
         self.screen  = pygame.display.set_mode( *arg, **kwargs)
+
+    def schedule_job(self, delay, func):
+        self.pre_scheduled_jobs.append((delay*1000, func))
+
+    def __schedule_jobs(self, time):
+        for delay, func in self.pre_scheduled_jobs:
+            self.scheduled_jobs.append((time+delay, func))
+        self.pre_scheduled_jobs = []
+
+    def __run_jobs(self, time):
+        i = len(self.scheduled_jobs)
+        while i:
+            due_time, func = self.scheduled_jobs[i-1]
+            if due_time < time:
+                func()  
+                self.scheduled_jobs.pop(i-1)
+            i-=1
 
     def start(self, framerate, sim_step_min=300, debug_draw=True):
 
@@ -80,6 +104,8 @@ class Game:
                 self.space.step(dt/draw_every_n_step)
 
             time = pygame.time.get_ticks()
+            self.__schedule_jobs(time)
+            self.__run_jobs(time)
 
             for c in Event.timer_event_checkers:
                 c(time)
@@ -103,11 +129,11 @@ class Game:
 
             self.screen.fill((30, 30, 30))
 
+            if debug_draw: 
+                self.space.debug_draw(self.draw_options)
             self.all_sprites.update(self.space)
             self.all_sprites.draw(self.screen)
 
-            if debug_draw: 
-                self.space.debug_draw(self.draw_options)
             
             pygame.display.flip()
 
