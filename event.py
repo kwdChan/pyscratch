@@ -63,12 +63,14 @@ class Event:
         return event#, check_trigger
     
     pygame_event_checkers = []
-    def create_pygame_event(flag):
+
+
+    def create_pygame_event(flags):
         event = Event()
 
         def check_trigger(pygame_event_list):
             for pygame_event in pygame_event_list:
-                if pygame_event.type == flag:
+                if pygame_event.type in flags:
                     event.trigger(pygame_event)
 
         Event.pygame_event_checkers.append(check_trigger)

@@ -16,12 +16,16 @@ frame_dict = get_frame_dict(sprite_sheet, 2, 12, {
 sprite3 = rect_sprite((255, 0,0), 100, 20, (500, 500))
 game.add_sprite(sprite3)
 
+
 sprite2 = circle_sprite((255, 0,0), 50, (100, 100), body_type=pymunk.Body.DYNAMIC)
 game.add_sprite(sprite2)
+print(sprite2.rect)
 
-sprite1 = ScratchSprite(frame_dict,  "1", (100,100), pymunk.Body.KINEMATIC)
+sprite2.set_shape('box', 1)
+print(sprite2.rect)
+sprite1 = ScratchSprite(frame_dict,  "1", (100,100), body_type=pymunk.Body.KINEMATIC)
 
-sprite1.set_shape('circle_width', shape_factor=.4)
+sprite1.set_shape('box', shape_factor=.4)
 game.add_sprite(sprite1)
 import random
 
@@ -50,7 +54,7 @@ timer_event.add_handler(lambda: sprite1.next_frame())
     
 
 
-keydown_event = Event.create_pygame_event(pygame.KEYDOWN)
+keydown_event = Event.create_pygame_event([pygame.KEYDOWN])
 
 def when_key_down(e):
     if e.key  == pygame.key.key_code("w"):

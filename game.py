@@ -44,7 +44,7 @@ class Game:
     
         self.all_sprites = pygame.sprite.Group()
 
-        self.data = {}
+        self.shared_data = {}
 
 
         # scheduled jobs
@@ -67,6 +67,37 @@ class Game:
         self.add_sprite(self.bottom_edge)
         self.add_sprite(self.left_edge)
         self.add_sprite(self.right_edge)
+
+        # mouse dragging event
+        self.dragged_sprite = None
+        self.drag_offset = 0, 0
+        mouse_drag_event = Event.create_pygame_event([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
+        def mouse_drag_handler(e):
+            if e.type == pygame.MOUSEBUTTONDOWN: 
+                for s in self.all_sprites:
+                    
+                    if s.shape.point_query(e.pos).distance <= 0:
+                        s.set_is_dragging (True)
+                        self.dragged_sprite = s
+                        offset_x = s.body.position[0]  - e.pos[0]
+                        offset_y = s.body.position[1]  - e.pos[1]
+                        self.drag_offset = offset_x, offset_y
+                        
+                        break 
+
+
+            elif e.type == pygame.MOUSEBUTTONUP:
+                if self.dragged_sprite: 
+                    self.dragged_sprite.set_is_dragging (False)
+                    self.dragged_sprite = None
+
+            elif e.type == pygame.MOUSEMOTION and self.dragged_sprite:
+                x = e.pos[0] + self.drag_offset[0]
+                y = e.pos[1] + self.drag_offset[1]
+                self.dragged_sprite.set_xy((x,y))
+
+
+        mouse_drag_event.add_handler(mouse_drag_handler)
         
 
     def update_screen_mode(self, *arg, **kwargs):
