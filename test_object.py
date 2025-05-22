@@ -21,6 +21,16 @@ game.add_sprite(sprite2)
 
 sprite1 = ScratchSprite(frame_dict,  "1", (100,100), pymunk.Body.DYNAMIC)
 game.add_sprite(sprite1)
+import random
+
+collision_event = Event.create_collision_event(sprite2, sprite1)
+collision_event.add_handler(lambda a: print(random.random()))
+
+
+
+
+# overlap_event = Event.create_overlap_event(sprite2, sprite1)
+# overlap_event.add_handler(lambda: print(random.random()))
 
 sprite1.scale(4)
 
@@ -41,10 +51,18 @@ keydown_event = Event.create_pygame_event(pygame.KEYDOWN)
 
 def when_key_down(e):
     if e.key  == pygame.key.key_code("w"):
-        sprite1.body.velocity = sprite1.body.velocity[0], -1    
-    if e.key  == pygame.key.key_code("1"):
+        sprite1.body.velocity = sprite1.body.velocity[0], -.5
+        sprite1.scale(1.1)
+
+    elif e.key  == pygame.key.key_code("d"):
+        sprite1.body.velocity = .5, sprite1.body.velocity[1]
+
+    elif e.key  == pygame.key.key_code("a"):
+        sprite1.body.velocity = -.5, sprite1.body.velocity[1]
+        
+    elif e.key  == pygame.key.key_code("1"):
         sprite1.set_frame_mode("1")
-    if e.key  == pygame.key.key_code("2"):
+    elif e.key  == pygame.key.key_code("2"):
         sprite1.set_frame_mode("2")
 
 

@@ -38,7 +38,7 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.set_frame_mode(starting_mode)
         self.set_frame(0)
 
-        self.body = pymunk.Body(1, 1, body_type=body_type)
+        self.body = pymunk.Body(1, 100, body_type=body_type)
         self.body.position = pos
         
         self.scale(1)
@@ -55,7 +55,9 @@ class ScratchSprite(pygame.sprite.Sprite):
 
         if self.new_shape: 
             space.remove(self.shape)
+            self.new_shape.collision_type = self.shape.collision_type
             self.shape, self.new_shape = self.new_shape, None
+            
             space.add(self.shape)
     
     def scale(self, factor):

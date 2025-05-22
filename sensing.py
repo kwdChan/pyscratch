@@ -12,3 +12,24 @@ def get_mouse_pos():
 
 def get_mouse_presses(num_buttons=3):
     return pygame.mouse.get_pressed(num_buttons=num_buttons)
+
+def is_touching(game, sprite_a, sprite_b):
+    for pair in game.contact_pairs_set:
+
+        if (sprite_a.shape in pair) and (sprite_b.shape in pair):
+            return True
+    return False
+
+
+def is_overlap(sprite_a, sprite_b):
+    return  pygame
+
+
+def is_overlap(sprite_a, sprite_b, rect_or_circle='rect'):
+    
+    if rect_or_circle == 'rect':
+        detection_func = pygame.sprite.collide_rect
+    elif rect_or_circle == 'circle':
+        detection_func = pygame.sprite.collide_circle
+
+    return detection_func(sprite_a, sprite_b)

@@ -1,7 +1,11 @@
+import pygame
+import pymunk
+
 class Event:
     active_events = []
-    timer_event_checkers = []
-    pygame_event_checkers = []
+    
+    
+
 
     def __init__(self, active=True):
         self.triggers = []
@@ -40,8 +44,7 @@ class Event:
 
         return True
     
-
-
+    timer_event_checkers = []
     def create_timer_event(period_sec):
         event = Event()
         
@@ -62,7 +65,7 @@ class Event:
 
         return event#, check_trigger
     
-
+    pygame_event_checkers = []
     def create_pygame_event(flag):
         event = Event()
 
@@ -96,13 +99,33 @@ class Event:
         for e in Event.subscriptions[topic]:
             e.trigger(*arg, **kwargs)
 
+    overlap_event_checkers = []
+    def create_overlap_event(sprite_a, sprite_b, rect_or_circle='rect'):
+        event = Event()
+        
+        if rect_or_circle == 'rect':
+            detection_func = pygame.sprite.collide_rect
+        elif rect_or_circle == 'circle':
+            detection_func = pygame.sprite.collide_circle
 
+        def checker():
+            if detection_func(sprite_a, sprite_b):
+                event.trigger()
+
+        Event.overlap_event_checkers.append(checker)
+
+        return event
         
 
+    collision_pairs = {}
 
-frame_start_event = Event()
-keypress_event = Event()
+    def create_collision_event(sprite_a, sprite_b):
+        event = Event()
+        sprite_a.shape.collision_type = 1
+        sprite_b.shape.collision_type = 1
+        Event.collision_pairs[event] = sprite_a, sprite_b
 
+        return event
 
-
+        
         

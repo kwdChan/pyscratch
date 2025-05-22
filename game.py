@@ -3,20 +3,39 @@ import pymunk
 from event import Event
 from scratch_sprite import rect_sprite
 from pymunk.pygame_util import DrawOptions
+
+
+def collision_begin(arbiter, space, data):
+    data['self'].contact_pairs_set.add(arbiter.shapes) 
+    print(0)
+
+    for e, (a,b) in Event.collision_pairs.items():
+        if (a.shape in arbiter.shapes) and (b.shape in arbiter.shapes):
+            e.trigger(arbiter)
+    return True#False
+
+def collision_separate(arbiter, space, data):
+    if arbiter.shapes in data['self'].contact_pairs_set:
+        data['self'].contact_pairs_set.remove(arbiter.shapes)
+
 class Game:
+
     def __init__(self, screen_size=(1280, 720)):
-
-
 
         self.screen  = pygame.display.set_mode(screen_size, vsync=1)
         self.space = pymunk.Space()
 
+        self.contact_pairs_set = set() 
+
+        self.collision_handler = self.space.add_collision_handler(1, 1)
+        self.collision_handler.data = {'self': self}
+        self.collision_handler.begin = collision_begin
+        self.collision_handler.separate = collision_separate
+
         self.draw_options = DrawOptions(self.screen)
 
-
-
         # test only
-        self.space.gravity=0,.0001
+        self.space.gravity=0,.001
         seg = pymunk.Segment(self.space.static_body, (0, 200), (1000, 1000), 25)
         self.space.add(seg)
         self.seg = seg
@@ -41,10 +60,6 @@ class Game:
         self.add_sprite(bottom_edge)
         self.add_sprite(left_edge)
         self.add_sprite(right_edge)
-
-
-
-
         
 
     def update_screen_mode(self, *arg, **kwargs):
@@ -69,6 +84,9 @@ class Game:
 
             for c in Event.timer_event_checkers:
                 c(time)
+
+            for c in Event.overlap_event_checkers:
+                c()
 
             all_events = pygame.event.get()
 
