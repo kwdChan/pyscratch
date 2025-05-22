@@ -1,8 +1,9 @@
-from scratch_sprite import ScratchSprite
+from scratch_sprite import ScratchSprite, circle_sprite, rect_sprite
 from event import Event
 import pygame
 import pymunk
 from game import game # neccessary for image loading
+
 from helper import get_frame, get_frame_sequence, get_frame_dict
 sprite_sheet = pygame.image.load("assets/Sprout Lands - Sprites - Basic pack/Characters/Basic Charakter Actions.png").convert_alpha()
 
@@ -12,7 +13,13 @@ frame_dict = get_frame_dict(sprite_sheet, 2, 12, {
     "2": [2, 3],
 })
 
-sprite1 = ScratchSprite(frame_dict,  "1", (100,100), pymunk.Body.KINEMATIC)
+sprite3 = rect_sprite((255, 0,0), 100, 20, (500, 500))
+game.add_sprite(sprite3)
+
+sprite2 = circle_sprite((255, 0,0), 50, (100, 100), body_type=pymunk.Body.DYNAMIC)
+game.add_sprite(sprite2)
+
+sprite1 = ScratchSprite(frame_dict,  "1", (100,100), pymunk.Body.DYNAMIC)
 game.add_sprite(sprite1)
 
 sprite1.scale(4)

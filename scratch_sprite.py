@@ -1,6 +1,32 @@
 import pygame 
 import pymunk
 
+
+def circle_sprite(colour, radius, *args, **kwargs):
+    circle = create_circle(colour, radius)
+    return ScratchSprite({"always":[circle]}, "always", *args, **kwargs)
+
+
+def rect_sprite(colour, width, height, *args, **kwargs):
+    rect = create_rect(colour, width, height)
+    return ScratchSprite({"always":[rect]}, "always", *args, **kwargs)
+
+
+def create_circle(colour, radius):
+    surface = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
+    pygame.draw.circle(surface, colour, (radius, radius), radius)
+    return surface
+
+
+def create_rect(colour, width, height):
+    surface = pygame.Surface((width, height), pygame.SRCALPHA)
+    pygame.draw.rect(surface, colour, surface.get_rect())
+    return surface
+
+
+
+
+
 class ScratchSprite(pygame.sprite.Sprite):
     
     def __init__(self, frame_dict, starting_mode, pos, body_type=pymunk.Body.KINEMATIC):

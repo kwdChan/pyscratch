@@ -1,14 +1,19 @@
 import pygame
 import pymunk
 from event import Event
-
+from scratch_sprite import rect_sprite
 from pymunk.pygame_util import DrawOptions
 class Game:
     def __init__(self, screen_size=(1280, 720)):
+
+
+
         self.screen  = pygame.display.set_mode(screen_size, vsync=1)
         self.space = pymunk.Space()
 
         self.draw_options = DrawOptions(self.screen)
+
+
 
         # test only
         self.space.gravity=0,.0001
@@ -20,6 +25,27 @@ class Game:
         self.all_sprites = pygame.sprite.Group()
 
         self.data = {}
+
+        # edges
+        edge_colour = (255, 0, 0)
+        edge_body = pymunk.Body.KINEMATIC
+        screen_w, screen_h = screen_size
+
+
+        top_edge = rect_sprite(edge_colour, screen_w, 4, (screen_w//2, 0),body_type= edge_body)
+        bottom_edge = rect_sprite(edge_colour, screen_w, 4, (screen_w//2, screen_h),body_type= edge_body)
+        left_edge = rect_sprite(edge_colour, 4, screen_h, (0, screen_h//2),body_type= edge_body)
+        right_edge = rect_sprite(edge_colour, 4, screen_h, (screen_w,  screen_h//2),body_type= edge_body)
+
+        self.add_sprite(top_edge)
+        self.add_sprite(bottom_edge)
+        self.add_sprite(left_edge)
+        self.add_sprite(right_edge)
+
+
+
+
+        
 
     def update_screen_mode(self, *arg, **kwargs):
         self.screen  = pygame.display.set_mode( *arg, **kwargs)
@@ -33,7 +59,9 @@ class Game:
         frame_count = 0
         while True:
             frame_count += 1
- 
+
+            # TODO: there is no need to wait between each simulation step. 
+            # all the simulation steps between the frames can be run instantly 
             dt = clock.tick(framerate*draw_every_n_step)
             self.space.step(dt)
 
