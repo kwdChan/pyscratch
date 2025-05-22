@@ -28,7 +28,7 @@ class Game:
         self.contact_pairs_set = set() 
 
         self.collision_handler = self.space.add_collision_handler(1, 1)
-        self.collision_handler.data = {'self': self}
+        self.collision_handler.data['self'] =self
         self.collision_handler.begin = collision_begin
         self.collision_handler.separate = collision_separate
 

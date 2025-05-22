@@ -57,8 +57,9 @@ class ScratchSprite(pygame.sprite.Sprite):
             space.remove(self.shape)
             self.new_shape.collision_type = self.shape.collision_type
             self.shape, self.new_shape = self.new_shape, None
-            
             space.add(self.shape)
+    
+    
     
     def scale(self, factor):
         # use with caution: this creates a new shape for the object
