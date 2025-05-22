@@ -71,14 +71,13 @@ class Game:
         clock = pygame.time.Clock()
 
         draw_every_n_step = sim_step_min//framerate
-        frame_count = 0
         while True:
-            frame_count += 1
 
             # TODO: there is no need to wait between each simulation step. 
             # all the simulation steps between the frames can be run instantly 
-            dt = clock.tick(framerate*draw_every_n_step)
-            self.space.step(dt)
+            dt = clock.tick(framerate)
+            for i in range(draw_every_n_step): 
+                self.space.step(dt/draw_every_n_step)
 
             time = pygame.time.get_ticks()
 
@@ -102,17 +101,15 @@ class Game:
             for e in Event.active_events:
                 e.handle_all()
 
-            if not frame_count % draw_every_n_step: 
-                frame_count = 0
-                self.screen.fill((30, 30, 30))
+            self.screen.fill((30, 30, 30))
 
-                self.all_sprites.update(self.space)
-                self.all_sprites.draw(self.screen)
+            self.all_sprites.update(self.space)
+            self.all_sprites.draw(self.screen)
 
-                if debug_draw: 
-                    self.space.debug_draw(self.draw_options)
-                
-                pygame.display.flip()
+            if debug_draw: 
+                self.space.debug_draw(self.draw_options)
+            
+            pygame.display.flip()
 
     def add_sprite(self, sprite):
         self.all_sprites.add(sprite)
