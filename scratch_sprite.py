@@ -45,6 +45,7 @@ class ScratchSprite(pygame.sprite.Sprite):
 
         self.mouse_selected = False
         self.is_dragging = False
+        self.draggable = False
 
         self.private_data = {}
 

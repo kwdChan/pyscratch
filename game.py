@@ -75,6 +75,8 @@ class Game:
         def mouse_drag_handler(e):
             if e.type == pygame.MOUSEBUTTONDOWN: 
                 for s in self.all_sprites:
+                    if not s.draggable:
+                        continue
                     
                     if s.shape.point_query(e.pos).distance <= 0:
                         s.set_is_dragging (True)

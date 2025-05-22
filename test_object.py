@@ -16,7 +16,7 @@ frame_dict = get_frame_dict(sprite_sheet, 2, 12, {
 sprite3 = rect_sprite((255, 0,0), 100, 20, (500, 500))
 game.add_sprite(sprite3)
 
-
+sprite3.set_draggable(True)
 sprite2 = circle_sprite((255, 0,0), 50, (100, 100), body_type=pymunk.Body.DYNAMIC)
 game.add_sprite(sprite2)
 print(sprite2.rect)
