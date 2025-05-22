@@ -143,8 +143,8 @@ class Game:
             for c in Event.timer_event_checkers:
                 c(time)
 
-            for c in Event.overlap_event_checkers:
-                c()
+            # for c in Event.overlap_event_checkers:
+            #     c()
 
             all_events = pygame.event.get()
 

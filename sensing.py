@@ -22,17 +22,17 @@ def is_touching(game, sprite_a, sprite_b):
     return False
 
 
-def is_overlap(sprite_a, sprite_b, rect_or_circle='rect'):
-    """pygame"""
+# def is_overlap(sprite_a, sprite_b, rect_or_circle='rect'):
+#     """pygame"""
     
-    if rect_or_circle == 'rect':
-        detection_func = pygame.sprite.collide_rect
-    elif rect_or_circle == 'circle':
-        detection_func = pygame.sprite.collide_circle
+#     if rect_or_circle == 'rect':
+#         detection_func = pygame.sprite.collide_rect
+#     elif rect_or_circle == 'circle':
+#         detection_func = pygame.sprite.collide_circle
 
-    return detection_func(sprite_a, sprite_b)
+#     return detection_func(sprite_a, sprite_b)
 
 
 def is_touching_mouse(sprite):
-    return sprite.rect.collidepoint(pygame.mouse.get_pos())
+    return sprite.shape.point_query(pygame.mouse.get_pos()).distance <= 0
     

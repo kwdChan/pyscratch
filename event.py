@@ -99,21 +99,21 @@ class Event:
             e.trigger(*arg, **kwargs)
 
     overlap_event_checkers = []
-    def create_overlap_event(sprite_a, sprite_b, rect_or_circle='rect'):
-        event = Event()
+    # def create_overlap_event(sprite_a, sprite_b, rect_or_circle='rect'):
+    #     event = Event()
         
-        if rect_or_circle == 'rect':
-            detection_func = pygame.sprite.collide_rect
-        elif rect_or_circle == 'circle':
-            detection_func = pygame.sprite.collide_circle
+    #     if rect_or_circle == 'rect':
+    #         detection_func = pygame.sprite.collide_rect
+    #     elif rect_or_circle == 'circle':
+    #         detection_func = pygame.sprite.collide_circle
 
-        def checker():
-            if detection_func(sprite_a, sprite_b):
-                event.trigger()
+    #     def checker():
+    #         if detection_func(sprite_a, sprite_b):
+    #             event.trigger()
 
-        Event.overlap_event_checkers.append(checker)
+    #     Event.overlap_event_checkers.append(checker)
 
-        return event
+    #     return event
         
 
     collision_pairs = {}
