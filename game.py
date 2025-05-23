@@ -170,10 +170,11 @@ class Game:
                 e.handle_all()
 
         
+            
             self.screen.fill((30, 30, 30))
-
             if self.background: 
-                self
+                self.screen.blit(self.background, (0, 0))
+
 
             if debug_draw: 
                 self.space.debug_draw(self.draw_options)

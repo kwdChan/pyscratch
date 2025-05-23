@@ -7,10 +7,14 @@ from game import game # neccessary for image loading
 from helper import get_frame, get_frame_sequence, get_frame_dict
 sprite_sheet = pygame.image.load("assets/Sprout Lands - Sprites - Basic pack/Characters/Basic Charakter Actions.png").convert_alpha()
 
+background = pygame.image.load('assets/kenney_fish-pack_2/Sample.png')
+
+
 
 frame_dict = get_frame_dict(sprite_sheet, 2, 12, {
     "1": [0, 1], 
     "2": [2, 3],
+    "3": [4, 5],
 }, inset=0)
 
 
@@ -75,16 +79,17 @@ timer_event.add_handler(lambda: sprite1.next_frame())
 
 
 keydown_event = Event.create_pygame_event([pygame.KEYDOWN])
-
 def when_key_down(e):
-    if e.key == pygame.key.key_code("space"):
+
+    
+    if e.key == pygame.key.key_code("w"):
         # sprite1.move_indir(1)
         # sprite1.flip_horizontal()
         # #game.hide_sprite(sprite1)
         sprite2.body.velocity = sprite1.body.velocity[0], -1
         # game.move_to_back(sprite1)
 
-    if e.key  == pygame.key.key_code("w"):
+    if e.key  == pygame.key.key_code("space"):
         #sprite1.body.velocity = sprite1.body.velocity[0], -.5
         game.schedule_job(2, lambda: sprite1.scale(1.2))
         game.schedule_job(3, lambda: sprite1.scale(1.2))
@@ -100,6 +105,14 @@ def when_key_down(e):
     elif e.key  == pygame.key.key_code("2"):
         sprite1.set_frame_mode("2")
 
+    elif e.key  == pygame.key.key_code("3"):
+        sprite1.set_frame_mode("3")
+
+    elif e.key  == pygame.key.key_code("4"):
+        game.set_background_image(background)
+    elif e.key  == pygame.key.key_code("5"):
+        game.set_background_image(None)
+    
 
 keydown_event.add_handler(when_key_down)
 
