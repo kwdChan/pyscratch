@@ -13,24 +13,31 @@ frame_dict = get_frame_dict(sprite_sheet, 2, 12, {
     "2": [2, 3],
 }, inset=0)
 
-sprite3 = rect_sprite((255, 0,0), 100, 20, (500, 500))
-game.add_sprite(sprite3)
+sprite_rect = rect_sprite((255, 0,0), 100, 20, (500, 500))
+game.add_sprite(sprite_rect)
+sprite_rect.set_draggable(True)
+sprite_rect.set_shape('box', 1, collision_allowed=False)
 
-sprite3.set_draggable(True)
-sprite2 = circle_sprite((255, 0,0), 50, (100, 100), body_type=pymunk.Body.DYNAMIC)
-game.add_sprite(sprite2)
-print(sprite2.rect)
 
-sprite2.set_shape('box', 1)
-print(sprite2.rect)
+sprite_cir = circle_sprite((255, 0,0), 50, (100, 100), body_type=pymunk.Body.DYNAMIC)
+sprite_cir.set_draggable(True)
+sprite_cir.set_shape('box', 1, collision_allowed=True)
+game.add_sprite(sprite_cir)
+
+
 sprite1 = ScratchSprite(frame_dict,  "1", (100,100), body_type=pymunk.Body.KINEMATIC)
-
 sprite1.set_shape('box', shape_factor=.4)
 game.add_sprite(sprite1)
+
+
+
+
+
+
 import random
 
-collision_event = Event.create_collision_event(sprite2, sprite1)
-collision_event.add_handler(lambda a: print(random.random()))
+# collision_event = Event.create_collision_event(sprite2, sprite1)
+# collision_event.add_handler(lambda a: print(random.random()))
 
 
 

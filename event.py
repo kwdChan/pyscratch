@@ -1,6 +1,22 @@
 import pygame
 import pymunk
 
+class Trigger:
+    all_triggers = []
+    def __init__(self, condition_checker):
+        self.condition_checker = condition_checker
+        self.func = lambda: None
+        type(self).all_triggers.append(self)
+    
+    def do(self, func):
+        self.func = func
+    
+    def check(self):
+        if self.condition_checker():
+            self.func()
+            type(self).all_triggers.remove(self)
+
+
 class Event:
     active_events = []
 

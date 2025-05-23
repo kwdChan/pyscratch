@@ -1,6 +1,6 @@
 import pygame
 import pymunk
-from event import Event
+from event import Event, Trigger
 from scratch_sprite import rect_sprite
 from pymunk.pygame_util import DrawOptions
 
@@ -12,7 +12,10 @@ def collision_begin(arbiter, space, data):
     for e, (a,b) in Event.collision_pairs.items():
         if (a.shape in arbiter.shapes) and (b.shape in arbiter.shapes):
             e.trigger(arbiter)
-    return True#False
+
+    if (arbiter.shapes[0].collision_type == 2) or (arbiter.shapes[1].collision_type == 2):
+        return False
+    return True
 
 def collision_separate(arbiter, space, data):
     if arbiter.shapes in data['self'].contact_pairs_set:
@@ -27,8 +30,7 @@ class Game:
 
         self.contact_pairs_set = set() 
 
-        # the collision type of the shape will be changed to 1 when the event is created
-        self.collision_handler = self.space.add_collision_handler(1, 1)
+        self.collision_handler = self.space.add_default_collision_handler()
         self.collision_handler.data['self'] = self
         self.collision_handler.begin = collision_begin
         self.collision_handler.separate = collision_separate
@@ -130,6 +132,8 @@ class Game:
         draw_every_n_step = sim_step_min//framerate
         while True:
 
+            
+
             # TODO: there is no need to wait between each simulation step. 
             # all the simulation steps between the frames can be run instantly 
             dt = clock.tick(framerate)
@@ -139,6 +143,9 @@ class Game:
             time = pygame.time.get_ticks()
             self.__schedule_jobs(time)
             self.__run_jobs(time)
+
+            for t in Trigger.all_triggers:
+                t.check()
 
             for c in Event.timer_event_checkers:
                 c(time)

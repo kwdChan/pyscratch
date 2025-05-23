@@ -49,6 +49,7 @@ class ScratchSprite(pygame.sprite.Sprite):
 
         self.private_data = {}
 
+
     def is_mouse_selected(self):
         return self.mouse_selected
     
@@ -71,11 +72,7 @@ class ScratchSprite(pygame.sprite.Sprite):
               width=img_w,
               height=img_h,
               )
-        #print(self.rect.center )
-        #self.rect.width = int(self.rect.width*self.shape_factor)
-        #self.rect.height = int(self.rect.height*self.shape_factor)    
-        #print(self.rect.center )
-        #self.rect.center = self.body.position
+
 
         if (not self.shape_type) and (self.shape):
             space.remove(self.shape)
@@ -83,18 +80,20 @@ class ScratchSprite(pygame.sprite.Sprite):
 
         if self.new_shape: 
             space.remove(self.shape)
-            self.new_shape.collision_type = self.shape.collision_type
+            #self.new_shape.collision_type = self.shape.collision_type
+            self.new_shape.collision_type = 0 if self.collision_allowed else 2
             self.shape, self.new_shape = self.new_shape, None
             space.add(self.shape)
 
         if self.is_dragging:
             self.body.velocity=0,0
     
-    def set_shape(self, shape_type=None, shape_factor=1):
+    def set_shape(self, shape_type='box', shape_factor=1, collision_allowed=False):
         # could be a function or a string
         # TODO: raise error when invalid mode is selected
         self.shape_type = shape_type
         self.shape_factor = shape_factor
+        self.collision_allowed= collision_allowed
         self.scale(1)
 
     
@@ -129,6 +128,8 @@ class ScratchSprite(pygame.sprite.Sprite):
             self.new_shape = self.shape_type(factor, self.shape_factor)
         else: 
             pass
+
+
 
     def get_rotation(self):
         return self.body.rotation_vector.angle_degrees
