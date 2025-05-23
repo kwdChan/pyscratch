@@ -1,7 +1,6 @@
 import pygame 
 import pymunk
-
-
+import math
 def circle_sprite(colour, radius, *args, **kwargs):
     circle = create_circle(colour, radius)
     return ScratchSprite({"always":[circle]}, "always", *args, **kwargs)
@@ -48,6 +47,8 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.draggable = False
 
         self.private_data = {}
+        self.flip_y = False
+        self.flip_x = False
 
 
     def is_mouse_selected(self):
@@ -63,9 +64,18 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.frame_mode = new_mode
         self.frames = self.frame_dict[new_mode]
 
+    def flip_horizontal(self):
+        self.flip_x = not self.flip_x
+
+    def flip_vertical(self):
+        self.flip_y = not self.flip_y
+
     def update(self, space):
         x, y = self.body.position
-        self.image = pygame.transform.rotate(self.frames[self.frame_idx], -self.body.rotation_vector.angle_degrees)
+        img = self.frames[self.frame_idx]
+        img = pygame.transform.flip(img, self.flip_x, self.flip_y)
+        img = pygame.transform.rotate(img, -self.body.rotation_vector.angle_degrees)
+        self.image = img
         img_w, img_h = self.image.get_width(), self.image.get_height()
         self.rect = self.image.get_rect(
             center=(x, y),
@@ -131,6 +141,7 @@ class ScratchSprite(pygame.sprite.Sprite):
 
 
 
+
     def get_rotation(self):
         return self.body.rotation_vector.angle_degrees
     
@@ -145,6 +156,12 @@ class ScratchSprite(pygame.sprite.Sprite):
     
     def next_frame(self):
         self.set_frame((self.frame_idx+1) % len(self.frames))
+
+
+    def move_indir(self, length):
+        self.body.position += self.body.rotation_vector*length
+        
+        
 
     def move_xy(self, xy):
         self.body.position = self.body.position + xy

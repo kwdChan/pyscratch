@@ -38,13 +38,14 @@ class Game:
         self.draw_options = DrawOptions(self.screen)
 
         # test only
-        self.space.gravity=0,.001
-        seg = pymunk.Segment(self.space.static_body, (0, 200), (1000, 1000), 2)
-        self.space.add(seg)
-        self.seg = seg
+        # self.space.gravity=0,.001
+        # seg = pymunk.Segment(self.space.static_body, (0, 200), (1000, 1000), 2)
+        # self.space.add(seg)
+        # self.seg = seg
         # test only --end
     
         self.all_sprites = pygame.sprite.Group()
+        self.all_sprites_to_show = pygame.sprite.LayeredUpdates()
 
         self.shared_data = {}
 
@@ -76,7 +77,8 @@ class Game:
         mouse_drag_event = Event.create_pygame_event([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
         def mouse_drag_handler(e):
             if e.type == pygame.MOUSEBUTTONDOWN: 
-                for s in self.all_sprites:
+                
+                for s in reversed(list(self.all_sprites_to_show)):
                     if not s.draggable:
                         continue
                     
@@ -86,13 +88,11 @@ class Game:
                         offset_x = s.body.position[0]  - e.pos[0]
                         offset_y = s.body.position[1]  - e.pos[1]
                         self.drag_offset = offset_x, offset_y
-                        
                         break 
-
 
             elif e.type == pygame.MOUSEBUTTONUP:
                 if self.dragged_sprite: 
-                    self.dragged_sprite.set_is_dragging (False)
+                    self.dragged_sprite.set_is_dragging(False)
                     self.dragged_sprite = None
 
             elif e.type == pygame.MOUSEMOTION and self.dragged_sprite:
@@ -102,6 +102,8 @@ class Game:
 
 
         mouse_drag_event.add_handler(mouse_drag_handler)
+
+        self.background = None
         
 
     def update_screen_mode(self, *arg, **kwargs):
@@ -167,19 +169,50 @@ class Game:
             for e in Event.active_events:
                 e.handle_all()
 
+        
             self.screen.fill((30, 30, 30))
+
+            if self.background: 
+                self
 
             if debug_draw: 
                 self.space.debug_draw(self.draw_options)
             self.all_sprites.update(self.space)
-            self.all_sprites.draw(self.screen)
+            self.all_sprites_to_show.draw(self.screen)
 
             
             pygame.display.flip()
 
-    def add_sprite(self, sprite):
+    def set_gravity(self, xy):
+        self.space.gravity = xy
+
+    def add_sprite(self, sprite, to_show=True):
         self.all_sprites.add(sprite)
         self.space.add(sprite.body, sprite.shape)
+        if to_show:
+            self.all_sprites_to_show.add(sprite)
+
+    def show_sprite(self, sprite):
+        self.all_sprites_to_show.add(sprite)
+
+    def hide_sprite(self, sprite):
+        self.all_sprites_to_show.remove(sprite)
+
+    def bring_to_front(self, sprite):
+        self.all_sprites_to_show.move_to_front(sprite)
+
+    def move_to_back(self, sprite):
+        self.all_sprites_to_show.move_to_back(sprite)
+
+    def change_layer(self, sprite, layer):
+        self.all_sprites_to_show.change_layer(sprite, layer)
+
+    def get_layer_of_sprite(self, sprite):
+        self.all_sprites_to_show.get_layer_of_sprite(sprite)
+
+    def set_background_image(self, image: pygame.Surface):
+        self.background = image
+    
 
 game = Game()
 
