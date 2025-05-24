@@ -208,6 +208,13 @@ class Game:
     def change_layer(self, sprite, layer):
         self.all_sprites_to_show.change_layer(sprite, layer)
 
+
+    def change_layer_by(self, sprite, by):
+        layer = self.all_sprites_to_show.get_layer_of_sprite(sprite)
+        self.all_sprites_to_show.change_layer(sprite, layer + by)
+
+
+
     def get_layer_of_sprite(self, sprite):
         self.all_sprites_to_show.get_layer_of_sprite(sprite)
 

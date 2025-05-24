@@ -41,13 +41,16 @@ sprite1.set_shape('box', shape_factor=.4)
 sprite1.set_draggable(True)
 game.add_sprite(sprite1)
 game.set_gravity((0,0.002))
-sprite1.scale(2)
+sprite1.scale_by(2)
 
 
 
 sprite2 = ScratchSprite(frame_dict,  "1", (100,100), body_type=pymunk.Body.DYNAMIC)
 sprite2.set_shape('box', shape_factor=.4, collision_allowed=True)
-sprite1.scale(3)
+sprite1.scale_by(3)
+
+#sprite1.set_scale(6)
+sprite2.set_scale(4)
 
 game.add_sprite(sprite2)
 
@@ -96,8 +99,8 @@ def when_key_down(e):
 
     if e.key  == pygame.key.key_code("space"):
         #sprite1.body.velocity = sprite1.body.velocity[0], -.5
-        game.schedule_job(2, lambda: sprite1.scale(1.2))
-        game.schedule_job(3, lambda: sprite1.scale(1.2))
+        game.schedule_job(2, lambda: sprite1.scale_by(1.2))
+        game.schedule_job(3, lambda: sprite1.scale_by(1.2))
 
     elif e.key  == pygame.key.key_code("d"):
         sprite2.body.velocity = .5, sprite1.body.velocity[1]

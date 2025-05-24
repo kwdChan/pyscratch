@@ -30,7 +30,8 @@ class ScratchSprite(pygame.sprite.Sprite):
         # DYNAMIC, KINEMATIC, STATIC
         # TODO: add all the properties here
         super().__init__()
-        self.frame_dict = frame_dict
+        self.frame_dict_original = frame_dict
+        self.frame_dict = frame_dict.copy()
         
         self.set_frame_mode(starting_mode)
         self.set_frame(0)
@@ -38,6 +39,8 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.body = pymunk.Body(1, 100, body_type=body_type)
         self.body.position = pos
         
+        self.scale_factor = 1
+
         self.set_shape(shape_type, shape_factor)
         self.shape = None
         self.shape, self.new_shape = self.new_shape, None
@@ -49,6 +52,7 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.private_data = {}
         self.flip_y = False
         self.flip_x = False
+
 
 
     def is_mouse_selected(self):
@@ -104,14 +108,25 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.shape_type = shape_type
         self.shape_factor = shape_factor
         self.collision_allowed= collision_allowed
-        self.scale(1)
+        self.scale_by(1)
+
+
+    def set_scale(self, factor):
+        self.scale_factor = factor
+        self.scale_by(1)
+    
 
     
-    def scale(self, factor):
+    def scale_by(self, factor):
+
+
+        new_factor = self.scale_factor*factor
+        self.scale_factor = new_factor
+
         # TODO: 
         # use with caution: this creates a new shape for the object
-        for k, frames in self.frame_dict.items():
-            self.frame_dict[k] = [pygame.transform.scale_by(f, factor) for f in frames]
+        for k, frames in self.frame_dict_original.items():
+            self.frame_dict[k] = [pygame.transform.scale_by(f, new_factor) for f in frames]
 
         self.set_frame_mode(self.frame_mode)
 
@@ -133,9 +148,12 @@ class ScratchSprite(pygame.sprite.Sprite):
 
         elif self.shape_type == 'circle_height':
             self.new_shape = pymunk.Circle(self.body, (self.rect.height)//2)
+
         elif self.shape_type:
-            # self.shape_type is a function that returns the shape
-            self.new_shape = self.shape_type(factor, self.shape_factor)
+            # in this case, self.shape_type is a function that returns the shape
+
+            # factor is the change_factor, new_factor is the overall factor
+            self.new_shape = self.shape_type(new_factor, factor, self.shape_factor)
         else: 
             pass
 
@@ -202,5 +220,12 @@ class ScratchSprite(pygame.sprite.Sprite):
         rot_vec = (pos - self.body.position).normalized()
         self.body.angle = rot_vec.angle + offset_degree
 
+
+    def change_brightness(self):
+        pass
+
+    def change_transparency(self):
+        pass
+    
 
     
