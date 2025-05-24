@@ -65,8 +65,13 @@ import random
 
 
 timer_event = Event.create_timer_event(.1)
-timer_event.add_handler(lambda: sprite1.add_rotation(3))
+#timer_event.add_handler(lambda: sprite1.add_rotation(3))
 timer_event.add_handler(lambda: sprite1.next_frame())
+timer_event.add_handler(lambda: sprite1.point_towards(sprite2))
+timer_event.add_handler(lambda: sprite1.point_towards_mouse())
+
+
+
 
 
 # # timer_event2 = Event.create_timer_event(0)

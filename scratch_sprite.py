@@ -1,6 +1,6 @@
 import pygame 
 import pymunk
-import math
+
 def circle_sprite(colour, radius, *args, **kwargs):
     circle = create_circle(colour, radius)
     return ScratchSprite({"always":[circle]}, "always", *args, **kwargs)
@@ -139,8 +139,30 @@ class ScratchSprite(pygame.sprite.Sprite):
         else: 
             pass
 
-
-
+    @property
+    def direction(self):
+        return self.body.rotation_vector.angle_degrees
+    
+    # the use of setter should discouraged...
+    @direction.setter
+    def direction(self, degree):
+        self.set_rotation(degree)
+    
+    @property
+    def x(self):
+        return self.body.position[0]
+    
+    @property
+    def y(self):
+        return self.body.position[1]
+    
+    @x.setter
+    def x(self, v):
+        self.body.position =  v, self.body.position[1]
+    
+    @y.setter
+    def y(self):
+        self.body.position = self.body.position[0], v
 
     def get_rotation(self):
         return self.body.rotation_vector.angle_degrees
@@ -169,6 +191,16 @@ class ScratchSprite(pygame.sprite.Sprite):
 
     def set_xy(self, xy):
         self.body.position =  xy
+
+
+    def point_towards(self, sprite, offset_degree=0):
+        rot_vec = (sprite.body.position - self.body.position).normalized()
+        self.body.angle = rot_vec.angle + offset_degree
+
+    def point_towards_mouse(self, offset_degree=0):
+        pos = pygame.mouse.get_pos()
+        rot_vec = (pos - self.body.position).normalized()
+        self.body.angle = rot_vec.angle + offset_degree
 
 
     
