@@ -1,6 +1,6 @@
 import pygame
 import pymunk
-
+import numpy as np
 class Trigger:
     all_triggers = []
     def __init__(self, condition_checker):
@@ -58,25 +58,35 @@ class Event:
         return True
     
     timer_event_checkers = []
-    def create_timer_event(period_sec):
+    def create_timer_event(period_sec, n_times=np.inf):
         event = Event()
         
         period_ms = period_sec*1000
         time_ms_last = 0
 
+        counter = 0
+
         def check_trigger(time_ms_new):
-            nonlocal time_ms_last
+            nonlocal time_ms_last, counter
 
             dt = time_ms_new - time_ms_last
             if dt >= period_ms:
                 event.trigger()
                 time_ms_last = time_ms_new
+                counter += 1
                 #print(dt)
+                if counter >= n_times:
+                    # remove itself from the active event list
+                    # TODO: unclear if the object is completely dereferenced
+                    event.add_handler(lambda: event.inactive())
+                    Event.timer_event_checkers.remove(check_trigger)
 
-            
         Event.timer_event_checkers.append(check_trigger)
 
         return event#, check_trigger
+    
+
+    
     
     pygame_event_checkers = []
 

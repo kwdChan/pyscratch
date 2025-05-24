@@ -1,5 +1,8 @@
 import pygame
 def get_frame(sheet, columns, rows, index, spacing=0, margin=0, inset=0):
+    """
+    WRITTEN BY CHATGPT
+    """
     sheet_rect = sheet.get_rect()
 
     total_spacing_x = spacing * (columns - 1)
@@ -40,3 +43,38 @@ def get_frame_dict(sheet, columns, rows, indices_dict, spacing=0, margin=0, inse
         frame_dict[k] = get_frame_sequence(sheet, columns, rows, v, spacing, margin, inset)
 
     return frame_dict
+
+
+import pygame
+import numpy as np
+
+def adjust_brightness(surface, value):
+    """Returns a new surface with brightness adjusted.
+    
+    Args:
+        surface (pygame.Surface): The original surface.
+        value (int or float): Amount to adjust brightness. Positive to brighten, negative to darken.
+                              Can be an int (e.g., +50) or a multiplier (e.g., 1.2).
+    
+    Returns:
+        pygame.Surface: New surface with adjusted brightness.
+
+
+    WRITTEN BY CHATGPT
+    """
+    # Ensure we have a copy
+    new_surface = surface.copy()
+
+    # Convert to 24-bit or 32-bit format (RGB/RGBA)
+    new_surface = new_surface.convert_alpha()
+
+    # Get pixel arrays
+    arr = pygame.surfarray.pixels3d(new_surface)
+    
+    # Brightness adjustment
+    arr[...] = np.clip(arr * value, 0, 255)
+
+    # Release the lock on the array (very important!)
+    del arr
+
+    return new_surface

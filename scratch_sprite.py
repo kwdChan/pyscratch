@@ -1,6 +1,7 @@
 import pygame 
 import pymunk
-
+from event import Event
+from helper import adjust_brightness
 def circle_sprite(colour, radius, *args, **kwargs):
     circle = create_circle(colour, radius)
     return ScratchSprite({"always":[circle]}, "always", *args, **kwargs)
@@ -24,13 +25,14 @@ def create_rect(colour, width, height):
 
 
 
+
 class ScratchSprite(pygame.sprite.Sprite):
     
     def __init__(self, frame_dict, starting_mode, pos, shape_type='box', shape_factor=1, body_type=pymunk.Body.KINEMATIC):
         # DYNAMIC, KINEMATIC, STATIC
         # TODO: add all the properties here
         super().__init__()
-        self.frame_dict_original = frame_dict
+        self.frame_dict_original = frame_dict.copy() 
         self.frame_dict = frame_dict.copy()
         
         self.set_frame_mode(starting_mode)
@@ -52,6 +54,10 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.private_data = {}
         self.flip_y = False
         self.flip_x = False
+
+        self.on_mouse_click_event = Event()
+        self.lock_to_sprite = None
+        self.lock_offset = 0, 0
 
 
 
@@ -75,6 +81,10 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.flip_y = not self.flip_y
 
     def update(self, space):
+
+        if self.lock_to_sprite:
+            self.body.position = self.lock_to_sprite.body.position + self.lock_offset
+
         x, y = self.body.position
         img = self.frames[self.frame_idx]
         img = pygame.transform.flip(img, self.flip_x, self.flip_y)
@@ -211,20 +221,52 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.body.position =  xy
 
 
-    def point_towards(self, sprite, offset_degree=0):
-        rot_vec = (sprite.body.position - self.body.position).normalized()
+    def distance_to(self, position, return_vector=False):
+        if return_vector:
+            return (position - self.body.position)
+        else:
+            return (position - self.body.position).length
+
+    def distance_to_sprite(self, sprite, return_vector=False):
+        return self.distance_to(sprite.body.position, return_vector)
+    
+    def point_towards_mouse(self, sprite, return_vector=False):
+        return self.distance_to(pygame.mouse.get_pos(), return_vector)
+
+
+    def point_towards(self, position, offset_degree=0):
+        rot_vec = (position - self.body.position).normalized()
         self.body.angle = rot_vec.angle + offset_degree
+
+    def point_towards_sprite(self, sprite, offset_degree=0):
+        self.point_towards(sprite.body.position, offset_degree)
 
     def point_towards_mouse(self, offset_degree=0):
-        pos = pygame.mouse.get_pos()
-        rot_vec = (pos - self.body.position).normalized()
-        self.body.angle = rot_vec.angle + offset_degree
+        self.point_towards(pygame.mouse.get_pos(), offset_degree)
 
 
-    def change_brightness(self):
+    def change_brightness(self, factor):
+        # for k, frames in self.frame_dict_original.items():
+        #     self.frame_dict[k] = [adjust_brightness(f, factor) for f in frames]
+
+        # self.set_frame_mode(self.frame_mode)
         pass
+    
+
 
     def change_transparency(self):
+        pass
+
+
+    def lock_to(self, sprite, offset):
+        assert self.body.body_type == pymunk.Body.KINEMATIC, "only KINEMATIC object can be locked to another sprite"
+        
+        self.lock_to_sprite = sprite
+        self.lock_offset = offset
+
+    def release_position_lock(self):
+        self.lock_to_sprite = None
+        self.lock_offset = None
         pass
     
 

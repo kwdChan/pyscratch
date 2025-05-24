@@ -3,11 +3,11 @@ import pymunk
 from event import Event, Trigger
 from scratch_sprite import rect_sprite
 from pymunk.pygame_util import DrawOptions
-
+from typing import Optional, List, Dict
 
 def collision_begin(arbiter, space, data):
     data['self'].contact_pairs_set.add(arbiter.shapes) 
-    print(0)
+    #print(0)
 
     for e, (a,b) in Event.collision_pairs.items():
         if (a.shape in arbiter.shapes) and (b.shape in arbiter.shapes):
@@ -79,10 +79,14 @@ class Game:
             if e.type == pygame.MOUSEBUTTONDOWN: 
                 
                 for s in reversed(list(self.all_sprites_to_show)):
-                    if not s.draggable:
-                        continue
-                    
+
                     if s.shape.point_query(e.pos).distance <= 0:
+                        s.on_mouse_click_event.trigger()
+
+                        if not s.draggable:
+                            continue
+                    
+
                         s.set_is_dragging (True)
                         self.dragged_sprite = s
                         offset_x = s.body.position[0]  - e.pos[0]
@@ -103,7 +107,13 @@ class Game:
 
         mouse_drag_event.add_handler(mouse_drag_handler)
 
-        self.background = None
+        self.backdrops = []
+        self.__backdrop_index = None
+
+
+        self.on_backdrop_change_event = Event()
+
+
         
 
     def update_screen_mode(self, *arg, **kwargs):
@@ -146,6 +156,8 @@ class Game:
             self.__schedule_jobs(time)
             self.__run_jobs(time)
 
+
+            # TODO: Move all events into the private properties of the game
             for t in Trigger.all_triggers:
                 t.check()
 
@@ -172,16 +184,14 @@ class Game:
         
             
             self.screen.fill((30, 30, 30))
-            if self.background: 
-                self.screen.blit(self.background, (0, 0))
-
+            if not (self.__backdrop_index is None): 
+                self.screen.blit(self.backdrops[self.__backdrop_index], (0, 0))
 
             if debug_draw: 
                 self.space.debug_draw(self.draw_options)
+            
             self.all_sprites.update(self.space)
             self.all_sprites_to_show.draw(self.screen)
-
-            
             pygame.display.flip()
 
     def set_gravity(self, xy):
@@ -213,15 +223,28 @@ class Game:
         layer = self.all_sprites_to_show.get_layer_of_sprite(sprite)
         self.all_sprites_to_show.change_layer(sprite, layer + by)
 
-
-
     def get_layer_of_sprite(self, sprite):
         self.all_sprites_to_show.get_layer_of_sprite(sprite)
 
-    def set_background_image(self, image: pygame.Surface):
-        self.background = image
+    def set_backdrops(self, images: List[pygame.Surface]):
+        self.backdrops = images
     
+    @property
+    def backdrop_index(self):
+        return self.__backdrop_index
 
+    def switch_backdrop(self, index:Optional[int]=None):
+        self.__backdrop_index = index
+        self.on_backdrop_change_event.trigger(index)
+
+    def next_backdrop(self):
+        self.switch_backdrop((self.__backdrop_index+1) % len(self.backdrops))
+        
+
+
+    
+        
+        
 game = Game()
 
         

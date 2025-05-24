@@ -8,7 +8,7 @@ from helper import get_frame, get_frame_sequence, get_frame_dict
 sprite_sheet = pygame.image.load("assets/Sprout Lands - Sprites - Basic pack/Characters/Basic Charakter Actions.png").convert_alpha()
 
 background = pygame.image.load('assets/kenney_fish-pack_2/Sample.png')
-
+game.set_backdrops([background])
 
 
 frame_dict = get_frame_dict(sprite_sheet, 2, 12, {
@@ -55,7 +55,7 @@ sprite2.set_scale(4)
 game.add_sprite(sprite2)
 
 
-
+sprite1.lock_to(sprite2, (200,-200))
 
 import random
 
@@ -69,12 +69,15 @@ import random
 
 timer_event = Event.create_timer_event(.1)
 #timer_event.add_handler(lambda: sprite1.add_rotation(3))
-timer_event.add_handler(lambda: sprite1.next_frame())
-timer_event.add_handler(lambda: sprite1.point_towards(sprite2))
-timer_event.add_handler(lambda: sprite1.point_towards_mouse())
+# timer_event.add_handler(lambda: sprite1.point_towards(sprite2))
+# timer_event.add_handler(lambda: sprite1.point_towards_mouse())
 
 
+timer_event2 = Event.create_timer_event(.5, 3)
+timer_event2.add_handler(lambda: sprite1.add_rotation(15))
 
+
+sprite2.on_mouse_click_event.add_handler(lambda: print('hi'))
 
 
 # # timer_event2 = Event.create_timer_event(0)
@@ -83,8 +86,7 @@ timer_event.add_handler(lambda: sprite1.point_towards_mouse())
 
 # timer_event2.add_handler(test)
 
-    
-
+sprite1.change_brightness(2)
 
 keydown_event = Event.create_pygame_event([pygame.KEYDOWN])
 def when_key_down(e):
@@ -117,9 +119,9 @@ def when_key_down(e):
         sprite1.set_frame_mode("3")
 
     elif e.key  == pygame.key.key_code("4"):
-        game.set_background_image(background)
+        game.switch_backdrop(0)
     elif e.key  == pygame.key.key_code("5"):
-        game.set_background_image(None)
+        game.next_backdrop()
     
 
 keydown_event.add_handler(when_key_down)

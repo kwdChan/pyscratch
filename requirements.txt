@@ -1,3 +1,4 @@
 pymunk
 pygame
 jupyterlab 
+numpy
