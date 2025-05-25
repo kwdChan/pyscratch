@@ -127,7 +127,7 @@ def when_key_down(e):
 keydown_event.add_handler(when_key_down)
 
 
-
+game.create_edges()
 
 
 game.start(60, sim_step_min=1000, debug_draw=False)

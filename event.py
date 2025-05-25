@@ -1,6 +1,9 @@
 import pygame
 import pymunk
 import numpy as np
+
+
+
 class Trigger:
     all_triggers = []
     def __init__(self, condition_checker):
@@ -58,6 +61,7 @@ class Event:
         return True
     
     timer_event_checkers = []
+    @staticmethod
     def create_timer_event(period_sec, n_times=np.inf):
         event = Event()
         
@@ -90,7 +94,7 @@ class Event:
     
     pygame_event_checkers = []
 
-
+    @staticmethod
     def create_pygame_event(flags):
         event = Event()
 
@@ -104,19 +108,20 @@ class Event:
     
     subscriptions = {} 
 
+    @staticmethod
     def new_subscription(topic, event):
         if not (topic in Event.subscriptions):
             Event.subscriptions[topic] = []
 
         Event.subscriptions[topic].append(event)
         
-
+    @staticmethod
     def create_messager_event(topic):
         event = Event()
         Event.new_subscription(topic, event)
         return event
     
-
+    @staticmethod
     def submit_message(topic, *arg, **kwargs):
         if not topic in Event.subscriptions:
             return 
@@ -124,26 +129,10 @@ class Event:
         for e in Event.subscriptions[topic]:
             e.trigger(*arg, **kwargs)
 
-    overlap_event_checkers = []
-    # def create_overlap_event(sprite_a, sprite_b, rect_or_circle='rect'):
-    #     event = Event()
-        
-    #     if rect_or_circle == 'rect':
-    #         detection_func = pygame.sprite.collide_rect
-    #     elif rect_or_circle == 'circle':
-    #         detection_func = pygame.sprite.collide_circle
 
-    #     def checker():
-    #         if detection_func(sprite_a, sprite_b):
-    #             event.trigger()
-
-    #     Event.overlap_event_checkers.append(checker)
-
-    #     return event
-        
 
     collision_pairs = {}
-
+    @staticmethod
     def create_collision_event(sprite_a, sprite_b):
         event = Event()
         sprite_a.shape.collision_type = 1

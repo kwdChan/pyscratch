@@ -1,12 +1,12 @@
 import pygame
 import pymunk
 from event import Event, Trigger
-from scratch_sprite import rect_sprite
+from scratch_sprite import rect_sprite, ScratchSprite
 from pymunk.pygame_util import DrawOptions
 from typing import Optional, List, Dict
 
 def collision_begin(arbiter, space, data):
-    data['self'].contact_pairs_set.add(arbiter.shapes) 
+    data['game'].contact_pairs_set.add(arbiter.shapes) 
     #print(0)
 
     for e, (a,b) in Event.collision_pairs.items():
@@ -18,8 +18,8 @@ def collision_begin(arbiter, space, data):
     return True
 
 def collision_separate(arbiter, space, data):
-    if arbiter.shapes in data['self'].contact_pairs_set:
-        data['self'].contact_pairs_set.remove(arbiter.shapes)
+    if arbiter.shapes in data['game'].contact_pairs_set:
+        data['game'].contact_pairs_set.remove(arbiter.shapes)
 
 class Game:
 
@@ -27,27 +27,21 @@ class Game:
 
         self.screen  = pygame.display.set_mode(screen_size, vsync=1)
         self.space = pymunk.Space()
-
-        self.contact_pairs_set = set() 
-
-        self.collision_handler = self.space.add_default_collision_handler()
-        self.collision_handler.data['self'] = self
-        self.collision_handler.begin = collision_begin
-        self.collision_handler.separate = collision_separate
-
         self.draw_options = DrawOptions(self.screen)
 
-        # test only
-        # self.space.gravity=0,.001
-        # seg = pymunk.Segment(self.space.static_body, (0, 200), (1000, 1000), 2)
-        # self.space.add(seg)
-        # self.seg = seg
-        # test only --end
-    
+        # shared variables 
+        self.shared_data = {}
+        
+        # collision detection
+        self.contact_pairs_set = set() 
+        self.collision_handler = self.space.add_default_collision_handler()
+        self.collision_handler.data['game'] = self
+        self.collision_handler.begin = collision_begin
+        self.collision_handler.separate = collision_separate
+        
+        # sprites updating and drawing
         self.all_sprites = pygame.sprite.Group()
         self.all_sprites_to_show = pygame.sprite.LayeredUpdates()
-
-        self.shared_data = {}
 
 
         # scheduled jobs
@@ -55,66 +49,68 @@ class Game:
         self.scheduled_jobs = []
         
 
-
-        # edges
-        edge_colour = (255, 0, 0)
-        edge_body = pymunk.Body.KINEMATIC
-        screen_w, screen_h = screen_size
-
-        self.top_edge = rect_sprite(edge_colour, screen_w, 4, (screen_w//2, 0),body_type= edge_body)
-        self.bottom_edge = rect_sprite(edge_colour, screen_w, 4, (screen_w//2, screen_h),body_type= edge_body)
-        self.left_edge = rect_sprite(edge_colour, 4, screen_h, (0, screen_h//2),body_type= edge_body)
-        self.right_edge = rect_sprite(edge_colour, 4, screen_h, (screen_w,  screen_h//2),body_type= edge_body)
-
-        self.add_sprite(self.top_edge)
-        self.add_sprite(self.bottom_edge)
-        self.add_sprite(self.left_edge)
-        self.add_sprite(self.right_edge)
-
         # mouse dragging event
         self.dragged_sprite = None
         self.drag_offset = 0, 0
-        mouse_drag_event = Event.create_pygame_event([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
-        def mouse_drag_handler(e):
-            if e.type == pygame.MOUSEBUTTONDOWN: 
-                
-                for s in reversed(list(self.all_sprites_to_show)):
-
-                    if s.shape.point_query(e.pos).distance <= 0:
-                        s.on_mouse_click_event.trigger()
-
-                        if not s.draggable:
-                            continue
-                    
-
-                        s.set_is_dragging (True)
-                        self.dragged_sprite = s
-                        offset_x = s.body.position[0]  - e.pos[0]
-                        offset_y = s.body.position[1]  - e.pos[1]
-                        self.drag_offset = offset_x, offset_y
-                        break 
-
-            elif e.type == pygame.MOUSEBUTTONUP:
-                if self.dragged_sprite: 
-                    self.dragged_sprite.set_is_dragging(False)
-                    self.dragged_sprite = None
-
-            elif e.type == pygame.MOUSEMOTION and self.dragged_sprite:
-                x = e.pos[0] + self.drag_offset[0]
-                y = e.pos[1] + self.drag_offset[1]
-                self.dragged_sprite.set_xy((x,y))
+        self.__mouse_drag_event = Event.create_pygame_event([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
+        self.__mouse_drag_event.add_handler(self.__mouse_drag_handler)
 
 
-        mouse_drag_event.add_handler(mouse_drag_handler)
-
+        ## Backdrops
         self.backdrops = []
         self.__backdrop_index = None
-
-
         self.on_backdrop_change_event = Event()
 
+    def __mouse_drag_handler(self, e):
+        if e.type == pygame.MOUSEBUTTONDOWN: 
+            
+            for s in reversed(list(self.all_sprites_to_show)):
 
-        
+                if s.shape.point_query(e.pos).distance <= 0:
+                    s.on_mouse_click_event.trigger()
+
+                    if not s.draggable:
+                        continue
+
+                    s.set_is_dragging (True)
+                    self.dragged_sprite = s
+                    offset_x = s.body.position[0]  - e.pos[0]
+                    offset_y = s.body.position[1]  - e.pos[1]
+                    self.drag_offset = offset_x, offset_y
+                    break 
+
+        elif e.type == pygame.MOUSEBUTTONUP:
+            if self.dragged_sprite: 
+                self.dragged_sprite.set_is_dragging(False)
+                self.dragged_sprite = None
+
+        elif e.type == pygame.MOUSEMOTION and self.dragged_sprite:
+            x = e.pos[0] + self.drag_offset[0]
+            y = e.pos[1] + self.drag_offset[1]
+            self.dragged_sprite.set_xy((x,y))
+
+
+    def create_edges(self, edge_colour = (255, 0, 0), thickness=4):
+        # edges
+        edge_body = pymunk.Body.STATIC
+        screen_w, screen_h = self.screen.get_width(), self.screen.get_height()
+
+        top_edge = rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, 0),body_type= edge_body)
+        bottom_edge = rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, screen_h),body_type= edge_body)
+        left_edge = rect_sprite(edge_colour, thickness, screen_h, (0, screen_h//2),body_type= edge_body)
+        right_edge = rect_sprite(edge_colour, thickness, screen_h, (screen_w,  screen_h//2),body_type= edge_body)
+
+        self.add_sprite(top_edge)
+        self.add_sprite(bottom_edge)
+        self.add_sprite(left_edge)
+        self.add_sprite(right_edge)
+
+        self.shared_data['top_edge'] = top_edge
+        self.shared_data['left_edge'] = left_edge
+        self.shared_data['bottom_edge'] = bottom_edge
+        self.shared_data['right_edge'] = right_edge
+
+        return top_edge, left_edge, bottom_edge, right_edge
 
     def update_screen_mode(self, *arg, **kwargs):
         self.screen  = pygame.display.set_mode( *arg, **kwargs)
@@ -194,6 +190,8 @@ class Game:
             self.all_sprites_to_show.draw(self.screen)
             pygame.display.flip()
 
+
+
     def set_gravity(self, xy):
         self.space.gravity = xy
 
@@ -238,7 +236,8 @@ class Game:
         self.on_backdrop_change_event.trigger(index)
 
     def next_backdrop(self):
-        self.switch_backdrop((self.__backdrop_index+1) % len(self.backdrops))
+        if not self.__backdrop_index is None: 
+            self.switch_backdrop((self.__backdrop_index+1) % len(self.backdrops))
         
 
 
