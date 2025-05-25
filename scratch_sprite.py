@@ -123,7 +123,11 @@ class ScratchSprite(pygame.sprite.Sprite):
             # TODO: should be done every physics loop or reset location every frame
             # or can i change it to kinamatic temporarily
 
-        
+    def set_mass(self, mass):
+        self.body.mass = mass
+
+    def set_moment(self, moment):
+        self.body.moment = moment
     
     def set_shape(self, shape_type='box', shape_factor=1.0, collision_allowed=False):
         # could be a function or a string

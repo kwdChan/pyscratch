@@ -4,7 +4,7 @@ import pymunk
 from event import ConditionInterface, Trigger, OneOffTrigger, Condition, TimerCondition
 from scratch_sprite import rect_sprite, ScratchSprite
 from pymunk.pygame_util import DrawOptions
-from typing import Callable, Optional, List, Dict, cast
+from typing import Any, Callable, Optional, List, Dict, cast
 
 def collision_begin(arbiter, space, data):
     data['game'].contact_pairs_set.add(arbiter.shapes) 
@@ -59,14 +59,18 @@ class Game:
         self.all_pygame_events = []
         self.all_triggers: List[Trigger] = [] # these are to be executed every iteration
         self.all_conditions: List[ConditionInterface] = [] # these are to be checked every iteration
-        self.all_forever_jobs: List[Callable[[], None]] = []
-        self.all_message_subscriptions = {}
+        #self.all_forever_jobs: List[Callable[[], None]] = []
+        self.all_message_subscriptions: Dict[str, List[Trigger]] = {}
         
+        # key events 
+        key_event = self.create_pygame_event_trigger([pygame.KEYDOWN, pygame.KEYUP])
+        key_event.add_callback(self.__key_event_handler)
+        self.all_simple_key_triggers: List[Trigger] = [] # these are to be triggered by self.__key_event_handler only
 
         # mouse dragging event
         self.dragged_sprite = None
         self.drag_offset = 0, 0
-        self.sprite_click_trigger = {}
+        self.sprite_click_trigger:Dict[ScratchSprite, Trigger] = {}  #TODO: need to be able to destory the trigger here when the sprite is destoryed
         mouse_drag_trigger = self.create_pygame_event_trigger([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
         mouse_drag_trigger.add_callback(self.__mouse_drag_handler)
 
@@ -74,6 +78,20 @@ class Game:
         self.backdrops = []
         self.__backdrop_index = None
         self.backdrop_change_trigger = self.create_trigger()
+
+
+    def __key_event_handler(self, e):
+        up_or_down = 'up' if e.type == pygame.KEYDOWN else 'down'
+        keyname = pygame.key.name(e.key)
+
+        for t in self.all_simple_key_triggers:
+            t.trigger(keyname, up_or_down)
+
+    def create_key_event(self):
+        t = self.create_trigger()
+        self.all_simple_key_triggers.append(t)
+        return t
+
 
     def __mouse_drag_handler(self, e):
         if e.type == pygame.MOUSEBUTTONDOWN: 
@@ -149,15 +167,19 @@ class Game:
 
 
     def create_pygame_event_trigger(self, flags: List[int]):
-        trigger = self.create_trigger()
+
+        condition = self.create_conditional_trigger()
         
-        def j():
+        def checker_hijack():
             for e in self.all_pygame_events:
                 if e.type in flags:
-                    trigger.trigger(e)
-        self.__run_forever(j)
+                    condition.trigger.trigger(e)
 
-        return trigger
+            if not condition.trigger.stay_active:
+                condition.remove()
+
+        condition.change_checker(checker_hijack)
+        return condition.trigger
 
 
     def create_timer_trigger(self, reset_period=np.inf, repeats=np.inf):
@@ -177,27 +199,31 @@ class Game:
 
         return trigger
 
-    def new_subscription(self, topic, trigger):
+
+    def retrieve_sprite_click_trigger(self, sprite):
+        return self.sprite_click_trigger[sprite]
+        
+    def new_subscription(self, topic: str, trigger: Trigger):
         if not (topic in self.all_message_subscriptions):
             self.all_message_subscriptions[topic] = []
 
         self.all_message_subscriptions[topic].append(trigger)
 
-
-    def retrieve_sprite_click_trigger(self, sprite):
-        return self.sprite_click_trigger[sprite]
         
-    def create_messager_trigger(self, topic):
+    def create_messager_trigger(self, topic: str):
         trigger = self.create_trigger()
         self.new_subscription(topic, trigger)
         return trigger
     
-    def boardcast_message(self, topic, data):
+    def boardcast_message(self, topic: str, data: Any):
         if not topic in self.all_message_subscriptions:
             return 
         
+        self.all_message_subscriptions[topic] = list(filter(lambda t: t.stay_active, self.all_message_subscriptions[topic]))
         for e in self.all_message_subscriptions[topic]:
+
             e.trigger(data)
+            
 
     def create_conditional_trigger(self, checker=lambda: False, repeats=np.inf):
         condition = Condition(checker, repeats)
@@ -210,9 +236,9 @@ class Game:
         self.all_triggers.append(trigger)
         return trigger
     
-    # not sure if this should be exposed
-    def __run_forever(self, func: Callable[[], None]):
-        self.all_forever_jobs.append(func)
+    # # not sure if this should be exposed
+    # def __run_forever(self, func: Callable[[], None]):
+    #     self.all_forever_jobs.append(func)
 
 
     def load_sound(self, key, path) :
@@ -247,43 +273,28 @@ class Game:
                     pygame.quit()
 
 
-            # time = pygame.time.get_ticks()
-            # self.__schedule_jobs(time)
-            # self.__run_jobs(time)
-
-
-            # # TODO: Move all events into the private properties of the game
-            # for t in Trigger_v0.all_triggers:
-            #     t.check()
-
-            # for c in Event_v0.timer_event_checkers:
-            #     c(time)
-
-            # for c in Event.overlap_event_checkers:
-            #     c()
-
-
-            # for c in Event_v0.pygame_event_checkers:
-            #     c(all_events)
-
-            for j in self.all_forever_jobs:
-                j()
+            # for j in self.all_forever_jobs:
+            #     j()
 
             # check conditions
             for c in self.all_conditions:
                 c.check()
-            #print('conditions: ', len(self.all_conditions))
-            self.all_conditions = list(filter(lambda t: t.stay_active, self.all_conditions))
 
             # execute 
             for t in self.all_triggers:
                 t.handle_all()
                 # TODO: is it possible to remove t in the self.all_triggers here?
 
+            # clean up
+            self.all_conditions = list(filter(lambda t: t.stay_active, self.all_conditions))
+            self.all_simple_key_triggers = list(filter(lambda t: t.stay_active, self.all_simple_key_triggers))
             self.all_triggers = list(filter(lambda t: t.stay_active, self.all_triggers))
-            #print('triggers: ', len(self.all_triggers))
+
+            # print("all_conditions", len(self.all_conditions))
+            # print("all_triggers", len(self.all_triggers))
+            # print("all_simple_key_triggers", len(self.all_simple_key_triggers))
+
             # Drawing
-            
             self.screen.fill((30, 30, 30))
             if not (self.__backdrop_index is None): 
                 self.screen.blit(self.backdrops[self.__backdrop_index], (0, 0))
@@ -295,8 +306,6 @@ class Game:
             self.all_sprites_to_show.draw(self.screen)
             pygame.display.flip()
 
-
-
     def set_gravity(self, xy):
         self.space.gravity = xy
 
@@ -307,6 +316,14 @@ class Game:
             self.all_sprites_to_show.add(sprite)
 
         self.sprite_click_trigger[sprite] = self.create_trigger()
+
+    def remove_sprite(self, sprite):
+
+        self.all_sprites.remove(sprite)
+        self.space.remove(sprite.body, sprite.shape)
+        self.all_sprites_to_show.remove(sprite) 
+        self.sprite_click_trigger[sprite].remove()
+
 
     def show_sprite(self, sprite):
         self.all_sprites_to_show.add(sprite)

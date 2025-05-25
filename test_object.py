@@ -77,6 +77,7 @@ import random
 
 
 
+
 timer = game.create_timer_trigger(100)
 timer.on_reset(lambda x: sprite1.next_frame())
 #timer_event.add_handler(lambda: sprite1.add_rotation(3))
@@ -96,11 +97,31 @@ timer2.on_reset(lambda x: sprite1.add_rotation(15))
 
 game.create_conditional_trigger(lambda: pygame.mouse.get_pos()[0] < 100, 100).add_callback(lambda x: print(x))
 
+
+hello_word_trigger = game.create_messager_trigger('hello_world')
+hello_word_trigger.add_callback(lambda x: print(x))
+
+simple_key_event = game.create_key_event()
+
+def on_key_press(key, updown):
+    game.boardcast_message('hello_world', dict(x=key))
+    print(game.all_message_subscriptions)
+
+
+    
+simple_key_event.add_callback(on_key_press)
+
+
+
 keydown_event = game.create_pygame_event_trigger([pygame.KEYDOWN])
+
+
+
 def when_key_down(e):
 
     
     if e.key == pygame.key.key_code("w"):
+        hello_word_trigger.remove()
         # sprite1.move_indir(1)
         # sprite1.flip_horizontal()
         # #game.hide_sprite(sprite1)
@@ -137,10 +158,14 @@ def when_key_down(e):
         game.switch_backdrop(0)
     elif e.key  == pygame.key.key_code("5"):
         game.next_backdrop()
-    
+
+    elif e.key  == pygame.key.key_code("6"):
+        keydown_event.remove()
 
 keydown_event.add_callback(when_key_down)
 
+game.remove_sprite(sprite1)
+#game.all_sprites.remove(sprite1)
 
 game.create_edges()
 game.backdrop_change_trigger.add_callback(lambda x: print(x))
