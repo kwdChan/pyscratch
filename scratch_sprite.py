@@ -1,6 +1,5 @@
 import pygame 
 import pymunk
-from event import Event
 from helper import adjust_brightness
 def circle_sprite(colour, radius, *args, **kwargs):
     circle = create_circle(colour, radius)
@@ -55,7 +54,7 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.flip_y = False
         self.flip_x = False
 
-        self.on_mouse_click_event = Event()
+        #self.on_mouse_click_event = Event_v0()
         self.lock_to_sprite = None
         self.lock_offset = 0, 0
 
@@ -189,7 +188,7 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.body.position =  v, self.body.position[1]
     
     @y.setter
-    def y(self):
+    def y(self, v):
         self.body.position = self.body.position[0], v
 
     def get_rotation(self):
@@ -230,9 +229,6 @@ class ScratchSprite(pygame.sprite.Sprite):
     def distance_to_sprite(self, sprite, return_vector=False):
         return self.distance_to(sprite.body.position, return_vector)
     
-    def point_towards_mouse(self, sprite, return_vector=False):
-        return self.distance_to(pygame.mouse.get_pos(), return_vector)
-
 
     def point_towards(self, position, offset_degree=0):
         rot_vec = (position - self.body.position).normalized()

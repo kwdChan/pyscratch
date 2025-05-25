@@ -1,145 +1,148 @@
+from typing import Union, override
 import pygame
 import pymunk
 import numpy as np
 
-
-
 class Trigger:
-    all_triggers = []
-    def __init__(self, condition_checker):
-        self.condition_checker = condition_checker
-        self.func = lambda: None
-        type(self).all_triggers.append(self)
-    
-    def do(self, func):
-        self.func = func
-    
-    def check(self):
-        if self.condition_checker():
-            self.func()
-            type(self).all_triggers.remove(self)
 
+    def __init__(self):
+        self.__triggers = []
+        self.__callbacks = []
+        self.__stay_active = True
 
-class Event:
-    active_events = []
+    def remove(self):
+        self.__stay_active = False
 
-    def __init__(self, active=True):
-        self.triggers = []
-        self.handlers = []
-
-        if active: 
-            self.active()
-
-    def inactive(self):
-        type(self).active_events.remove(self)
-
-    def active(self):
-        assert not (self in type(self).active_events)
-        type(self).active_events.append(self)
+    @property
+    def stay_active(self):
+        return self.__stay_active
 
 
     def trigger(self, *args, **kwargs):
-        self.triggers.append((args, kwargs))
+        self.__triggers.append((args, kwargs))
     
-    def add_handler(self, func):
-        self.handlers.append(func)
+    def add_callback(self, func):
+        self.__callbacks.append(func)
 
     def handle_all(self):
         while self.handle_one():
             pass
         
-
     def handle_one(self):
-        if not len(self.triggers): 
+        if not len(self.__triggers): 
             return False
         
-        args, kwargs = self.triggers.pop(0)
+        args, kwargs = self.__triggers.pop(0)
 
-        for h in self.handlers:
-            h(*args, **kwargs)
+        for cb in self.__callbacks:
+            cb(*args, **kwargs)
 
         return True
+
+
+class OneOffTrigger:
+    def __init__(self, condition_checker):
+        self.condition_checker = condition_checker
+        self.callback = lambda: None
     
-    timer_event_checkers = []
-    @staticmethod
-    def create_timer_event(period_sec, n_times=np.inf):
-        event = Event()
+    def set_callback(self, func):
+        self.callback = func
+    
+    def check(self):
+        if self.condition_checker():
+            self.callback()
+
+
+class ConditionInterface:
+    def check(self):
+        pass
+    
+    def remove(self):
+        pass
+
+    @property
+    def stay_active(self) -> bool:
+        return True
+
+class Condition(ConditionInterface):
+    def __init__(self, checker= lambda: False, repeats: Union[float, int]=1):
+        self.trigger = Trigger()
+        self.repeat_remains = repeats
+        self.checker = checker
+        self.__stay_active = True
+
+    def remove(self):
+        self.__stay_active = False
+        self.trigger.remove()
+
+    @property
+    def stay_active(self):
+        return self.__stay_active
+
+    @override
+    def check(self):
+        if self.checker() and self.repeat_remains:
+            self.repeat_remains -= 1
+            self.trigger.trigger(self.repeat_remains)
+
+        if not self.repeat_remains:
+            self.remove()
         
-        period_ms = period_sec*1000
-        time_ms_last = 0
+    def add_callback(self, callback):
+        self.trigger.add_callback(callback)
 
-        counter = 0
-
-        def check_trigger(time_ms_new):
-            nonlocal time_ms_last, counter
-
-            dt = time_ms_new - time_ms_last
-            if dt >= period_ms:
-                event.trigger()
-                time_ms_last = time_ms_new
-                counter += 1
-                #print(dt)
-                if counter >= n_times:
-                    # remove itself from the active event list
-                    # TODO: unclear if the object is completely dereferenced
-                    event.add_handler(lambda: event.inactive())
-                    Event.timer_event_checkers.remove(check_trigger)
-
-        Event.timer_event_checkers.append(check_trigger)
-
-        return event#, check_trigger
-    
+    def change_checker(self, checker= lambda: False):
+        self.checker = checker
 
     
-    
-    pygame_event_checkers = []
 
-    @staticmethod
-    def create_pygame_event(flags):
-        event = Event()
+class TimerCondition(ConditionInterface):
+    def __init__(self, reset_period=np.inf, repeats=np.inf):
+        self.trigger = Trigger()
+        self.repeat_remains = repeats
+        self.timer = Timer(reset_period=reset_period)
+        self.period = 0
+        self.__stay_active = True
 
-        def check_trigger(pygame_event_list):
-            for pygame_event in pygame_event_list:
-                if pygame_event.type in flags:
-                    event.trigger(pygame_event)
+    def remove(self):
+        self.__stay_active = False
+        self.trigger.remove()
 
-        Event.pygame_event_checkers.append(check_trigger)
-        return event
-    
-    subscriptions = {} 
+    @property
+    def stay_active(self):
+        return self.__stay_active
 
-    @staticmethod
-    def new_subscription(topic, event):
-        if not (topic in Event.subscriptions):
-            Event.subscriptions[topic] = []
+    @override
+    def check(self):
+        self.timer.read()
+        while (self.timer.n_period > self.period) and self.repeat_remains:
+            self.period += 1
+            self.repeat_remains -= 1
+            self.trigger.trigger(self.repeat_remains)
 
-        Event.subscriptions[topic].append(event)
+        if not self.repeat_remains:
+            self.remove()
         
-    @staticmethod
-    def create_messager_event(topic):
-        event = Event()
-        Event.new_subscription(topic, event)
-        return event
+
+    def on_reset(self, callback):
+        self.trigger.add_callback(callback)
+
+
+class Timer:
+    def __init__(self, reset_period=np.inf):
+        self.t0 = pygame.time.get_ticks()
+        self.reset_period = reset_period
+        self.n_period = 0
+
+    def read(self):
+        dt = pygame.time.get_ticks() - self.t0
+        self.n_period = int(dt // self.reset_period)
+        return dt % self.reset_period
     
-    @staticmethod
-    def submit_message(topic, *arg, **kwargs):
-        if not topic in Event.subscriptions:
-            return 
-        
-        for e in Event.subscriptions[topic]:
-            e.trigger(*arg, **kwargs)
-
-
-
-    collision_pairs = {}
-    @staticmethod
-    def create_collision_event(sprite_a, sprite_b):
-        event = Event()
-        sprite_a.shape.collision_type = 1
-        sprite_b.shape.collision_type = 1
-        Event.collision_pairs[event] = sprite_a, sprite_b
-
-        return event
 
         
+
         
+
+
+

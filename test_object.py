@@ -1,5 +1,4 @@
 from scratch_sprite import ScratchSprite, circle_sprite, rect_sprite
-from event import Event
 import pygame
 import pymunk
 from game import game # neccessary for image loading
@@ -63,32 +62,26 @@ import random
 # collision_event.add_handler(lambda a: print(random.random()))
 
 
-# overlap_event = Event.create_overlap_event(sprite2, sprite1)
-# overlap_event.add_handler(lambda: print(random.random()))
-
-
-timer_event = Event.create_timer_event(.1)
+timer = game.create_timer_trigger(100)
+timer.on_reset(lambda x: sprite1.next_frame())
 #timer_event.add_handler(lambda: sprite1.add_rotation(3))
 # timer_event.add_handler(lambda: sprite1.point_towards(sprite2))
 # timer_event.add_handler(lambda: sprite1.point_towards_mouse())
 
 
-timer_event2 = Event.create_timer_event(.5, 3)
-timer_event2.add_handler(lambda: sprite1.add_rotation(15))
+game.retrieve_sprite_click_trigger(sprite2).add_callback(lambda: print('sprite2'))
+game.retrieve_sprite_click_trigger(sprite1).add_callback(lambda: print('sprite1'))
+
+game.create_collision_trigger(sprite2, sprite_cir).add_callback(lambda x: print('hi'))
 
 
-sprite2.on_mouse_click_event.add_handler(lambda: print('hi'))
+timer2 = game.create_timer_trigger(500, 3)
+timer2.on_reset(lambda x: sprite1.add_rotation(15))
 
 
-# # timer_event2 = Event.create_timer_event(0)
-# # def test():
-# #     sprite1.move_xy((1,2))
+game.create_conditional_trigger(lambda: pygame.mouse.get_pos()[0] < 100, 100).add_callback(lambda x: print(x))
 
-# timer_event2.add_handler(test)
-
-sprite1.change_brightness(2)
-
-keydown_event = Event.create_pygame_event([pygame.KEYDOWN])
+keydown_event = game.create_pygame_event_trigger([pygame.KEYDOWN])
 def when_key_down(e):
 
     
@@ -101,8 +94,8 @@ def when_key_down(e):
 
     if e.key  == pygame.key.key_code("space"):
         #sprite1.body.velocity = sprite1.body.velocity[0], -.5
-        game.schedule_job(2, lambda: sprite1.scale_by(1.2))
-        game.schedule_job(3, lambda: sprite1.scale_by(1.2))
+        game.create_timer_trigger(2000, 1).on_reset( lambda x: sprite1.scale_by(1.2))
+        game.create_timer_trigger(3000, 1).on_reset( lambda x: sprite1.scale_by(1.2))
 
     elif e.key  == pygame.key.key_code("d"):
         sprite2.body.velocity = .5, sprite1.body.velocity[1]
@@ -124,7 +117,7 @@ def when_key_down(e):
         game.next_backdrop()
     
 
-keydown_event.add_handler(when_key_down)
+keydown_event.add_callback(when_key_down)
 
 
 game.create_edges()
