@@ -1,13 +1,30 @@
+from anyio import SpooledTemporaryFile
 from scratch_sprite import ScratchSprite, circle_sprite, rect_sprite
 import pygame
 import pymunk
 from game import game # neccessary for image loading
+from helper import scale_to_fit_aspect, scale_and_tile, scale_to_fill_screen, adjust_brightness, set_transparency
 
 from helper import get_frame, get_frame_sequence, get_frame_dict
+
+game.update_screen_mode((2300, 700))
 sprite_sheet = pygame.image.load("assets/Sprout Lands - Sprites - Basic pack/Characters/Basic Charakter Actions.png").convert_alpha()
 
-background = pygame.image.load('assets/kenney_fish-pack_2/Sample.png')
+background = pygame.image.load('assets/kenney_fish-pack_2/Sample.png').convert() # TODO: convert is needed 
+#background = scale_to_fit_aspect(background, game.screen.get_size())
+background = scale_to_fill_screen(background, game.screen.get_size())
+#background = scale_and_tile(background, game.screen.get_size(), 0.5)
+
+
+#background = adjust_brightness(background, 0.9)
+background = set_transparency(background, .5)
+
+
 game.set_backdrops([background])
+
+game.load_sound('bong', 'assets/sound_effects/Metal Clang-SoundBible.com-19572601.wav')
+
+
 
 
 frame_dict = get_frame_dict(sprite_sheet, 2, 12, {
@@ -58,8 +75,6 @@ sprite1.lock_to(sprite2, (200,-200))
 
 import random
 
-# collision_event = Event.create_collision_event(sprite2, sprite1)
-# collision_event.add_handler(lambda a: print(random.random()))
 
 
 timer = game.create_timer_trigger(100)
@@ -72,7 +87,7 @@ timer.on_reset(lambda x: sprite1.next_frame())
 game.retrieve_sprite_click_trigger(sprite2).add_callback(lambda: print('sprite2'))
 game.retrieve_sprite_click_trigger(sprite1).add_callback(lambda: print('sprite1'))
 
-game.create_collision_trigger(sprite2, sprite_cir).add_callback(lambda x: print('hi'))
+game.create_collision_trigger(sprite2, sprite_cir).add_callback(lambda x: game.play_sound('bong', 0.2))
 
 
 timer2 = game.create_timer_trigger(500, 3)
@@ -94,8 +109,12 @@ def when_key_down(e):
 
     if e.key  == pygame.key.key_code("space"):
         #sprite1.body.velocity = sprite1.body.velocity[0], -.5
-        game.create_timer_trigger(2000, 1).on_reset( lambda x: sprite1.scale_by(1.2))
-        game.create_timer_trigger(3000, 1).on_reset( lambda x: sprite1.scale_by(1.2))
+        #sprite1.set_brightness(1.1)
+        sprite1.set_transparency(.1)
+        sprite2.body.moment = 1
+        sprite2.body.mass = .1
+        #game.create_timer_trigger(2000, 1).on_reset( lambda x: sprite1.scale_by(1.2))
+        #game.create_timer_trigger(3000, 1).on_reset( lambda x: sprite1.scale_by(1.2))
 
     elif e.key  == pygame.key.key_code("d"):
         sprite2.body.velocity = .5, sprite1.body.velocity[1]
@@ -124,7 +143,7 @@ keydown_event.add_callback(when_key_down)
 
 
 game.create_edges()
-
+game.backdrop_change_trigger.add_callback(lambda x: print(x))
 
 game.start(60, sim_step_min=1000, debug_draw=True)
 

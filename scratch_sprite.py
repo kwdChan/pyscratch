@@ -1,7 +1,7 @@
 from typing import Any, Dict, Hashable, List, Optional, cast
 import pygame 
 import pymunk
-from helper import adjust_brightness
+from helper import adjust_brightness, set_transparency
 def circle_sprite(colour, radius, *args, **kwargs):
     circle = create_circle(colour, radius)
     return ScratchSprite({"always":[circle]}, "always", *args, **kwargs)
@@ -65,6 +65,8 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.private_data = {}
         self.flip_y = False
         self.flip_x = False
+        self.transparency_factor = 1.0
+        self.brightness_factor = 1.0
 
         self.lock_to_sprite = None
         self.lock_offset = 0, 0
@@ -117,11 +119,13 @@ class ScratchSprite(pygame.sprite.Sprite):
             space.add(self.shape)
 
         if self.is_dragging:
-            self.body.velocity=0,0 # TODO: should be done every physics loop or reset location every frame
+            self.body.velocity=0,0 
+            # TODO: should be done every physics loop or reset location every frame
+            # or can i change it to kinamatic temporarily
 
         
     
-    def set_shape(self, shape_type='box', shape_factor=1, collision_allowed=False):
+    def set_shape(self, shape_type='box', shape_factor=1.0, collision_allowed=False):
         # could be a function or a string
         # TODO: raise error when invalid mode is selected
         self.shape_type = shape_type
@@ -159,11 +163,25 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.scale_factor = factor
 
         for k, frames in self.frame_dict_original.items():
-            self.frame_dict[k] = [pygame.transform.scale_by(f, factor) for f in frames]
-        self.set_frame_mode(self.frame_mode)
+            self.frame_dict[k] = [
+                pygame.transform.scale_by(
+                    adjust_brightness(
+                        set_transparency(f, self.transparency_factor), 
+                        self.brightness_factor),
+                    factor) 
+                for f in frames]
 
+        # 
+        self.set_frame_mode(self.frame_mode)
         self.request_update_shape()
 
+    def set_brightness(self, factor):
+        self.brightness_factor = factor
+        self.set_scale(self.scale_factor)
+
+    def set_transparency(self, factor):
+        self.transparency_factor = factor
+        self.set_scale(self.scale_factor)
 
     
     def scale_by(self, factor):
@@ -245,15 +263,6 @@ class ScratchSprite(pygame.sprite.Sprite):
     def point_towards_mouse(self, offset_degree=0):
         self.point_towards(pygame.mouse.get_pos(), offset_degree)
 
-
-    def change_brightness(self, factor):
-
-        pass
-    
-
-
-    def change_transparency(self):
-        pass
 
 
     def lock_to(self, sprite, offset):

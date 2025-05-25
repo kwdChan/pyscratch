@@ -48,33 +48,83 @@ def get_frame_dict(sheet, columns, rows, indices_dict, spacing=0, margin=0, inse
 import pygame
 import numpy as np
 
-def adjust_brightness(surface, value):
-    """Returns a new surface with brightness adjusted.
-    
-    Args:
-        surface (pygame.Surface): The original surface.
-        value (int or float): Amount to adjust brightness. Positive to brighten, negative to darken.
-                              Can be an int (e.g., +50) or a multiplier (e.g., 1.2).
-    
-    Returns:
-        pygame.Surface: New surface with adjusted brightness.
 
 
-    WRITTEN BY CHATGPT
+def scale_and_tile(image, screen_size, scale_factor):
+    """WRITTEN BY AI"""
+
+    img_w, img_h = image.get_size()
+    new_img = pygame.transform.smoothscale(image, (int(img_w * scale_factor), int(img_h * scale_factor)))
+    new_img_w, new_img_h = new_img.get_size()
+    
+    tiled_surface = pygame.Surface(screen_size)
+    
+    for y in range(0, screen_size[1], new_img_h):
+        for x in range(0, screen_size[0], new_img_w):
+            tiled_surface.blit(new_img, (x, y))
+    
+    return tiled_surface
+
+
+def scale_to_fill_screen(image, screen_size):
+    """WRITTEN BY AI (lol)"""
+    return pygame.transform.smoothscale(image, screen_size)
+
+
+def scale_to_fit_aspect(image, screen_size, fit='horizontal'):
+    """WRITTEN BY AI"""
+    img_rect = image.get_rect()
+    screen_w, screen_h = screen_size
+    img_w, img_h = img_rect.size
+
+    if fit == 'horizontal':
+        scale_factor = screen_w / img_w
+    elif fit == 'vertical':
+        scale_factor = screen_h / img_h
+    else:
+        raise ValueError("fit must be 'horizontal' or 'vertical'")
+
+    new_size = (int(img_w * scale_factor), int(img_h * scale_factor))
+    return pygame.transform.smoothscale(image, new_size)
+
+
+
+def set_transparency(image, factor):
     """
-    # Ensure we have a copy
-    new_surface = surface.copy()
-
-    # Convert to 24-bit or 32-bit format (RGB/RGBA)
-    new_surface = new_surface.convert_alpha()
-
-    # Get pixel arrays
-    arr = pygame.surfarray.pixels3d(new_surface)
+    Return a copy of the image with the given factor 
     
-    # Brightness adjustment
-    arr[...] = np.clip(arr * value, 0, 255)
+    WRITTEN BY AI
+    """
+    new_image = image.copy()
+    new_image.set_alpha(int(factor*255))
+    return new_image
 
-    # Release the lock on the array (very important!)
-    del arr
 
-    return new_surface
+
+def adjust_brightness(image, factor):
+    """
+    Return a copy of the image with brightness adjusted by the given factor.
+
+    Does not work very well for the transparent background of sprite frames 
+    
+    WRITTEN BY AI
+    """
+    new_image = image.copy()
+    brightness_surface = pygame.Surface(image.get_size()).convert_alpha()
+    brightness_surface.fill((255, 255, 255, 0))  # Start with no change
+    
+    # Per-pixel operation is slow. Instead, we use special_flags to modulate brightness.
+    if factor < 1:
+        # Darken using multiply blend mode
+        darken_surface = pygame.Surface(image.get_size()).convert_alpha()
+        value = int(255 * factor)
+        darken_surface.fill((value, value, value))
+        new_image.blit(darken_surface, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+    elif factor > 1:
+        # Brighten by blending in white
+        value = int(255 * (factor - 1))
+        brighten_surface = pygame.Surface(image.get_size()).convert_alpha()
+        brighten_surface.fill((value, value, value))
+        new_image.blit(brighten_surface, (0, 0), special_flags=pygame.BLEND_RGBA_ADD)
+
+    return new_image

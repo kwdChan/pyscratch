@@ -25,10 +25,15 @@ def collision_separate(arbiter, space, data):
 class Game:
 
     def __init__(self, screen_size=(1280, 720)):
+        
 
         self.screen  = pygame.display.set_mode(screen_size, vsync=1)
         self.space = pymunk.Space()
         self.draw_options = DrawOptions(self.screen)
+
+        # sounds
+        self.mixer = pygame.mixer.init()
+        self.sounds = {}
 
         # shared variables 
         self.shared_data = {}
@@ -64,8 +69,6 @@ class Game:
         self.sprite_click_trigger = {}
         mouse_drag_trigger = self.create_pygame_event_trigger([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
         mouse_drag_trigger.add_callback(self.__mouse_drag_handler)
-
-
 
         ## Backdrops
         self.backdrops = []
@@ -210,7 +213,18 @@ class Game:
     # not sure if this should be exposed
     def __run_forever(self, func: Callable[[], None]):
         self.all_forever_jobs.append(func)
-    
+
+
+    def load_sound(self, key, path) :
+        if key in self.sounds: 
+            raise KeyError(f'{key} already loaded. Choose a different key name.')
+        
+        self.sounds[key] = pygame.mixer.Sound(path)
+
+    def play_sound(self, key, volume=1.0):
+        s = self.sounds[key]
+        s.set_volume(volume)
+        s.play()
     
 
     def start(self, framerate, sim_step_min=300, debug_draw=True):
@@ -325,8 +339,10 @@ class Game:
         return self.__backdrop_index
 
     def switch_backdrop(self, index:Optional[int]=None):
-        self.__backdrop_index = index
-        self.backdrop_change_trigger.trigger(index)
+
+        if index != self.__backdrop_index:
+            self.__backdrop_index = index
+            self.backdrop_change_trigger.trigger(index)
 
     def next_backdrop(self):
         if not self.__backdrop_index is None: 
