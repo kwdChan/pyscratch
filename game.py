@@ -4,7 +4,7 @@ import pymunk
 from event import ConditionInterface, Trigger, OneOffTrigger, Condition, TimerCondition
 from scratch_sprite import rect_sprite, ScratchSprite
 from pymunk.pygame_util import DrawOptions
-from typing import Callable, Optional, List, Dict
+from typing import Callable, Optional, List, Dict, cast
 
 def collision_begin(arbiter, space, data):
     data['game'].contact_pairs_set.add(arbiter.shapes) 
@@ -76,6 +76,7 @@ class Game:
         if e.type == pygame.MOUSEBUTTONDOWN: 
             
             for s in reversed(list(self.all_sprites_to_show)):
+                s = cast(ScratchSprite, s)
 
                 if s.shape.point_query(e.pos).distance <= 0:
                     self.sprite_click_trigger[s].trigger()

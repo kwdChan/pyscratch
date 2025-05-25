@@ -99,7 +99,10 @@ def when_key_down(e):
 
     elif e.key  == pygame.key.key_code("d"):
         sprite2.body.velocity = .5, sprite1.body.velocity[1]
-
+    elif e.key  == pygame.key.key_code("s"):
+        sprite2.scale_by(1.4)
+        
+        
     elif e.key  == pygame.key.key_code("a"):
         sprite2.body.velocity = -.5, sprite1.body.velocity[1]
         
@@ -123,5 +126,5 @@ keydown_event.add_callback(when_key_down)
 game.create_edges()
 
 
-game.start(60, sim_step_min=1000, debug_draw=False)
+game.start(60, sim_step_min=1000, debug_draw=True)
 

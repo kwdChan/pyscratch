@@ -1,3 +1,4 @@
+from typing import Any, Dict, Hashable, List, Optional, cast
 import pygame 
 import pymunk
 from helper import adjust_brightness
@@ -27,24 +28,35 @@ def create_rect(colour, width, height):
 
 class ScratchSprite(pygame.sprite.Sprite):
     
-    def __init__(self, frame_dict, starting_mode, pos, shape_type='box', shape_factor=1, body_type=pymunk.Body.KINEMATIC):
+    def __init__(self, frame_dict: Dict[Hashable, List[pygame.Surface]], starting_mode, pos, shape_type='box', shape_factor=1, body_type=pymunk.Body.KINEMATIC):
         # DYNAMIC, KINEMATIC, STATIC
         # TODO: add all the properties here
+
         super().__init__()
-        self.frame_dict_original = frame_dict.copy() 
-        self.frame_dict = frame_dict.copy()
+        self.frame_dict_original:Dict[Hashable, List[pygame.Surface]] = frame_dict.copy() # never changed
+        self.frame_dict:Dict[Hashable, List[pygame.Surface]] = frame_dict.copy() # transformed on the spot
+
+        self.frames: List[pygame.Surface] # updated on the spot
+        self.frame_mode: Hashable
         
         self.set_frame_mode(starting_mode)
         self.set_frame(0)
 
         self.body = pymunk.Body(1, 100, body_type=body_type)
-        self.body.position = pos
+        self.body.position = pos # change be updated anytime 
+
+        self.shape: pymunk.Shape # swapped only during self.update
+        self.new_shape: Optional[pymunk.Shape] # swapped only during self.update
+
+        self.image: pygame.Surface # rotated and flipped every update during self.update
+        self.rect: pygame.Rect # depends on the rotated image and thus should be redefined during self.update
+
+
         
         self.scale_factor = 1
 
         self.set_shape(shape_type, shape_factor)
-        self.shape = None
-        self.shape, self.new_shape = self.new_shape, None
+        self.shape, self.new_shape = cast(pymunk.Shape, self.new_shape), None
 
         self.mouse_selected = False
         self.is_dragging = False
@@ -54,7 +66,6 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.flip_y = False
         self.flip_x = False
 
-        #self.on_mouse_click_event = Event_v0()
         self.lock_to_sprite = None
         self.lock_offset = 0, 0
 
@@ -83,12 +94,14 @@ class ScratchSprite(pygame.sprite.Sprite):
 
         if self.lock_to_sprite:
             self.body.position = self.lock_to_sprite.body.position + self.lock_offset
+            self.body.velocity = 0, 0 
 
         x, y = self.body.position
         img = self.frames[self.frame_idx]
         img = pygame.transform.flip(img, self.flip_x, self.flip_y)
         img = pygame.transform.rotate(img, -self.body.rotation_vector.angle_degrees)
         self.image = img
+
         img_w, img_h = self.image.get_width(), self.image.get_height()
         self.rect = self.image.get_rect(
             center=(x, y),
@@ -97,74 +110,66 @@ class ScratchSprite(pygame.sprite.Sprite):
               )
 
 
-        if (not self.shape_type) and (self.shape):
-            space.remove(self.shape)
-            self.shape = None
-
         if self.new_shape: 
             space.remove(self.shape)
-            #self.new_shape.collision_type = self.shape.collision_type
             self.new_shape.collision_type = 0 if self.collision_allowed else 2
             self.shape, self.new_shape = self.new_shape, None
             space.add(self.shape)
 
         if self.is_dragging:
-            self.body.velocity=0,0
+            self.body.velocity=0,0 # TODO: should be done every physics loop or reset location every frame
+
+        
     
     def set_shape(self, shape_type='box', shape_factor=1, collision_allowed=False):
         # could be a function or a string
         # TODO: raise error when invalid mode is selected
         self.shape_type = shape_type
         self.shape_factor = shape_factor
-        self.collision_allowed= collision_allowed
-        self.scale_by(1)
+        self.collision_allowed = collision_allowed
+
+        self.request_update_shape()
+
+
+    def request_update_shape(self):
+        """create the shape based on the self.frames and put it in self.new_shape"""
+
+        # the rect of the un
+        rect = self.frames[self.frame_idx].get_rect()
+        width = int(rect.width*self.shape_factor)
+        height = int(rect.height*self.shape_factor)
+        
+
+        if self.shape_type == 'box': 
+            self.new_shape = pymunk.Poly.create_box(self.body, (width, height))
+
+        elif self.shape_type == 'circle':
+            radius = (width+height)//4
+            self.new_shape = pymunk.Circle(self.body,radius)
+
+        elif self.shape_type == 'circle_width':
+            self.new_shape = pymunk.Circle(self.body, rect.width//2)
+
+        elif self.shape_type == 'circle_height':
+            self.new_shape = pymunk.Circle(self.body, height//2)
+
 
 
     def set_scale(self, factor):
         self.scale_factor = factor
-        self.scale_by(1)
-    
+
+        for k, frames in self.frame_dict_original.items():
+            self.frame_dict[k] = [pygame.transform.scale_by(f, factor) for f in frames]
+        self.set_frame_mode(self.frame_mode)
+
+        self.request_update_shape()
+
 
     
     def scale_by(self, factor):
-
-
-        new_factor = self.scale_factor*factor
-        self.scale_factor = new_factor
-
-        # TODO: 
-        # use with caution: this creates a new shape for the object
-        for k, frames in self.frame_dict_original.items():
-            self.frame_dict[k] = [pygame.transform.scale_by(f, new_factor) for f in frames]
-
-        self.set_frame_mode(self.frame_mode)
-
-        # the rect here has no effect
-        self.rect = self.frames[self.frame_idx].get_rect()
-        self.rect.width = int(self.rect.width*self.shape_factor)
-        self.rect.height = int(self.rect.height*self.shape_factor)
-        #self.rect.move_ip(self.body.position)
+        self.set_scale(self.scale_factor*factor)
         
 
-        if self.shape_type == 'box': 
-            size = int(self.rect.width), int(self.rect.height)
-            self.new_shape = pymunk.Poly.create_box(self.body, size)
-        elif self.shape_type == 'circle':
-            radius = ((self.rect.width+self.rect.height))//4
-            self.new_shape = pymunk.Circle(self.body,radius)
-        elif self.shape_type == 'circle_width':
-            self.new_shape = pymunk.Circle(self.body, (self.rect.width)//2)
-
-        elif self.shape_type == 'circle_height':
-            self.new_shape = pymunk.Circle(self.body, (self.rect.height)//2)
-
-        elif self.shape_type:
-            # in this case, self.shape_type is a function that returns the shape
-
-            # factor is the change_factor, new_factor is the overall factor
-            self.new_shape = self.shape_type(new_factor, factor, self.shape_factor)
-        else: 
-            pass
 
     @property
     def direction(self):
@@ -242,10 +247,7 @@ class ScratchSprite(pygame.sprite.Sprite):
 
 
     def change_brightness(self, factor):
-        # for k, frames in self.frame_dict_original.items():
-        #     self.frame_dict[k] = [adjust_brightness(f, factor) for f in frames]
 
-        # self.set_frame_mode(self.frame_mode)
         pass
     
 
