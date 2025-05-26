@@ -4,23 +4,39 @@ import pymunk
 from .event import ConditionInterface, Trigger, Condition, TimerCondition
 from .scratch_sprite import rect_sprite, ScratchSprite
 from pymunk.pygame_util import DrawOptions
-from typing import Any, Callable, Optional, List, Dict, cast
+from typing import Any, Callable, Optional, List, Dict, Set, Tuple, cast
+
+
+
 
 def collision_begin(arbiter, space, data):
-    data['game'].contact_pairs_set.add(arbiter.shapes) 
+    game = cast(Game, data['game'])
+    game.contact_pairs_set.add(arbiter.shapes) 
     #print(0)
 
-    for e, (a,b) in data['game'].trigger_to_collision_pairs.items():
+    for e, (a,b) in game.trigger_to_collision_pairs.items():
         if (a.shape in arbiter.shapes) and (b.shape in arbiter.shapes):
             e.trigger(arbiter)
 
+
+    colliding_types = arbiter.shapes[0].collision_type, arbiter.shapes[1].collision_type
+    collision_allowed = True
+    for collision_type, (allowed, triggers) in game.collision_type_to_trigger.items():
+        if collision_type in colliding_types: 
+            [t.trigger(arbiter) for t in triggers]
+            collision_allowed = collision_allowed and allowed
+        
+
     if (arbiter.shapes[0].collision_type == 0) or (arbiter.shapes[1].collision_type == 0):
-        return False
-    return True
+        collision_allowed = False
+
+
+    return collision_allowed
 
 def collision_separate(arbiter, space, data):
-    if arbiter.shapes in data['game'].contact_pairs_set:
-        data['game'].contact_pairs_set.remove(arbiter.shapes)
+    game = cast(Game, data['game'])
+    if arbiter.shapes in game.contact_pairs_set:
+        game.contact_pairs_set.remove(arbiter.shapes)
 
 class Game:
 
@@ -40,7 +56,10 @@ class Game:
         
         # collision detection
         self.trigger_to_collision_pairs = {}
-        self.contact_pairs_set = set() 
+        self.collision_type_pair_to_trigger: Dict[Tuple[int, int], List[Trigger]] = {}
+        self.collision_type_to_trigger: Dict[int, Tuple[bool, List[Trigger]]] = {}
+
+        self.contact_pairs_set: Set[pymunk.Shape] = set() 
         self.collision_handler = self.space.add_default_collision_handler()
         self.collision_handler.data['game'] = self
         self.collision_handler.begin = collision_begin
@@ -133,6 +152,12 @@ class Game:
         left_edge = rect_sprite(edge_colour, thickness, screen_h, (0, screen_h//2),body_type= edge_body)
         right_edge = rect_sprite(edge_colour, thickness, screen_h, (screen_w,  screen_h//2),body_type= edge_body)
 
+        top_edge.set_collision_type(1)
+        bottom_edge.set_collision_type(1)
+        left_edge.set_collision_type(1)
+        right_edge.set_collision_type(1)
+
+
         self.add_sprite(top_edge)
         self.add_sprite(bottom_edge)
         self.add_sprite(left_edge)
@@ -188,7 +213,9 @@ class Game:
         self.all_triggers.append(condition.trigger)
         return condition
 
-    def create_collision_trigger(self, sprite1: ScratchSprite, sprite2: ScratchSprite):
+    def create_specific_collision_trigger(self, sprite1: ScratchSprite, sprite2: ScratchSprite):
+
+        #"""Cannot change the collision type of the obbject after calling this function"""
         trigger = self.create_trigger()
 
         # TODO: refactor sprite
@@ -198,6 +225,51 @@ class Game:
         self.trigger_to_collision_pairs[trigger] = sprite1, sprite2
 
         return trigger
+
+    def create_type2type_collision_trigger(self, type_a, type_b, collision_suppressed=False):
+        pair = (type_a, type_b) if type_a>type_b else (type_b, type_a)
+
+        h = self.space.add_collision_handler(*pair)
+        trigger = self.create_trigger()
+        
+        if not pair in self.collision_type_pair_to_trigger: 
+            self.collision_type_pair_to_trigger[pair] = []
+        self.collision_type_pair_to_trigger[pair].append(trigger)
+
+        collision_allowed = not collision_suppressed
+        def begin(arbiter, space, data):
+            game = cast(Game, data['game'])
+            game.contact_pairs_set.add(arbiter.shapes) 
+
+            for t in game.collision_type_pair_to_trigger[pair]:
+                t.trigger(arbiter)
+            return collision_allowed
+        
+        h.data['game'] = self
+        h.begin = begin
+        h.separate = collision_separate
+        
+        return trigger
+
+
+    def create_type_collision_trigger(self, collision_type, collision_suppressed=False):
+        trigger = self.create_trigger()
+
+        collision_allowed = not collision_suppressed
+        
+
+        if not collision_type in self.collision_type_to_trigger: 
+            self.collision_type_to_trigger[collision_type] = collision_allowed, []
+
+
+        self.collision_type_to_trigger[collision_type][1].append(trigger)
+
+        
+    
+        return trigger
+
+    
+
 
 
     def retrieve_sprite_click_trigger(self, sprite):

@@ -1,3 +1,4 @@
+import pymunk
 from pyscratch import sensing
 from pyscratch.scratch_sprite import ScratchSprite, create_rect, rect_sprite
 from pyscratch.helper import get_frame_dict
@@ -52,11 +53,16 @@ def shoot_player_bullet(origin):
     bullet = ScratchSprite(frames, "circle_bullets", origin)
 
     game.add_sprite(bullet)
+    bullet.set_collision_type(4)
     bullet.set_rotation(-90)
     #bullet.body.velocity = (0, -.3)
-    game.create_timer_trigger(1000/120).on_reset(
-        lambda x: bullet.move_indir(3.5)
+    game.create_timer_trigger(1000/240).on_reset(
+        lambda x: bullet.move_indir(2)
     )
+    game.create_timer_trigger(100).on_reset(
+        lambda x: bullet.next_frame()
+    )
+
     # TODO: destory the bullet and the event when going out of the screen 
     # TODO: check the variable type when taking in the callback?
 
@@ -67,8 +73,10 @@ def shoot_player_bullet(origin):
 
 def game_start(data):
 
-    player = rect_sprite((0, 0, 255), 50, 30, pos=(720//2, 1200))
+    player = rect_sprite((0, 0, 255), 50, 30, pos=(720//2, 1200), body_type=pymunk.Body.DYNAMIC)
     game.add_sprite(player)
+    game.create_edges()
+    player.set_collision_type(2)
     #bullet = ScratchSprite(frames, "circle_bullets", (400, 400))
 
     #bullet.set_scale(4)
@@ -99,10 +107,18 @@ def game_start(data):
 
     game.create_timer_trigger(1000/120).on_reset(run_forever)
 
-    #game.create_key_trigger().add_callback(on_key_press)
+    #game.create_collision_trigger(game.shared_data['bottom_edge'], player).add_callback(lambda a: player.move_xy((0, -50)))
+    #game.create_collision_trigger(game.shared_data['bottom_edge'], player).add_callback(lambda a: print(a.shapes[1].collision_type))
+    #game.create_collision_trigger(game.shared_data['bottom_edge'], player).add_callback(lambda a: print(a.shapes[0].collision_type))
+
+    # about the collision suppression: 
+    # two the earlier overwrite the later
+    # call order: type2type -> default ->  type wildcard (not implemented)
+    #game.create_type2type_collision_trigger(4, 2, True).add_callback(lambda a: print(2))
+    #game.create_type_collision_trigger(2, True).add_callback(lambda a: print(1))
 
 
 wait_for_game_start = game.create_messager_trigger('game_start').add_callback(game_start)
 
 
-game.start(60, 60, False)
+game.start(60, 300, False)

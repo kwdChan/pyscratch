@@ -71,6 +71,7 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.lock_to_sprite = None
         self.lock_offset = 0, 0
 
+        self.collision_type:int = 1
 
 
     def is_mouse_selected(self):
@@ -114,7 +115,6 @@ class ScratchSprite(pygame.sprite.Sprite):
 
         if self.new_shape: 
             space.remove(self.shape)
-            self.new_shape.collision_type = 1 if self.collision_allowed else 0
             self.shape, self.new_shape = self.new_shape, None
             space.add(self.shape)
 
@@ -134,8 +134,14 @@ class ScratchSprite(pygame.sprite.Sprite):
         # TODO: raise error when invalid mode is selected
         self.shape_type = shape_type
         self.shape_factor = shape_factor
-        self.collision_allowed = collision_allowed
+        if not collision_allowed:
+            self.set_collision_type(0)
+        else: 
+            self.set_collision_type(self.collision_type)
 
+
+    def set_collision_type(self, value: int=0):
+        self.collision_type = value
         self.request_update_shape()
 
 
@@ -160,6 +166,14 @@ class ScratchSprite(pygame.sprite.Sprite):
 
         elif self.shape_type == 'circle_height':
             self.new_shape = pymunk.Circle(self.body, height//2)
+        
+
+        if self.new_shape:
+            self.new_shape.collision_type = self.collision_type
+
+        else:
+            raise ValueError('invalid shape_type')
+
 
 
 
