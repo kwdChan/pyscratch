@@ -48,6 +48,9 @@ def on_click():
 #game.retrieve_sprite_click_trigger(start_buttom).add_callback(on_click)
 on_click()
 
+
+game.suppress_type_collision(4, True)
+
 def shoot_player_bullet(origin):
 
     bullet = ScratchSprite(frames, "circle_bullets", origin)
@@ -62,6 +65,8 @@ def shoot_player_bullet(origin):
     game.create_timer_trigger(100).on_reset(
         lambda x: bullet.next_frame()
     )
+
+
 
     # TODO: destory the bullet and the event when going out of the screen 
     # TODO: check the variable type when taking in the callback?

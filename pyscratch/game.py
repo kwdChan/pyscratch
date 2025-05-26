@@ -267,8 +267,15 @@ class Game:
         
     
         return trigger
-
     
+    def suppress_type_collision(self, collision_type, collision_suppressed=True):
+        collision_allowed = not collision_suppressed
+
+        if not collision_type in self.collision_type_to_trigger: 
+            self.collision_type_to_trigger[collision_type] = collision_allowed, []    
+        else:
+            t_list = self.collision_type_to_trigger[collision_type][1]
+            self.collision_type_to_trigger[collision_type] = collision_allowed, t_list
 
 
 
