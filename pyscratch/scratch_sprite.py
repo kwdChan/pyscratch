@@ -190,8 +190,13 @@ class ScratchSprite(pygame.sprite.Sprite):
     
     def scale_by(self, factor):
         self.set_scale(self.scale_factor*factor)
-        
 
+    def write_text(self, text, font, colour=(255,255,255), offset=(0,0)):
+        text_surface = font.render(text, True, colour)  # White text
+        self.blit(text_surface)
+
+    def blit(self, surface: pygame.Surface, offset=(0,0)):
+        self.frames[self.frame_idx].blit(surface, offset)
 
     @property
     def direction(self):

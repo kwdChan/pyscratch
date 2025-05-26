@@ -25,7 +25,7 @@ def collision_separate(arbiter, space, data):
 class Game:
 
     def __init__(self, screen_size=(1280, 720)):
-        
+        pygame.init()
 
         self.screen  = pygame.display.set_mode(screen_size, vsync=1)
         self.space = pymunk.Space()
