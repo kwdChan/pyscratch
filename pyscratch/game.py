@@ -1,7 +1,7 @@
 import numpy as np
 import pygame
 import pymunk
-from .event import ConditionInterface, Trigger, OneOffTrigger, Condition, TimerCondition
+from .event import ConditionInterface, Trigger, Condition, TimerCondition
 from .scratch_sprite import rect_sprite, ScratchSprite
 from pymunk.pygame_util import DrawOptions
 from typing import Any, Callable, Optional, List, Dict, cast
@@ -14,7 +14,7 @@ def collision_begin(arbiter, space, data):
         if (a.shape in arbiter.shapes) and (b.shape in arbiter.shapes):
             e.trigger(arbiter)
 
-    if (arbiter.shapes[0].collision_type == 2) or (arbiter.shapes[1].collision_type == 2):
+    if (arbiter.shapes[0].collision_type == 0) or (arbiter.shapes[1].collision_type == 0):
         return False
     return True
 
@@ -258,9 +258,10 @@ class Game:
 
         clock = pygame.time.Clock()
 
-        draw_every_n_step = sim_step_min//framerate
+        draw_every_n_step = sim_step_min//(framerate*2)
+        draw = True
         while True:
-            dt = clock.tick(framerate)
+            dt = clock.tick(framerate*2)
             for i in range(draw_every_n_step): 
                 self.space.step(dt/draw_every_n_step)
 
@@ -295,16 +296,20 @@ class Game:
             # print("all_simple_key_triggers", len(self.all_simple_key_triggers))
 
             # Drawing
-            self.screen.fill((30, 30, 30))
-            if not (self.__backdrop_index is None): 
-                self.screen.blit(self.backdrops[self.__backdrop_index], (0, 0))
 
-            if debug_draw: 
-                self.space.debug_draw(self.draw_options)
+            if draw: 
+                self.screen.fill((30, 30, 30))
+                if not (self.__backdrop_index is None): 
+                    self.screen.blit(self.backdrops[self.__backdrop_index], (0, 0))
+
+                if debug_draw: 
+                    self.space.debug_draw(self.draw_options)
+                
+                self.all_sprites.update(self.space)
+                self.all_sprites_to_show.draw(self.screen)
+                pygame.display.flip()
             
-            self.all_sprites.update(self.space)
-            self.all_sprites_to_show.draw(self.screen)
-            pygame.display.flip()
+            draw = not draw
 
     def set_gravity(self, xy):
         self.space.gravity = xy

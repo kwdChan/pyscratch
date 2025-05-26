@@ -1,4 +1,4 @@
-from typing import Union, override
+from typing import Any, Callable, Union, override
 import pygame
 import pymunk
 import numpy as np
@@ -21,7 +21,7 @@ class Trigger:
     def trigger(self, *args, **kwargs):
         self.__triggers.append((args, kwargs))
     
-    def add_callback(self, func):
+    def add_callback(self, func: Callable[..., Any]):
         self.__callbacks.append(func)
 
     def handle_all(self):
@@ -40,17 +40,17 @@ class Trigger:
         return True
 
 
-class OneOffTrigger:
-    def __init__(self, condition_checker):
-        self.condition_checker = condition_checker
-        self.callback = lambda: None
+# class OneOffTrigger:
+#     def __init__(self, condition_checker: Callable[[], bool]):
+#         self.condition_checker = condition_checker
+#         self.callback = lambda: None
     
-    def set_callback(self, func):
-        self.callback = func
+#     def set_callback(self, func):
+#         self.callback = func
     
-    def check(self):
-        if self.condition_checker():
-            self.callback()
+#     def check(self):
+#         if self.condition_checker():
+#             self.callback()
 
 
 class ConditionInterface:
@@ -65,7 +65,7 @@ class ConditionInterface:
         return True
 
 class Condition(ConditionInterface):
-    def __init__(self, checker= lambda: False, repeats: Union[float, int]=1):
+    def __init__(self, checker: Callable[[], bool] = lambda: False, repeats: Union[float, int]=1):
         self.trigger = Trigger()
         self.repeat_remains = repeats
         self.checker = checker
@@ -88,7 +88,7 @@ class Condition(ConditionInterface):
         if not self.repeat_remains:
             self.remove()
         
-    def add_callback(self, callback):
+    def add_callback(self, callback: Callable[[str], Any]):
         self.trigger.add_callback(callback)
 
     def change_checker(self, checker= lambda: False):
@@ -124,7 +124,7 @@ class TimerCondition(ConditionInterface):
             self.remove()
         
 
-    def on_reset(self, callback):
+    def on_reset(self, callback: Callable[[str], Any]):
         self.trigger.add_callback(callback)
 
 

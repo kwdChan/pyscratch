@@ -114,7 +114,7 @@ class ScratchSprite(pygame.sprite.Sprite):
 
         if self.new_shape: 
             space.remove(self.shape)
-            self.new_shape.collision_type = 0 if self.collision_allowed else 2
+            self.new_shape.collision_type = 1 if self.collision_allowed else 0
             self.shape, self.new_shape = self.new_shape, None
             space.add(self.shape)
 
@@ -191,7 +191,7 @@ class ScratchSprite(pygame.sprite.Sprite):
     def scale_by(self, factor):
         self.set_scale(self.scale_factor*factor)
 
-    def write_text(self, text, font, colour=(255,255,255), offset=(0,0)):
+    def write_text(self, text: str, font: pygame.font.Font, colour=(255,255,255), offset=(0,0)):
         text_surface = font.render(text, True, colour)  # White text
         self.blit(text_surface)
 
