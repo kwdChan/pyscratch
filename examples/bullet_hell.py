@@ -1,14 +1,13 @@
-from pyscratch.scratch_sprite import ScratchSprite
+from pyscratch import sensing
+from pyscratch.scratch_sprite import ScratchSprite, create_rect, rect_sprite
 from pyscratch.helper import get_frame_dict
 from pyscratch.game import Game
 import pygame
 
-game = Game()
+game = Game((720, 1280))
 sprite_sheet = pygame.image.load("assets/09493140a07b68502ef63ff423a6da3954d36fd8/Green Effect and Bullet 16x16.png").convert_alpha()
 
-font = pygame.font.SysFont(None, 48)  # None = default font, 48 = font size
-
-text_surface = font.render("Hello, Pygame!", True, (255, 255, 255))  # White text
+font = pygame.font.SysFont(None, 24)  # None = default font, 48 = font size
 
 
 frames = get_frame_dict(sprite_sheet, 36, 13, {
@@ -28,20 +27,82 @@ frames = get_frame_dict(sprite_sheet, 36, 13, {
 
 
 
+start_buttom = rect_sprite((200, 0, 0), width=150, height=60, pos=(game.screen.get_width()//2, game.screen.get_height()//2))
+start_buttom.write_text("Click to Start", font)
+game.add_sprite(start_buttom)
+
+def on_click():
+    start_buttom.scale_by(0.9)
+
+    on_condition = game.create_conditional_trigger(
+        lambda: (not sensing.get_mouse_presses()[0]), repeats=1)
+    
+    def start_game(x):
+        start_buttom.scale_by(1/0.9)
+        game.boardcast_message('game_start', {'count': 0})
+        game.remove_sprite(start_buttom)
+
+    on_condition.add_callback(start_game)
+
+#game.retrieve_sprite_click_trigger(start_buttom).add_callback(on_click)
+on_click()
+
+def shoot_player_bullet(origin):
+
+    bullet = ScratchSprite(frames, "circle_bullets", origin)
+
+    game.add_sprite(bullet)
+    bullet.set_rotation(-90)
+    #bullet.body.velocity = (0, -.3)
+    game.create_timer_trigger(1000/120).on_reset(
+        lambda x: bullet.move_indir(3.5)
+    )
+    # TODO: destory the bullet and the event when going out of the screen 
+    # TODO: check the variable type when taking in the callback?
+
+    
 
 
 
 
-bullet = ScratchSprite(frames, "bullet1", (400, 400))
-bullet.set_scale(4)
-game.add_sprite(bullet)
-bullet.image.blit(text_surface, (0,0))
+def game_start(data):
+
+    player = rect_sprite((0, 0, 255), 50, 30, pos=(720//2, 1200))
+    game.add_sprite(player)
+    #bullet = ScratchSprite(frames, "circle_bullets", (400, 400))
+
+    #bullet.set_scale(4)
+
+    #game.add_sprite(bullet)
 
 
 
-def on_key_press(k, updown):
-    if updown == 'down':
-        bullet.next_frame()
-game.create_key_trigger().add_callback(on_key_press)
+    game.create_timer_trigger(200).on_reset(lambda x: shoot_player_bullet((player.x, player.y)))
+
+
+
+
+    def run_forever(_):
+        if sensing.is_key_pressed(['w']):
+            player.move_xy((0, -5))
+
+        if sensing.is_key_pressed(['s']):
+            player.move_xy((0, 5))
+
+        if sensing.is_key_pressed(['a']):
+            player.move_xy((-5, 0))
+
+        if sensing.is_key_pressed(['d']):
+            player.move_xy((5, 0))
+
+        
+
+    game.create_timer_trigger(1000/120).on_reset(run_forever)
+
+    #game.create_key_trigger().add_callback(on_key_press)
+
+
+wait_for_game_start = game.create_messager_trigger('game_start').add_callback(game_start)
+
 
 game.start(60, 60, False)

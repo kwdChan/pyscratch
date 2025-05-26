@@ -1,10 +1,10 @@
-from scratch_sprite import ScratchSprite, circle_sprite, rect_sprite
+from pyscratch.scratch_sprite import ScratchSprite, circle_sprite, rect_sprite
 import pygame
 import pymunk
-from game import game # neccessary for image loading
-from helper import scale_to_fit_aspect, scale_and_tile, scale_to_fill_screen, adjust_brightness, set_transparency
+from pyscratch.game import game # neccessary for image loading
+from pyscratch.helper import scale_to_fit_aspect, scale_and_tile, scale_to_fill_screen, adjust_brightness, set_transparency
 
-from helper import get_frame, get_frame_sequence, get_frame_dict
+from pyscratch.helper import get_frame, get_frame_sequence, get_frame_dict
 
 game.update_screen_mode((2300, 700))
 sprite_sheet = pygame.image.load("assets/Sprout Lands - Sprites - Basic pack/Characters/Basic Charakter Actions.png").convert_alpha()
