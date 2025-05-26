@@ -81,13 +81,13 @@ class Game:
 
 
     def __key_event_handler(self, e):
-        up_or_down = 'up' if e.type == pygame.KEYDOWN else 'down'
+        up_or_down = 'down' if e.type == pygame.KEYDOWN else 'up'
         keyname = pygame.key.name(e.key)
 
         for t in self.all_simple_key_triggers:
             t.trigger(keyname, up_or_down)
 
-    def create_key_event(self):
+    def create_key_trigger(self):
         t = self.create_trigger()
         self.all_simple_key_triggers.append(t)
         return t

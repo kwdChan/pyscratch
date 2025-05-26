@@ -1,4 +1,3 @@
-from anyio import SpooledTemporaryFile
 from scratch_sprite import ScratchSprite, circle_sprite, rect_sprite
 import pygame
 import pymunk
@@ -101,7 +100,7 @@ game.create_conditional_trigger(lambda: pygame.mouse.get_pos()[0] < 100, 100).ad
 hello_word_trigger = game.create_messager_trigger('hello_world')
 hello_word_trigger.add_callback(lambda x: print(x))
 
-simple_key_event = game.create_key_event()
+simple_key_event = game.create_key_trigger()
 
 def on_key_press(key, updown):
     game.boardcast_message('hello_world', dict(x=key))
