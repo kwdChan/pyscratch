@@ -23,6 +23,7 @@ class Trigger:
     
     def add_callback(self, func: Callable[..., Any]):
         self.__callbacks.append(func)
+        return self
 
     def handle_all(self):
         while self.handle_one():
@@ -90,6 +91,7 @@ class Condition(ConditionInterface):
         
     def add_callback(self, callback: Callable[[str], Any]):
         self.trigger.add_callback(callback)
+        return self
 
     def change_checker(self, checker= lambda: False):
         self.checker = checker
@@ -126,6 +128,7 @@ class TimerCondition(ConditionInterface):
 
     def on_reset(self, callback: Callable[[str], Any]):
         self.trigger.add_callback(callback)
+        return self
 
 
 class Timer:

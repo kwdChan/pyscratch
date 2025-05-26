@@ -350,7 +350,8 @@ class Game:
             # TODO: refactor
             for event in self.all_pygame_events:
                 if event.type == pygame.QUIT:
-                    pygame.quit()
+                    #pygame.quit()
+                    return 
 
 
             # for j in self.all_forever_jobs:
@@ -370,9 +371,9 @@ class Game:
             self.all_simple_key_triggers = list(filter(lambda t: t.stay_active, self.all_simple_key_triggers))
             self.all_triggers = list(filter(lambda t: t.stay_active, self.all_triggers))
 
-            # print("all_conditions", len(self.all_conditions))
-            # print("all_triggers", len(self.all_triggers))
-            # print("all_simple_key_triggers", len(self.all_simple_key_triggers))
+            print("all_conditions", len(self.all_conditions))
+            print("all_triggers", len(self.all_triggers))
+            print("all_simple_key_triggers", len(self.all_simple_key_triggers))
 
             # Drawing
 

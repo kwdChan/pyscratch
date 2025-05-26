@@ -1,3 +1,4 @@
+import re, sys
 import pymunk
 from pyscratch import sensing
 from pyscratch.scratch_sprite import ScratchSprite, create_rect, rect_sprite
@@ -59,14 +60,24 @@ def shoot_player_bullet(origin):
     bullet.set_collision_type(4)
     bullet.set_rotation(-90)
     #bullet.body.velocity = (0, -.3)
-    game.create_timer_trigger(1000/240).on_reset(
+    movement_timer = game.create_timer_trigger(1000/240).on_reset(
         lambda x: bullet.move_indir(2)
     )
-    game.create_timer_trigger(100).on_reset(
+
+    next_frame_timer = game.create_timer_trigger(100).on_reset(
         lambda x: bullet.next_frame()
     )
 
 
+    def destroy_when_exit(x):
+        if bullet.y < 100:
+
+            movement_timer.remove()
+            next_frame_timer.remove()
+            game.remove_sprite(bullet)
+
+    destroy_condition = game.create_conditional_trigger(lambda: (bullet.y < 100), repeats=1)
+    destroy_condition.add_callback(destroy_when_exit)
 
     # TODO: destory the bullet and the event when going out of the screen 
     # TODO: check the variable type when taking in the callback?
@@ -89,10 +100,7 @@ def game_start(data):
     #game.add_sprite(bullet)
 
 
-
     game.create_timer_trigger(200).on_reset(lambda x: shoot_player_bullet((player.x, player.y)))
-
-
 
 
     def run_forever(_):
