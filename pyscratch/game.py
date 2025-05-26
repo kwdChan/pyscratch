@@ -1,8 +1,8 @@
 import numpy as np
 import pygame
 import pymunk
-from event import ConditionInterface, Trigger, OneOffTrigger, Condition, TimerCondition
-from scratch_sprite import rect_sprite, ScratchSprite
+from .event import ConditionInterface, Trigger, OneOffTrigger, Condition, TimerCondition
+from .scratch_sprite import rect_sprite, ScratchSprite
 from pymunk.pygame_util import DrawOptions
 from typing import Any, Callable, Optional, List, Dict, cast
 

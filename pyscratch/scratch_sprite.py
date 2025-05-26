@@ -1,7 +1,7 @@
 from typing import Any, Dict, Hashable, List, Optional, cast
 import pygame 
 import pymunk
-from helper import adjust_brightness, set_transparency
+from .helper import adjust_brightness, set_transparency
 def circle_sprite(colour, radius, *args, **kwargs):
     circle = create_circle(colour, radius)
     return ScratchSprite({"always":[circle]}, "always", *args, **kwargs)
