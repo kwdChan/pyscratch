@@ -218,10 +218,6 @@ class Game:
         #"""Cannot change the collision type of the obbject after calling this function"""
         trigger = self.create_trigger()
 
-        # TODO: refactor sprite
-        sprite1.shape.collision_type = 1
-        sprite2.shape.collision_type = 1
-
         self.trigger_to_collision_pairs[trigger] = sprite1, sprite2
 
         return trigger
@@ -346,6 +342,7 @@ class Game:
 
 
             #all_events = pygame.event.get()
+
             self.all_pygame_events = pygame.event.get()
             # TODO: refactor
             for event in self.all_pygame_events:
@@ -358,22 +355,24 @@ class Game:
             #     j()
 
             # check conditions
-            for c in self.all_conditions:
-                c.check()
+            if draw:
+                for c in self.all_conditions:
+                    c.check()
 
-            # execute 
-            for t in self.all_triggers:
-                t.handle_all()
-                # TODO: is it possible to remove t in the self.all_triggers here?
+                # execute 
+                for t in self.all_triggers:
+                    t.handle_all()
+                    # TODO: is it possible to remove t in the self.all_triggers here?
 
-            # clean up
-            self.all_conditions = list(filter(lambda t: t.stay_active, self.all_conditions))
-            self.all_simple_key_triggers = list(filter(lambda t: t.stay_active, self.all_simple_key_triggers))
-            self.all_triggers = list(filter(lambda t: t.stay_active, self.all_triggers))
+                # clean up
+                self.all_conditions = list(filter(lambda t: t.stay_active, self.all_conditions))
+                self.all_simple_key_triggers = list(filter(lambda t: t.stay_active, self.all_simple_key_triggers))
+                self.all_triggers = list(filter(lambda t: t.stay_active, self.all_triggers))
 
-            print("all_conditions", len(self.all_conditions))
-            print("all_triggers", len(self.all_triggers))
-            print("all_simple_key_triggers", len(self.all_simple_key_triggers))
+                print("all_conditions", len(self.all_conditions))
+                print("all_triggers", len(self.all_triggers))
+                print("all sprite", len(self.all_sprites))
+            # print("all_simple_key_triggers", len(self.all_simple_key_triggers))
 
             # Drawing
 
@@ -405,9 +404,15 @@ class Game:
     def remove_sprite(self, sprite):
 
         self.all_sprites.remove(sprite)
-        self.space.remove(sprite.body, sprite.shape)
         self.all_sprites_to_show.remove(sprite) 
         self.sprite_click_trigger[sprite].remove()
+
+        self.trigger_to_collision_pairs = {k: v for k, v in self.trigger_to_collision_pairs.items() if not sprite in v}
+
+        try: 
+            self.space.remove(sprite.body, sprite.shape)
+        except:
+            print('removing non-existing shape or body')
 
 
     def show_sprite(self, sprite):

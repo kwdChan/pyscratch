@@ -1,6 +1,7 @@
 from typing import Any, Dict, Hashable, List, Optional, cast
 import pygame 
 import pymunk
+from copy import deepcopy
 from .helper import adjust_brightness, set_transparency
 def circle_sprite(colour, radius, *args, **kwargs):
     circle = create_circle(colour, radius)
@@ -33,8 +34,10 @@ class ScratchSprite(pygame.sprite.Sprite):
         # TODO: add all the properties here
 
         super().__init__()
-        self.frame_dict_original:Dict[Hashable, List[pygame.Surface]] = frame_dict.copy() # never changed
-        self.frame_dict:Dict[Hashable, List[pygame.Surface]] = frame_dict.copy() # transformed on the spot
+
+        #frame_dict = {k: [i.copy() for i in v] for k, v in frame_dict.items()}
+        self.frame_dict_original:Dict[Hashable, List[pygame.Surface]] = {k: [i.copy() for i in v] for k, v in frame_dict.items()} # never changed
+        self.frame_dict:Dict[Hashable, List[pygame.Surface]] = {k: [i.copy() for i in v] for k, v in frame_dict.items()} # transformed on the spot
 
         self.frames: List[pygame.Surface] # updated on the spot
         self.frame_mode: Hashable
@@ -86,6 +89,7 @@ class ScratchSprite(pygame.sprite.Sprite):
     def set_frame_mode(self, new_mode):
         self.frame_mode = new_mode
         self.frames = self.frame_dict[new_mode]
+        self.set_frame(0)
 
     def flip_horizontal(self):
         self.flip_x = not self.flip_x
@@ -208,8 +212,14 @@ class ScratchSprite(pygame.sprite.Sprite):
     def write_text(self, text: str, font: pygame.font.Font, colour=(255,255,255), offset=(0,0)):
         text_surface = font.render(text, True, colour)  # White text
         self.blit(text_surface)
+        
+    def restore_frame(self):
+        pass
 
-    def blit(self, surface: pygame.Surface, offset=(0,0)):
+
+    def blit(self, surface: pygame.Surface, offset=(0,0), reset=True):
+        if reset: 
+            self.frames[self.frame_idx] = self.frame_dict_original[self.frame_mode][self.frame_idx].copy()
         self.frames[self.frame_idx].blit(surface, offset)
 
     @property
@@ -256,6 +266,8 @@ class ScratchSprite(pygame.sprite.Sprite):
     def move_indir(self, length):
         self.body.position += self.body.rotation_vector*length
         
+    def move_across_dir(self, length):
+        self.body.position += self.body.rotation_vector.perpendicular()*length
         
 
     def move_xy(self, xy):
