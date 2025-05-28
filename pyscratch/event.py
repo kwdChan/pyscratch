@@ -142,6 +142,11 @@ class Timer:
         self.n_period = int(dt // self.reset_period)
         return dt % self.reset_period
     
+    def reset(self):
+        self.n_period = 0
+        self.t0 = pygame.time.get_ticks()
+
+    
 
         
 

@@ -1,4 +1,10 @@
 import pygame
+import random
+def random_number(min_v, max_v):
+
+    return random.random()*(max_v-min_v)+min_v
+
+
 def get_frame(sheet, columns, rows, index, spacing=0, margin=0, inset=0):
     """
     WRITTEN BY CHATGPT

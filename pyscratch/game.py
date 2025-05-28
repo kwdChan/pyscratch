@@ -12,7 +12,6 @@ from typing import Any, Callable, Optional, List, Dict, Set, Tuple, cast
 def collision_begin(arbiter, space, data):
     game = cast(Game, data['game'])
     game.contact_pairs_set.add(arbiter.shapes) 
-    #print(0)
 
     for e, (a,b) in game.trigger_to_collision_pairs.items():
         if (a.shape in arbiter.shapes) and (b.shape in arbiter.shapes):
@@ -333,7 +332,7 @@ class Game:
 
         clock = pygame.time.Clock()
 
-        draw_every_n_step = sim_step_min//(framerate*2)
+        draw_every_n_step = sim_step_min//(framerate*2)+1
         draw = True
         while True:
             dt = clock.tick(framerate*2)
@@ -369,9 +368,9 @@ class Game:
                 self.all_simple_key_triggers = list(filter(lambda t: t.stay_active, self.all_simple_key_triggers))
                 self.all_triggers = list(filter(lambda t: t.stay_active, self.all_triggers))
 
-                print("all_conditions", len(self.all_conditions))
-                print("all_triggers", len(self.all_triggers))
-                print("all sprite", len(self.all_sprites))
+                #print("all_conditions", len(self.all_conditions))
+                #print("all_triggers", len(self.all_triggers))
+                #print("all sprite", len(self.all_sprites))
             # print("all_simple_key_triggers", len(self.all_simple_key_triggers))
 
             # Drawing
