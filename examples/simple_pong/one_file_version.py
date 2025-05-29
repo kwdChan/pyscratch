@@ -2,7 +2,6 @@ import pymunk
 import pyscratch as pysc
 import pygame
 
-from pyscratch.scratch_sprite import rect_sprite
 
 # global settings
 SCREEN_WIDTH = 1280
@@ -156,10 +155,10 @@ def spawn_ball():
 
 
 # Score display
-score_left = rect_sprite((170, 170, 170), width=100, height=50, pos=(100, SCREEN_HEIGHT//2))
+score_left = pysc.rect_sprite((170, 170, 170), width=100, height=50, pos=(100, SCREEN_HEIGHT//2))
 pysc.game.add_sprite(score_left)
 
-score_right = rect_sprite((170, 170, 170), width=100, height=50, pos=(SCREEN_WIDTH-100, SCREEN_HEIGHT//2))
+score_right = pysc.rect_sprite((170, 170, 170), width=100, height=50, pos=(SCREEN_WIDTH-100, SCREEN_HEIGHT//2))
 pysc.game.add_sprite(score_right)
 
 # 
