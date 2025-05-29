@@ -1,4 +1,4 @@
-from typing import Any, Dict, Hashable, List, Optional, cast
+from typing import Any, Dict, Hashable, List, Optional, cast, override
 import pygame 
 import pymunk
 from copy import deepcopy
@@ -99,6 +99,7 @@ class ScratchSprite(pygame.sprite.Sprite):
     def flip_vertical(self):
         self.flip_y = not self.flip_y
 
+    @override
     def update(self, space):
 
         if self.lock_to_sprite:
@@ -226,6 +227,10 @@ class ScratchSprite(pygame.sprite.Sprite):
         
     def restore_frame(self):
         pass
+    
+    @override
+    def remove(self, *groups):
+        raise NotImplementedError("use game.remove_sprite this remove this sprite from the game")
 
 
     def blit(self, surface: pygame.Surface, offset=(0,0), reset=True):
@@ -237,7 +242,6 @@ class ScratchSprite(pygame.sprite.Sprite):
     def direction(self):
         return self.body.rotation_vector.angle_degrees
     
-    # the use of setter should discouraged...
     @direction.setter
     def direction(self, degree):
         self.set_rotation(degree)
