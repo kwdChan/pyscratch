@@ -89,7 +89,7 @@ class Condition(ConditionInterface):
         if not self.repeat_remains:
             self.remove()
         
-    def add_callback(self, callback: Callable[[str], Any]):
+    def add_callback(self, callback: Callable[[int], Any]):
         self.trigger.add_callback(callback)
         return self
 
@@ -126,7 +126,7 @@ class TimerCondition(ConditionInterface):
             self.remove()
         
 
-    def on_reset(self, callback: Callable[[str], Any]):
+    def on_reset(self, callback: Callable[[int], Any]):
         self.trigger.add_callback(callback)
         return self
 

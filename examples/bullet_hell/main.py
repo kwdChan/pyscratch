@@ -6,6 +6,6 @@ from setting import *
 pysc.game.update_screen_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 pysc.game.create_edges()
+pysc.game.shared_data['enemy_level'] = 0
 
-
-pysc.game.start(60, 60, False)
+pysc.game.start(60, 60, False, event_count=True)

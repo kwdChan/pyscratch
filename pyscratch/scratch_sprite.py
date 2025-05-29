@@ -64,6 +64,8 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.mouse_selected = False
         self.is_dragging = False
         self.draggable = False
+        self.elasticity: float = .99
+        self.friction: float = 0
 
         self.private_data = {}
         self.flip_y = False
@@ -120,6 +122,9 @@ class ScratchSprite(pygame.sprite.Sprite):
         if self.new_shape: 
             space.remove(self.shape)
             self.shape, self.new_shape = self.new_shape, None
+            self.shape.elasticity = self.elasticity
+            self.shape.friction = self.friction
+
             space.add(self.shape)
 
         if self.is_dragging:
@@ -132,6 +137,12 @@ class ScratchSprite(pygame.sprite.Sprite):
 
     def set_moment(self, moment):
         self.body.moment = moment
+
+    def set_elasticity(self, elasticity):
+        self.elasticity = elasticity
+
+    def set_friction(self, friction):
+        self.friction = friction
     
     def set_shape(self, shape_type='box', shape_factor=1.0, collision_allowed=False):
         # could be a function or a string
@@ -211,7 +222,7 @@ class ScratchSprite(pygame.sprite.Sprite):
 
     def write_text(self, text: str, font: pygame.font.Font, colour=(255,255,255), offset=(0,0)):
         text_surface = font.render(text, True, colour)  # White text
-        self.blit(text_surface)
+        self.blit(text_surface, offset)
         
     def restore_frame(self):
         pass

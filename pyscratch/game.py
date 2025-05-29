@@ -327,7 +327,7 @@ class Game:
         s.play()
     
 
-    def start(self, framerate, sim_step_min=300, debug_draw=True):
+    def start(self, framerate, sim_step_min=300, debug_draw=False, event_count=False):
 
 
         clock = pygame.time.Clock()
@@ -368,10 +368,12 @@ class Game:
                 self.all_simple_key_triggers = list(filter(lambda t: t.stay_active, self.all_simple_key_triggers))
                 self.all_triggers = list(filter(lambda t: t.stay_active, self.all_triggers))
 
-                #print("all_conditions", len(self.all_conditions))
-                #print("all_triggers", len(self.all_triggers))
-                #print("all sprite", len(self.all_sprites))
-            # print("all_simple_key_triggers", len(self.all_simple_key_triggers))
+                
+                if event_count: 
+                    print("all_conditions", len(self.all_conditions))
+                    print("all_triggers", len(self.all_triggers))
+                    print("all sprite", len(self.all_sprites))
+                    # print("all_simple_key_triggers", len(self.all_simple_key_triggers))
 
             # Drawing
 

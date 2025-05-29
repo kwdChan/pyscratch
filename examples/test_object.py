@@ -87,7 +87,7 @@ timer.on_reset(lambda x: sprite1.next_frame())
 game.retrieve_sprite_click_trigger(sprite2).add_callback(lambda: print('sprite2'))
 game.retrieve_sprite_click_trigger(sprite1).add_callback(lambda: print('sprite1'))
 
-game.create_collision_trigger(sprite2, sprite_cir).add_callback(lambda x: game.play_sound('bong', 0.2))
+game.create_specific_collision_trigger(sprite2, sprite_cir).add_callback(lambda x: game.play_sound('bong', 0.2))
 
 
 timer2 = game.create_timer_trigger(500, 3)

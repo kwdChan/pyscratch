@@ -2,7 +2,7 @@ import pyscratch as pysc
 from setting import *
 
 
-def spawn_player():
+def spawn_player(event_test=False):
 
     # main sprite
     player = pysc.rect_sprite((0, 0, 255), 50, 30, pos=(720//2, 1200))
@@ -23,16 +23,16 @@ def spawn_player():
     ## 1. movement    
     movement_event = pysc.game.create_timer_trigger(1000/120)
     def movement(_):
-        if pysc.sensing.is_key_pressed(['w']):
+        if pysc.sensing.is_key_pressed('w'):
             player.move_xy((0, -5))
 
-        if pysc.sensing.is_key_pressed(['s']):
+        if pysc.sensing.is_key_pressed('s'):
             player.move_xy((0, 5))
 
-        if pysc.sensing.is_key_pressed(['a']):
+        if pysc.sensing.is_key_pressed('a'):
             player.move_xy((-5, 0))
 
-        if pysc.sensing.is_key_pressed(['d']):
+        if pysc.sensing.is_key_pressed('d'):
             player.move_xy((5, 0))
 
         player.set_xy((cap(player.x, 50, SCREEN_WIDTH-50), cap(player.y, SCREEN_HEIGHT-900, SCREEN_HEIGHT)))
@@ -80,8 +80,11 @@ def spawn_player():
     
     health_change_event.add_callback(on_health_change)
 
+    if event_test: 
+        shoot_bullet_event.remove()
 
 
 
-spawn_player()
+
+spawn_player(event_test=False)
 

@@ -1,5 +1,9 @@
 import pygame
 import random
+
+def cap(v, min_v, max_v):
+    return max(min(max_v, v), min_v)
+
 def random_number(min_v, max_v):
 
     return random.random()*(max_v-min_v)+min_v

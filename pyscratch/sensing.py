@@ -1,11 +1,10 @@
 from typing import List
 import pygame
 
-def is_key_pressed(keys: List[str]):
-    keycodes = [pygame.key.key_code(k) for k in keys]
+def is_key_pressed(key: str) -> bool:
+    keycode = pygame.key.key_code(key)
     result = pygame.key.get_pressed()
-    result = [result[c] for c in keycodes]
-    return any(result)
+    return result[keycode]
 
 
 def get_mouse_pos():
