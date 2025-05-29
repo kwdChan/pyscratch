@@ -173,7 +173,7 @@ def show_score(n):
     score_left.write_text(str(pysc.game.shared_data['score_left']), font, offset=(40, 10))
     score_right.write_text(str(pysc.game.shared_data['score_right']), font, offset=(40, 10))
 
-
+    
     player_ready_event = pysc.game.create_conditional_trigger(
         lambda: pysc.sensing.is_key_pressed('space'),
         repeats=1)

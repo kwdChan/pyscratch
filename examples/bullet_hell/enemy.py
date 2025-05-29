@@ -124,6 +124,8 @@ def create_standard_enemy(position, rotation, start_point, pointing_to_player, s
 # testing only
 pysc.game.create_timer_trigger(500, 20).on_reset(spawn_random)
 
-spawn_6_side_entry(None)
 
-spawn_line(None)
+pysc.game.create_timer_trigger(3000, 1).on_reset(spawn_6_side_entry)
+pysc.game.create_timer_trigger(2000, 1).on_reset(spawn_line)
+
+
