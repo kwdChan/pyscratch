@@ -333,9 +333,13 @@ class Game:
         clock = pygame.time.Clock()
 
         draw_every_n_step = sim_step_min//(framerate*2)+1
+
+        current_time = 0
+
         draw = True
         while True:
             dt = clock.tick(framerate*2)
+            current_time += dt
             for i in range(draw_every_n_step): 
                 self.space.step(dt/draw_every_n_step)
 
@@ -360,8 +364,9 @@ class Game:
 
                 # execute 
                 for t in self.all_triggers:
-                    t.handle_all()
+                    t.handle_all(current_time)
                     # TODO: is it possible to remove t in the self.all_triggers here?
+                    t.generators_proceed(current_time)
 
                 # clean up
                 self.all_conditions = list(filter(lambda t: t.stay_active, self.all_conditions))

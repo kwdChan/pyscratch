@@ -1,4 +1,6 @@
-from typing import Any, Callable, Union, override
+from typing import Any, Callable, Dict, Generator, List, Tuple, Union, override
+from types import GeneratorType, NoneType
+
 import pygame
 import pymunk
 import numpy as np
@@ -7,8 +9,9 @@ class Trigger:
 
     def __init__(self):
         self.__triggers = []
-        self.__callbacks = []
+        self.__callbacks: List[Callable[..., Union[NoneType, Generator[float]]]] = []
         self.__stay_active = True
+        self.__generators: Dict[GeneratorType, float] = {}
 
     def remove(self):
         self.__stay_active = False
@@ -21,37 +24,42 @@ class Trigger:
     def trigger(self, *args, **kwargs):
         self.__triggers.append((args, kwargs))
     
-    def add_callback(self, func: Callable[..., Any]):
+    def add_callback(self, func: Callable[..., Union[NoneType, Generator[float, None, None]]]):
         self.__callbacks.append(func)
         return self
 
-    def handle_all(self):
-        while self.handle_one():
+    def handle_all(self, current_t_ms):
+        while self.handle_one(current_t_ms):
             pass
         
-    def handle_one(self):
+    def handle_one(self, current_t_ms):
         if not len(self.__triggers): 
             return False
         
         args, kwargs = self.__triggers.pop(0)
 
         for cb in self.__callbacks:
-            cb(*args, **kwargs)
+            ret = cb(*args, **kwargs)
+            if isinstance(ret, GeneratorType):
+
+                # just to schedule to run immediately 
+                # actually run when self.generators_proceed is called
+                self.__generators[ret] = current_t_ms
 
         return True
-
-
-# class OneOffTrigger:
-#     def __init__(self, condition_checker: Callable[[], bool]):
-#         self.condition_checker = condition_checker
-#         self.callback = lambda: None
     
-#     def set_callback(self, func):
-#         self.callback = func
-    
-#     def check(self):
-#         if self.condition_checker():
-#             self.callback()
+    def generators_proceed(self, current_t_ms):
+        to_remove = []
+
+        for g, t in self.__generators.items():
+            if t>=current_t_ms:
+                try:
+                    self.__generators[g] = current_t_ms+next(g)
+                except StopIteration:
+                    to_remove.append(g)
+
+        self.__generators = {g:t for g, t in self.__generators.items() if not g in to_remove}
+
 
 
 class ConditionInterface:
