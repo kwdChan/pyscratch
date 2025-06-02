@@ -21,7 +21,7 @@ font = pygame.font.SysFont(None, 48)  # None = default font, 48 = font size
 
 # 1. create left paddle
 left_paddle_sprite = pysc.rect_sprite(paddle_colour, paddle_width, paddle_height, pos=(paddle_margin, SCREEN_HEIGHT//2))
-pysc.game.add_sprite(left_paddle_sprite)
+#pysc.game.add_sprite(left_paddle_sprite)
 left_paddle_sprite.set_collision_type(1) # enables the collision
 
 
@@ -51,7 +51,7 @@ left_timer_event.add_callback(check_move_left)
 # 2. create right paddle
 
 right_paddle_sprite = pysc.rect_sprite(paddle_colour, paddle_width, paddle_height, pos=(SCREEN_WIDTH-paddle_margin, SCREEN_HEIGHT//2))
-pysc.game.add_sprite(right_paddle_sprite)
+#pysc.game.add_sprite(right_paddle_sprite)
 right_paddle_sprite.set_collision_type(1)
 
 
@@ -80,7 +80,7 @@ right_timer_event.add_callback(check_move_right)
 
 # 3. Create the function that the ball
 # the edges are just sprites
-top_edge, left_edge, bottom_edge, right_edge = pysc.game.create_edges()
+top_edge, left_edge, bottom_edge, right_edge = pysc.create_edges()
 
 # variables shared across the entire game
 pysc.game.shared_data['score_left'] = 0
@@ -99,7 +99,7 @@ def spawn_ball():
         shape_type='circle', # circular collision shape
         body_type=pymunk.Body.DYNAMIC # freely moving body
         )
-    pysc.game.add_sprite(ball_sprite)
+    #pysc.game.add_sprite(ball_sprite)
     ball_sprite.set_collision_type(1) # allow collision
     ball_sprite.set_elasticity(1.1) # bounce faster and faster
 
@@ -156,10 +156,10 @@ def spawn_ball():
 
 # Score display
 score_left = pysc.rect_sprite((170, 170, 170), width=100, height=50, pos=(100, SCREEN_HEIGHT//2))
-pysc.game.add_sprite(score_left)
+#pysc.game.add_sprite(score_left)
 
 score_right = pysc.rect_sprite((170, 170, 170), width=100, height=50, pos=(SCREEN_WIDTH-100, SCREEN_HEIGHT//2))
-pysc.game.add_sprite(score_right)
+#pysc.game.add_sprite(score_right)
 
 # 
 def show_score(data): # this function is called by the message trigger, which pass in some arbitory data. unused in this case 

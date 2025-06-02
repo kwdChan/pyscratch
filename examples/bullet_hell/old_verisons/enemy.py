@@ -14,7 +14,7 @@ def create_bullet_attracted(position):
     bullet = ScratchSprite(frames, "spin", position)
     
     bullet.set_scale(2.3)
-    game.add_sprite(bullet)
+    #game.add_sprite(bullet)
     speed = random.random()*15+5
 
     bullet.point_towards_sprite(game.shared_data['player'])
@@ -55,7 +55,7 @@ def create_bullet_start_pointing(position, _):
 
     bullet.point_towards_sprite(game.shared_data['player'])
     bullet.set_scale(2.3)
-    game.add_sprite(bullet)
+    #game.add_sprite(bullet)
     speed = random.random()*15+5
     bullet.point_towards_sprite(game.shared_data['player'])
 
@@ -92,7 +92,7 @@ def create_bullet_start_pointing(position, _):
 def create_bullet_move_sine(position, rotation):
     bullet = ScratchSprite(frames, "square_bullets", position)
     bullet.set_scale(2.3)
-    game.add_sprite(bullet)
+    #game.add_sprite(bullet)
     bullet.set_rotation(rotation+90)
     #speed = random.random()*15+5
     speed = 10
@@ -141,7 +141,7 @@ def create_bullet_type1(position, rotation):
     bullet = ScratchSprite(frames, "spin", position)
     bullet.add_rotation(rotation)
     bullet.set_scale(2.3)
-    game.add_sprite(bullet)
+    #game.add_sprite(bullet)
     speed = random.random()*15+5
     #speed = 15
 
@@ -179,7 +179,7 @@ def create_bullet_type1(position, rotation):
 def create_enemy_type1(position):
 
     enemy_sprite = rect_sprite((255, 0, 0), 50, 30, pos=position)
-    game.add_sprite(enemy_sprite)
+    #game.add_sprite(enemy_sprite)
 
     enemy_sprite.add_rotation(90+(random.random()-0.5)*15)
     enemy_sprite.set_collision_type(ENEMY_TYPE)

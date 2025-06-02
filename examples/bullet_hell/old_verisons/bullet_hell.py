@@ -47,7 +47,7 @@ frames = get_frame_dict(sprite_sheet, 36, 13, {
 
 start_buttom = rect_sprite((200, 0, 0), width=150, height=60, pos=(game.screen.get_width()//2, game.screen.get_height()//2))
 start_buttom.write_text("Click to Start", font)
-game.add_sprite(start_buttom)
+#game.add_sprite(start_buttom)
 
 def on_click():
     start_buttom.scale_by(0.9)
@@ -70,7 +70,7 @@ def shoot_player_bullet(origin, inaccuracy):
 
     bullet = ScratchSprite(frames, "circle_bullets", origin)
 
-    game.add_sprite(bullet)
+    #game.add_sprite(bullet)
     bullet.set_collision_type(PLAYER_BULLET_TYPE)
     bullet.set_rotation(-90 + inaccuracy*random.random()-inaccuracy/2)
 
@@ -97,7 +97,7 @@ def create_bullet_attracted(position):
     bullet = ScratchSprite(frames, "spin", position)
     
     bullet.set_scale(2.3)
-    game.add_sprite(bullet)
+    #game.add_sprite(bullet)
     speed = random.random()*15+5
 
 
@@ -136,7 +136,7 @@ def create_bullet_start_pointing(position, _):
 
     bullet.point_towards_sprite(game.shared_data['player'])
     bullet.set_scale(2.3)
-    game.add_sprite(bullet)
+    #game.add_sprite(bullet)
     speed = random.random()*15+5
     bullet.point_towards_sprite(game.shared_data['player'])
 
@@ -173,7 +173,7 @@ def create_bullet_start_pointing(position, _):
 def create_bullet_move_sine(position, rotation):
     bullet = ScratchSprite(frames, "square_bullets", position)
     bullet.set_scale(2.3)
-    game.add_sprite(bullet)
+    #game.add_sprite(bullet)
     bullet.set_rotation(rotation+90)
     #speed = random.random()*15+5
     speed = 10
@@ -222,7 +222,7 @@ def create_bullet_type1(position, rotation):
     bullet = ScratchSprite(frames, "spin", position)
     bullet.add_rotation(rotation)
     bullet.set_scale(2.3)
-    game.add_sprite(bullet)
+    #game.add_sprite(bullet)
     speed = random.random()*15+5
     #speed = 15
 
@@ -260,7 +260,7 @@ def create_bullet_type1(position, rotation):
 def create_enemy_type1(position):
 
     enemy_sprite = rect_sprite((255, 0, 0), 50, 30, pos=position)
-    game.add_sprite(enemy_sprite)
+    #game.add_sprite(enemy_sprite)
 
     enemy_sprite.add_rotation(90+(random.random()-0.5)*15)
     enemy_sprite.set_collision_type(ENEMY_TYPE)
@@ -310,7 +310,7 @@ def create_enemy_type1(position):
 def game_start(data):
 
     player = rect_sprite((0, 0, 255), 50, 30, pos=(720//2, 1200))
-    game.add_sprite(player)
+    #game.add_sprite(player)
     create_edges(game)
     player.set_collision_type(PLAYER_TYPE)
 
@@ -327,7 +327,7 @@ def game_start(data):
     player.private_data['health'] = 10
 
 
-    game.add_sprite(healthbar_empty)
+    #game.add_sprite(healthbar_empty)
     healthbar_empty.lock_to(player, (0,-30))
     healthbar_empty.blit(healthbar_red, (0,0))
 

@@ -9,7 +9,7 @@ def create_bullet_attracted(position):
     bullet = pysc.ScratchSprite(frames, "spin", position)
     
     bullet.set_scale(2.3)
-    pysc.game.add_sprite(bullet)
+    #pysc.game.add_sprite(bullet)
     speed = random.random()*15+5
 
     bullet.point_towards_sprite(pysc.game.shared_data['player'])
@@ -50,16 +50,16 @@ def create_bullet_start_pointing(position, _):
 
     bullet.point_towards_sprite(pysc.game.shared_data['player'])
     bullet.set_scale(2.3)
-    pysc.game.add_sprite(bullet)
+    #pysc.game.add_sprite(bullet)
     speed = random.random()*15+5
     bullet.point_towards_sprite(pysc.game.shared_data['player'])
 
 
-    movement_event = pysc.game.when_timer_reset(20).add_callback(lambda x: bullet.move_indir(speed))
+    movement_event = bullet.when_timer_reset(20).add_callback(lambda x: bullet.move_indir(speed))
     #movement_event = pysc.game.create_timer_trigger(20).on_reset(lambda x: bullet.move_across_dir((random.random()-0.5)*speed*0.3))
 
 
-    frame_event = pysc.game.when_timer_reset(200).add_callback(lambda x: bullet.next_frame())
+    frame_event = bullet.when_timer_reset(200).add_callback(lambda x: bullet.next_frame())
     hitting_player_event = pysc.game.create_specific_collision_trigger(bullet, pysc.game.shared_data['player'])
 
     
@@ -87,7 +87,7 @@ def create_bullet_start_pointing(position, _):
 def create_bullet_move_sine(position, rotation):
     bullet = pysc.ScratchSprite(frames, "square_bullets", position)
     bullet.set_scale(2.3)
-    pysc.game.add_sprite(bullet)
+    #pysc.game.add_sprite(bullet)
     bullet.set_rotation(rotation+90)
     #speed = random.random()*15+5
     speed = 10
@@ -141,14 +141,14 @@ def create_straight_bullet(position, rotation):
     bullet = pysc.ScratchSprite(frames, "spin", position)
     bullet.add_rotation(rotation)
     bullet.set_scale(2.3)
-    pysc.game.add_sprite(bullet)
+    #pysc.game.add_sprite(bullet)
     speed = random.random()*15+5
     #speed = 15
 
-    movement_event = pysc.game.when_timer_reset(20, associated_sprites=[bullet]).add_callback(lambda x: bullet.move_indir(speed))
-    frame_event = pysc.game.when_timer_reset(200, associated_sprites=[bullet]).add_callback(lambda x: bullet.next_frame())
-    hitting_player_event = pysc.game.create_specific_collision_trigger(bullet, pysc.game.shared_data['player'])
-    when_exit_screen = pysc.game.when_condition_met(lambda: (bullet.y > SCREEN_HEIGHT) or (bullet.y < 0) or (bullet.x <0) or (bullet.x>SCREEN_WIDTH), repeats=1, associated_sprites=[bullet])
+    movement_event = bullet.when_timer_reset(20).add_callback(lambda x: bullet.move_indir(speed))
+    frame_event = bullet.when_timer_reset(200).add_callback(lambda x: bullet.next_frame())
+    hitting_player_event = bullet.create_specific_collision_trigger(pysc.game.shared_data['player'])
+    when_exit_screen = bullet.when_condition_met(lambda: (bullet.y > SCREEN_HEIGHT) or (bullet.y < 0) or (bullet.x <0) or (bullet.x>SCREEN_WIDTH), repeats=1,)
 
     
     def explode_and_destroy(a):
@@ -180,7 +180,7 @@ def create_exploding_bullet(position, rotation):
     bullet = pysc.ScratchSprite(frames, "spin", position)
     bullet.add_rotation(rotation)
     bullet.set_scale(2.3)
-    pysc.game.add_sprite(bullet)
+    #pysc.game.add_sprite(bullet)
 
     speed = 7
 

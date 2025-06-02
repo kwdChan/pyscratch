@@ -19,7 +19,7 @@ def spawn_ball():
         shape_type='circle', # circular collision shape
         body_type=pymunk.Body.DYNAMIC # freely moving body
         )
-    pysc.game.add_sprite(ball_sprite)
+    #pysc.game.add_sprite(ball_sprite)
     ball_sprite.set_collision_type(1) # allow collision
     ball_sprite.set_elasticity(1.1) # bounce faster and faster
 

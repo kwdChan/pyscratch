@@ -62,7 +62,7 @@ def create_standard_enemy(position, rotation, start_point, pointing_to_player, s
 
     # create the sprite
     enemy_sprite = pysc.rect_sprite((255, 0, 0), 50, 30, pos=position)
-    pysc.game.add_sprite(enemy_sprite)
+    #pysc.game.add_sprite(enemy_sprite)
     enemy_sprite.set_collision_type(ENEMY_TYPE)
 
     enemy_sprite.add_rotation(rotation)
@@ -80,7 +80,7 @@ def create_standard_enemy(position, rotation, start_point, pointing_to_player, s
 
 
     ## 1. move a straight line   
-    movement_event = pysc.game.when_timer_reset(20, associated_sprites=[enemy_sprite])
+    movement_event = enemy_sprite.when_timer_reset(20)
     movement_event.add_callback(lambda x: enemy_sprite.move_indir(speed))
 
     if pointing_to_player: 
@@ -90,7 +90,7 @@ def create_standard_enemy(position, rotation, start_point, pointing_to_player, s
 
 
     ## 2. shoot bullets (of type based on the level) at a constant interval (based on the level)
-    bullet_event = pysc.game.when_timer_reset(bullet_period, associated_sprites=[enemy_sprite]).add_callback(lambda x: create_straight_bullet((enemy_sprite.x, enemy_sprite.y), enemy_sprite.get_rotation()))
+    bullet_event = enemy_sprite.when_timer_reset(bullet_period).add_callback(lambda x: create_straight_bullet((enemy_sprite.x, enemy_sprite.y), enemy_sprite.get_rotation()))
 
 
     ## 3. hitting a player

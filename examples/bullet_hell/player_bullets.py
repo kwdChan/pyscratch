@@ -6,7 +6,7 @@ def shoot_player_bullet(player):
 
     bullet = pysc.ScratchSprite(frames, "circle_bullets", player.body.position)
 
-    pysc.game.add_sprite(bullet)
+    #pysc.game.add_sprite(bullet)
     bullet.set_collision_type(PLAYER_BULLET_TYPE)
     bullet.set_rotation(-90)
 
