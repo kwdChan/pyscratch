@@ -11,7 +11,9 @@ right_paddle_sprite.set_collision_type(1)
 
 ## behaviour
 ## - move by key 'up' and 'down' in a limited space
-right_event = pysc.game.create_trigger()
+#right_event = pysc.game.create_trigger()
+
+right_event = right_paddle_sprite.when_game_start()
 
 def check_move_right():
     while True:
@@ -29,9 +31,9 @@ def check_move_right():
         max_y = SCREEN_HEIGHT-paddle_height//2
         right_paddle_sprite.y = pysc.helper.cap(right_paddle_sprite.y, min_y, max_y)
 
-        yield 1000/60
+        yield 10
 
 right_event.add_callback(check_move_right)
-right_event.trigger()
+#right_event.trigger()
 
 pysc.game.shared_data['right_paddle_sprite'] = right_paddle_sprite
