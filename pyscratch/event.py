@@ -56,9 +56,7 @@ class Trigger:
             next_t = t
             while next_t<=current_t_ms:
                 try:
-                    dt = next(g)
-                    assert dt, "cannot have yield 0"
-                    next_t = next_t+dt
+                    next_t = next_t+next(g)
                     self.__generators[g] = next_t
                 except StopIteration:
                     next_t = np.inf
