@@ -150,6 +150,8 @@ class ScratchSprite(pygame.sprite.Sprite):
 
 
         if self.new_shape: 
+            game.cleanup_old_shape(self.shape)
+
             space.remove(self.shape)
             self.shape, self.new_shape = self.new_shape, None
             self.shape.elasticity = self.elasticity
@@ -161,6 +163,7 @@ class ScratchSprite(pygame.sprite.Sprite):
             self.body.velocity=0,0 
             # TODO: should be done every physics loop or reset location every frame
             # or can i change it to kinamatic temporarily
+
 
     def set_mass(self, mass):
         self.body.mass = mass

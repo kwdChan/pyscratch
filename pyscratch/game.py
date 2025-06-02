@@ -38,8 +38,16 @@ def collision_begin(arbiter, space, data):
 
 def collision_separate(arbiter, space, data):
     game = cast(Game, data['game'])
+
     if arbiter.shapes in game.contact_pairs_set:
         game.contact_pairs_set.remove(arbiter.shapes)
+
+
+    reverse_order = arbiter.shapes[1], arbiter.shapes[0]
+    if reverse_order in game.contact_pairs_set:
+        game.contact_pairs_set.remove(reverse_order)
+
+
 
 class SpriteEventDependencyManager:
     def __init__(self):
@@ -94,7 +102,7 @@ class Game:
         self.collision_type_pair_to_trigger: Dict[Tuple[int, int], List[Trigger]] = {}
         self.collision_type_to_trigger: Dict[int, Tuple[bool, List[Trigger]]] = {}
 
-        self.contact_pairs_set: Set[pymunk.Shape] = set() 
+        self.contact_pairs_set: Set[Tuple[pymunk.Shape, pymunk.Shape]] = set() 
         self.collision_handler = self.space.add_default_collision_handler()
         self.collision_handler.data['game'] = self
         self.collision_handler.begin = collision_begin
@@ -460,13 +468,22 @@ class Game:
         if to_show:
             self.all_sprites_to_show.add(sprite)
 
-
+    def cleanup_old_shape(self, old_shape):
+        remove_list = []
+        for pair in self.contact_pairs_set:
+            if old_shape in pair:
+                remove_list.append(pair)
+        self.contact_pairs_set.remove(*remove_list)
+        
     def remove_sprite(self, sprite: ScratchSprite):
 
         self.all_sprites.remove(sprite)
         self.all_sprites_to_show.remove(sprite) 
 
         self.trigger_to_collision_pairs = {k: v for k, v in self.trigger_to_collision_pairs.items() if not sprite in v}
+
+        
+        self.cleanup_old_shape(sprite.shape)
 
         try: 
             self.space.remove(sprite.body, sprite.shape)
