@@ -49,13 +49,19 @@ class Trigger:
         return True
     
     def generators_proceed(self, current_t_ms):
+        # cannot have yield 0
         to_remove = []
 
         for g, t in self.__generators.items():
-            if t>=current_t_ms:
+            next_t = t
+            while next_t<=current_t_ms:
                 try:
-                    self.__generators[g] = current_t_ms+next(g)
+                    dt = next(g)
+                    assert dt, "cannot have yield 0"
+                    next_t = next_t+dt
+                    self.__generators[g] = next_t
                 except StopIteration:
+                    next_t = np.inf
                     to_remove.append(g)
 
         self.__generators = {g:t for g, t in self.__generators.items() if not g in to_remove}
