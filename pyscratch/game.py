@@ -158,7 +158,8 @@ class Game:
         if e.type == pygame.MOUSEBUTTONDOWN: 
             
             for s in reversed(list(self.all_sprites_to_show)):
-                s = cast(ScratchSprite, s)
+                if TYPE_CHECKING:
+                    s = cast(ScratchSprite, s)
 
                 if s.shape.point_query(e.pos).distance <= 0:
                     for t in self.sprite_click_trigger[s]:
