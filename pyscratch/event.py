@@ -1,9 +1,11 @@
-from typing import Any, Callable, Dict, Generator, List, Tuple, Union, override
+from typing import Any, Callable, Dict, Generator, List, Set, Tuple, Union, override
 from types import GeneratorType, NoneType
 
 import pygame
 import pymunk
 import numpy as np
+
+from pyscratch.scratch_sprite import ScratchSprite
 
 class Trigger:
 
@@ -12,7 +14,7 @@ class Trigger:
         self.__callbacks: List[Callable[..., Union[NoneType, Generator[float]]]] = []
         self.__stay_active = True
         self.__generators: Dict[GeneratorType, float] = {}
-
+        
     def remove(self):
         self.__stay_active = False
 
@@ -138,7 +140,7 @@ class TimerCondition(ConditionInterface):
             self.remove()
         
 
-    def on_reset(self, callback: Callable[[int], Any]):
+    def add_callback(self, callback: Callable[[int], Any]):
         self.trigger.add_callback(callback)
         return self
 

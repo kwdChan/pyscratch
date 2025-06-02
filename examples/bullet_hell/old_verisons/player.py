@@ -35,7 +35,7 @@ def game_start(data):
 
 
     #game.create_timer_trigger(100, 20).on_reset(lambda x: create_bullet_move_sine((355, 1), 0))
-    game.create_timer_trigger(100, 20).on_reset(lambda x: create_bullet_attracted((355, 300)))
+    game.when_timer_reset(100, 20).add_callback(lambda x: create_bullet_attracted((355, 300)))
     #game.create_timer_trigger(100, 100).on_reset(lambda x: create_bullet_type1((100, 100), 90))
 
     #game.create_timer_trigger(100, 10)
@@ -69,8 +69,8 @@ def game_start(data):
 
 
 
-    game.create_timer_trigger(1000/120).on_reset(run_forever)
-    game.create_messager_trigger('player_health').add_callback(on_health_change)
+    game.when_timer_reset(1000/120).add_callback(run_forever)
+    game.when_receive_message('player_health').add_callback(on_health_change)
 
 
-game.create_timer_trigger(0.1, 1).on_reset(game_start)
+game.when_timer_reset(0.1, 1).add_callback(game_start)

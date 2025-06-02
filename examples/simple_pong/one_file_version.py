@@ -28,7 +28,7 @@ left_paddle_sprite.set_collision_type(1) # enables the collision
 ## behaviour
 ## - move by key 'a' and 'd' in a limited space
 
-left_timer_event = pysc.game.create_timer_trigger(10) # run every 10ms, repeats=np.inf by default
+left_timer_event = pysc.game.when_timer_reset(10) # run every 10ms, repeats=np.inf by default
 
 def check_move_left(n): # the parameter n is the number of repeats left in the trigger. unused in this case.
     movement = 0
@@ -45,7 +45,7 @@ def check_move_left(n): # the parameter n is the number of repeats left in the t
     max_y = SCREEN_HEIGHT-paddle_height//2
     left_paddle_sprite.y = pysc.helper.cap(left_paddle_sprite.y, min_y, max_y)
 
-left_timer_event.on_reset(check_move_left)
+left_timer_event.add_callback(check_move_left)
 
 
 # 2. create right paddle
@@ -57,7 +57,7 @@ right_paddle_sprite.set_collision_type(1)
 
 ## behaviour
 ## - move by key 'up' and 'down' in a limited space
-right_timer_event = pysc.game.create_timer_trigger(10)
+right_timer_event = pysc.game.when_timer_reset(10)
 
 def check_move_right(n):
     movement = 0
@@ -74,7 +74,7 @@ def check_move_right(n):
     max_y = SCREEN_HEIGHT-paddle_height//2
     right_paddle_sprite.y = pysc.helper.cap(right_paddle_sprite.y, min_y, max_y)
 
-right_timer_event.on_reset(check_move_right)
+right_timer_event.add_callback(check_move_right)
 
 
 
@@ -178,7 +178,7 @@ def show_score(data): # this function is called by the message trigger, which pa
 
     # a conditional trigger takes a function that output a boolean 
     # the condition is checked every iteration of the game loop
-    player_ready_event = pysc.game.create_conditional_trigger(
+    player_ready_event = pysc.game.when_condition_met(
         lambda: pysc.sensing.is_key_pressed('space'),
         repeats=1
     ) 
@@ -192,7 +192,7 @@ def show_score(data): # this function is called by the message trigger, which pa
     player_ready_event.add_callback(on_player_ready)
 
 
-pysc.game.create_messager_trigger('restart').add_callback(show_score)
+pysc.game.when_receive_message('restart').add_callback(show_score)
 pysc.game.boardcast_message('restart', None) # the message can pass data to the callback function
 
 pysc.game.update_screen_mode((SCREEN_WIDTH, SCREEN_HEIGHT))

@@ -44,7 +44,7 @@ def show_score(data): # this function is called by the message trigger, which pa
 
     # a conditional trigger takes a function that output a boolean 
     # the condition is checked every iteration of the game loop
-    player_ready_event = pysc.game.create_conditional_trigger(
+    player_ready_event = pysc.game.when_condition_met(
         lambda: pysc.sensing.is_key_pressed('space'),
         repeats=1
     ) 
@@ -59,4 +59,4 @@ def show_score(data): # this function is called by the message trigger, which pa
 
 
 
-pysc.game.create_messager_trigger('restart').add_callback(show_score)
+pysc.game.when_receive_message('restart').add_callback(show_score)

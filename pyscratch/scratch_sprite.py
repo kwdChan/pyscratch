@@ -3,6 +3,10 @@ import pygame
 import pymunk
 from copy import deepcopy
 from .helper import adjust_brightness, set_transparency
+
+
+
+
 def circle_sprite(colour, radius, *args, **kwargs):
     circle = create_circle(colour, radius)
     return ScratchSprite({"always":[circle]}, "always", *args, **kwargs)
@@ -25,6 +29,28 @@ def create_rect(colour, width, height):
     return surface
 
 
+def create_edges(game, edge_colour = (255, 0, 0), thickness=4, collision_type=1):
+    # TODO: make the edge way thicker to avoid escape due to physics inaccuracy 
+    # edges
+    edge_body = pymunk.Body.STATIC
+    screen_w, screen_h = game.screen.get_width(), game.screen.get_height()
+
+    top_edge = rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, 0),body_type= edge_body)
+    bottom_edge = rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, screen_h),body_type= edge_body)
+    left_edge = rect_sprite(edge_colour, thickness, screen_h, (0, screen_h//2),body_type= edge_body)
+    right_edge = rect_sprite(edge_colour, thickness, screen_h, (screen_w,  screen_h//2),body_type= edge_body)
+
+    top_edge.set_collision_type(collision_type)
+    bottom_edge.set_collision_type(collision_type)
+    left_edge.set_collision_type(collision_type)
+    right_edge.set_collision_type(collision_type)
+
+    game.add_sprite(top_edge)
+    game.add_sprite(bottom_edge)
+    game.add_sprite(left_edge)
+    game.add_sprite(right_edge)
+
+    return top_edge, left_edge, bottom_edge, right_edge
 
 
 class ScratchSprite(pygame.sprite.Sprite):

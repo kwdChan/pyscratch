@@ -80,28 +80,28 @@ def create_standard_enemy(position, rotation, start_point, pointing_to_player, s
 
 
     ## 1. move a straight line   
-    movement_event = pysc.game.create_timer_trigger(20)
-    movement_event.on_reset(lambda x: enemy_sprite.move_indir(speed))
+    movement_event = pysc.game.when_timer_reset(20)
+    movement_event.add_callback(lambda x: enemy_sprite.move_indir(speed))
 
     if pointing_to_player: 
-        movement_event.on_reset(
+        movement_event.add_callback(
             lambda x: enemy_sprite.point_towards_sprite(pysc.game.shared_data['player'])
         )
 
 
     ## 2. shoot bullets (of type based on the level) at a constant interval (based on the level)
-    bullet_event = pysc.game.create_timer_trigger(bullet_period).on_reset(lambda x: create_straight_bullet((enemy_sprite.x, enemy_sprite.y), enemy_sprite.get_rotation()))
+    bullet_event = pysc.game.when_timer_reset(bullet_period).add_callback(lambda x: create_straight_bullet((enemy_sprite.x, enemy_sprite.y), enemy_sprite.get_rotation()))
 
 
     ## 3. hitting a player
-    when_hit_player = pysc.game.create_conditional_trigger(lambda: pysc.sensing.is_touching(pysc.game, enemy_sprite, pysc.game.shared_data['player']), repeats=1)
+    when_hit_player = pysc.game.when_condition_met(lambda: pysc.sensing.is_touching(pysc.game, enemy_sprite, pysc.game.shared_data['player']), repeats=1)
     when_hit_player.add_callback(lambda x: pysc.game.boardcast_message('player_health', -1))
 
     ## 4. hit by player buller
     when_hit_by_player_bullet = pysc.game.create_type2type_collision_trigger(PLAYER_BULLET_TYPE, ENEMY_TYPE)
     
     ## 5. destroyed when leaving the screen
-    when_leaving_screen =pysc.game.create_conditional_trigger(lambda: (enemy_sprite.y > SCREEN_HEIGHT), repeats=1)
+    when_leaving_screen =pysc.game.when_condition_met(lambda: (enemy_sprite.y > SCREEN_HEIGHT), repeats=1)
 
     ### callback for 3, 4, 5
     def destroy(x):
@@ -122,10 +122,10 @@ def create_standard_enemy(position, rotation, start_point, pointing_to_player, s
 
 
 # testing only
-pysc.game.create_timer_trigger(500, 20).on_reset(spawn_random)
+pysc.game.when_timer_reset(500, 20).add_callback(spawn_random)
 
 
-pysc.game.create_timer_trigger(3000, 1).on_reset(spawn_6_side_entry)
-pysc.game.create_timer_trigger(2000, 1).on_reset(spawn_line)
+pysc.game.when_timer_reset(3000, 1).add_callback(spawn_6_side_entry)
+pysc.game.when_timer_reset(2000, 1).add_callback(spawn_line)
 
 

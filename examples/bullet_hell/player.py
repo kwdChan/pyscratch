@@ -21,7 +21,7 @@ def spawn_player(event_test=False):
     ## 3. shoot bullet every n seconds (by messages)
 
     ## 1. movement    
-    movement_event = pysc.game.create_timer_trigger(1000/120)
+    movement_event = pysc.game.when_timer_reset(1000/120)
     def movement(_):
         if pysc.sensing.is_key_pressed('w'):
             player.move_xy((0, -5))
@@ -37,11 +37,11 @@ def spawn_player(event_test=False):
 
         player.set_xy((cap(player.x, 50, SCREEN_WIDTH-50), cap(player.y, SCREEN_HEIGHT-900, SCREEN_HEIGHT)))
     
-    movement_event.on_reset(movement)
+    movement_event.add_callback(movement)
 
 
     ## 2. health changes on message
-    health_change_event = pysc.game.create_messager_trigger('player_health')
+    health_change_event = pysc.game.when_receive_message('player_health')
 
     def health_change(change):
         pysc.game.shared_data['player_health'] += change
@@ -52,7 +52,7 @@ def spawn_player(event_test=False):
     ## 3. bullets 
     bullet_timer = pysc.Timer()
     condition = lambda: (bullet_timer.read() > pysc.game.shared_data['bullet_period_ms'])
-    shoot_bullet_event = pysc.game.create_conditional_trigger(condition)
+    shoot_bullet_event = pysc.game.when_condition_met(condition)
 
     def shoot_bullet(n):
         pysc.game.boardcast_message('player_shoot_bullet', player)
