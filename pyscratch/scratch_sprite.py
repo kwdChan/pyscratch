@@ -47,10 +47,10 @@ def create_edges(edge_colour = (255, 0, 0), thickness=4, collision_type=1, game=
     left_edge.set_collision_type(collision_type)
     right_edge.set_collision_type(collision_type)
 
-    game.add_sprite(top_edge)
-    game.add_sprite(bottom_edge)
-    game.add_sprite(left_edge)
-    game.add_sprite(right_edge)
+    #game.add_sprite(top_edge)
+    #game.add_sprite(bottom_edge)
+    #game.add_sprite(left_edge)
+    #game.add_sprite(right_edge)
 
     return top_edge, left_edge, bottom_edge, right_edge
 
