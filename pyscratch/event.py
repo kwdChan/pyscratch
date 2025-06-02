@@ -5,7 +5,6 @@ import pygame
 import pymunk
 import numpy as np
 
-from pyscratch.scratch_sprite import ScratchSprite
 
 class Trigger:
 

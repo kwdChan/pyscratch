@@ -1,11 +1,15 @@
+from __future__ import annotations
+
 import numpy as np
 import pygame
 import pymunk
 from .event import ConditionInterface, Trigger, Condition, TimerCondition
-from .scratch_sprite import rect_sprite, ScratchSprite
 from pymunk.pygame_util import DrawOptions
 from typing import Any, Callable, Iterable, Optional, List, Dict, Set, Tuple, Union, cast
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from .scratch_sprite import ScratchSprite
 
 
 
@@ -64,9 +68,12 @@ class SpriteEventDependencyManager:
             e.remove()
             
 class Game:
-
+    singleton_lock = False
     def __init__(self, screen_size=(1280, 720)):
         pygame.init()
+
+        assert not Game.singleton_lock, "Already instantiated."
+        Game.singleton_lock = True
 
         self.screen  = pygame.display.set_mode(screen_size, vsync=1)
         self.space = pymunk.Space()
@@ -134,10 +141,7 @@ class Game:
         ## global timer event
         self.global_timer_triggers: List[Trigger] = []
 
-        
-
-
-
+    
         self.current_time: float = 0
         
 
@@ -204,7 +208,7 @@ class Game:
         return t
     
     def when_this_sprite_clicked(self, sprite, other_associated_sprites: Iterable[ScratchSprite]=[]):
-        t = self.create_trigger(list(other_associated_sprites)+[sprite])
+        t = self.create_trigger(set(list(other_associated_sprites)+[sprite]))
 
         if not sprite in self.sprite_click_trigger:
             self.sprite_click_trigger[sprite] = []
@@ -264,7 +268,7 @@ class Game:
     def create_specific_collision_trigger(self, sprite1: ScratchSprite, sprite2: ScratchSprite, other_associated_sprites: Iterable[ScratchSprite]=[]):
 
         #"""Cannot change the collision type of the object after calling this function"""
-        trigger = self.create_trigger(list(other_associated_sprites)+[sprite1, sprite2])
+        trigger = self.create_trigger(set(list(other_associated_sprites)+[sprite1, sprite2]))
 
         self.trigger_to_collision_pairs[trigger] = sprite1, sprite2
 

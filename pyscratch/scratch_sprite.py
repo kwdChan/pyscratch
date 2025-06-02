@@ -1,7 +1,9 @@
-from typing import Any, Dict, Hashable, List, Optional, cast, override
+from typing import Any, Dict, Hashable, Iterable, List, Optional, cast, override
+import numpy as np
 import pygame 
 import pymunk
 from copy import deepcopy
+from .game import Game, game
 from .helper import adjust_brightness, set_transparency
 
 
@@ -29,7 +31,7 @@ def create_rect(colour, width, height):
     return surface
 
 
-def create_edges(game, edge_colour = (255, 0, 0), thickness=4, collision_type=1):
+def create_edges(edge_colour = (255, 0, 0), thickness=4, collision_type=1, game=game):
     # TODO: make the edge way thicker to avoid escape due to physics inaccuracy 
     # edges
     edge_body = pymunk.Body.STATIC
@@ -104,6 +106,7 @@ class ScratchSprite(pygame.sprite.Sprite):
 
         self.collision_type:int = 1
 
+        game.add_sprite(self)
 
     def is_mouse_selected(self):
         return self.mouse_selected
@@ -184,10 +187,10 @@ class ScratchSprite(pygame.sprite.Sprite):
 
     def set_collision_type(self, value: int=0):
         self.collision_type = value
-        self.request_update_shape()
+        self.__request_update_shape()
 
 
-    def request_update_shape(self):
+    def __request_update_shape(self):
         """create the shape based on the self.frames and put it in self.new_shape"""
 
         # the rect of the un
@@ -233,7 +236,7 @@ class ScratchSprite(pygame.sprite.Sprite):
 
         # 
         self.set_frame_mode(self.frame_mode)
-        self.request_update_shape()
+        self.__request_update_shape()
 
     def set_brightness(self, factor):
         self.brightness_factor = factor
@@ -351,6 +354,57 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.lock_to_sprite = None
         self.lock_offset = None
         pass
-    
 
     
+
+
+    ## scratch events
+
+    def when_game_start(self, other_associated_sprites : Iterable["ScratchSprite"]=[]):
+        associated_sprites = list(other_associated_sprites) + [self]
+        return game.when_game_start(associated_sprites)
+            
+    
+    def when_key_pressed(self, other_associated_sprites : Iterable["ScratchSprite"]=[]):
+        associated_sprites = list(other_associated_sprites) + [self]
+        return game.when_key_pressed(associated_sprites)
+    
+    def when_this_sprite_clicked(self, sprite, other_associated_sprites: Iterable["ScratchSprite"]=[]):
+        return game.when_this_sprite_clicked(self, other_associated_sprites)
+       
+ 
+    def when_backdrop_switched(self, other_associated_sprites : Iterable["ScratchSprite"]=[]):
+        associated_sprites = list(other_associated_sprites) + [self]
+        return game.when_backdrop_switched(associated_sprites)
+
+    def when_timer_above(self, t, other_associated_sprites : Iterable["ScratchSprite"]=[]):
+        associated_sprites = list(other_associated_sprites) + [self]
+        return game.when_timer_above(t, associated_sprites)
+    
+    def when_receive_message(self, topic: str, other_associated_sprites : Iterable["ScratchSprite"]=[]):
+        associated_sprites = list(other_associated_sprites) + [self]
+        return game.when_receive_message(topic, associated_sprites)
+    
+
+    def boardcast_message(self, topic: str, data: Any):
+        """completely unnecessary"""
+        return game.boardcast_message(topic, data)
+    
+
+    ## additional events
+    def when_condition_met(self, checker=lambda: False, repeats=np.inf, other_associated_sprites: Iterable["ScratchSprite"]=[]):
+           
+        associated_sprites = list(other_associated_sprites) + [self]
+
+        return game.when_condition_met(checker, repeats, associated_sprites)
+    
+    
+    def when_timer_reset(self, reset_period=np.inf, repeats=np.inf, other_associated_sprites: Iterable['ScratchSprite']=[]):
+        
+        associated_sprites = list(other_associated_sprites) + [self]
+
+        return game.when_timer_reset(reset_period, repeats, associated_sprites)
+    
+    
+    def create_specific_collision_trigger(self, other_sprite: "ScratchSprite", other_associated_sprites: Iterable["ScratchSprite"]=[]):
+        return game.create_specific_collision_trigger(self, other_sprite, other_associated_sprites)
