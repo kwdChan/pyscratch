@@ -42,7 +42,7 @@ def spawn_6_side_entry(_):
 
 def spawn_random(_):
     pos = pysc.helper.random_number(0, SCREEN_WIDTH), 0
-    speed = pysc.helper.random_number(1, 10)
+    speed = pysc.helper.random_number(9, 10)
     rotation = pysc.helper.random_number(90-10, 90+10)
 
     create_standard_enemy(pos, rotation, False, False, speed)
@@ -80,7 +80,7 @@ def create_standard_enemy(position, rotation, start_point, pointing_to_player, s
 
 
     ## 1. move a straight line   
-    movement_event = pysc.game.when_timer_reset(20)
+    movement_event = pysc.game.when_timer_reset(20, associated_sprites=[enemy_sprite])
     movement_event.add_callback(lambda x: enemy_sprite.move_indir(speed))
 
     if pointing_to_player: 
@@ -90,26 +90,26 @@ def create_standard_enemy(position, rotation, start_point, pointing_to_player, s
 
 
     ## 2. shoot bullets (of type based on the level) at a constant interval (based on the level)
-    bullet_event = pysc.game.when_timer_reset(bullet_period).add_callback(lambda x: create_straight_bullet((enemy_sprite.x, enemy_sprite.y), enemy_sprite.get_rotation()))
+    bullet_event = pysc.game.when_timer_reset(bullet_period, associated_sprites=[enemy_sprite]).add_callback(lambda x: create_straight_bullet((enemy_sprite.x, enemy_sprite.y), enemy_sprite.get_rotation()))
 
 
     ## 3. hitting a player
-    when_hit_player = pysc.game.when_condition_met(lambda: pysc.sensing.is_touching(pysc.game, enemy_sprite, pysc.game.shared_data['player']), repeats=1)
+    when_hit_player = pysc.game.when_condition_met(lambda: pysc.sensing.is_touching(pysc.game, enemy_sprite, pysc.game.shared_data['player']), repeats=1, associated_sprites=[enemy_sprite])
     when_hit_player.add_callback(lambda x: pysc.game.boardcast_message('player_health', -1))
 
     ## 4. hit by player buller
-    when_hit_by_player_bullet = pysc.game.create_type2type_collision_trigger(PLAYER_BULLET_TYPE, ENEMY_TYPE)
+    when_hit_by_player_bullet = pysc.game.create_type2type_collision_trigger(PLAYER_BULLET_TYPE, ENEMY_TYPE, associated_sprites=[enemy_sprite])
     
     ## 5. destroyed when leaving the screen
-    when_leaving_screen =pysc.game.when_condition_met(lambda: (enemy_sprite.y > SCREEN_HEIGHT), repeats=1)
+    when_leaving_screen =pysc.game.when_condition_met(lambda: (enemy_sprite.y > SCREEN_HEIGHT), repeats=1, associated_sprites=[enemy_sprite])
 
     ### callback for 3, 4, 5
     def destroy(x):
-        movement_event.remove()
-        bullet_event.remove()
-        when_hit_player.remove()
-        when_hit_by_player_bullet.remove()
-        when_leaving_screen.remove()
+        #movement_event.remove()
+        #bullet_event.remove()
+        #when_hit_player.remove()
+        #when_hit_by_player_bullet.remove()
+        #when_leaving_screen.remove()
         pysc.game.remove_sprite(enemy_sprite)
 
     def check_collision(a):

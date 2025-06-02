@@ -48,7 +48,7 @@ class SpriteEventDependencyManager:
         completely dereferenced until all the sprites on which it depends are removed
 
         """
-        for s in self.sprites:
+        for s in sprites:
             if not s in self.sprites:
                 self.sprites[s] = []
             self.sprites[s].append(event)

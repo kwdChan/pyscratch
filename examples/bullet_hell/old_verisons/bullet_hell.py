@@ -376,4 +376,4 @@ def game_start(data):
 wait_for_game_start = game.when_receive_message('game_start').add_callback(game_start)
 
 
-game.start(60, 60, False)
+game.start(60, 60, False, True)

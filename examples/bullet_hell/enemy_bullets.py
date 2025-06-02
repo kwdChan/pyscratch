@@ -145,10 +145,10 @@ def create_straight_bullet(position, rotation):
     speed = random.random()*15+5
     #speed = 15
 
-    movement_event = pysc.game.when_timer_reset(20).add_callback(lambda x: bullet.move_indir(speed))
-    frame_event = pysc.game.when_timer_reset(200).add_callback(lambda x: bullet.next_frame())
+    movement_event = pysc.game.when_timer_reset(20, associated_sprites=[bullet]).add_callback(lambda x: bullet.move_indir(speed))
+    frame_event = pysc.game.when_timer_reset(200, associated_sprites=[bullet]).add_callback(lambda x: bullet.next_frame())
     hitting_player_event = pysc.game.create_specific_collision_trigger(bullet, pysc.game.shared_data['player'])
-    when_exit_screen = pysc.game.when_condition_met(lambda: (bullet.y > SCREEN_HEIGHT) or (bullet.y < 0) or (bullet.x <0) or (bullet.x>SCREEN_WIDTH), repeats=1)
+    when_exit_screen = pysc.game.when_condition_met(lambda: (bullet.y > SCREEN_HEIGHT) or (bullet.y < 0) or (bullet.x <0) or (bullet.x>SCREEN_WIDTH), repeats=1, associated_sprites=[bullet])
 
     
     def explode_and_destroy(a):
@@ -159,10 +159,10 @@ def create_straight_bullet(position, rotation):
 
 
     def destory(x):
-        movement_event.remove()
-        frame_event.remove()
-        hitting_player_event.remove()
-        when_exit_screen.remove()
+        #movement_event.remove()
+        #frame_event.remove()
+        #hitting_player_event.remove()
+        #when_exit_screen.remove()
         pysc.game.remove_sprite(bullet)
 
     when_exit_screen.add_callback(destory)
@@ -184,11 +184,11 @@ def create_exploding_bullet(position, rotation):
 
     speed = 7
 
-    movement_event = pysc.game.when_timer_reset(20).add_callback(lambda x: bullet.move_indir(speed))
-    frame_event = pysc.game.when_timer_reset(200).add_callback(lambda x: bullet.next_frame())
+    movement_event = pysc.game.when_timer_reset(20, associated_sprites=[bullet]).add_callback(lambda x: bullet.move_indir(speed))
+    frame_event = pysc.game.when_timer_reset(200, associated_sprites=[bullet]).add_callback(lambda x: bullet.next_frame())
     hitting_player_event = pysc.game.create_specific_collision_trigger(bullet, pysc.game.shared_data['player'])
-    exit_screen_event = pysc.game.when_condition_met(lambda: bullet.y > SCREEN_HEIGHT, repeats=1)
-    explosion_event = pysc.game.when_timer_reset(1200,1)
+    exit_screen_event = pysc.game.when_condition_met(lambda: bullet.y > SCREEN_HEIGHT, repeats=1, associated_sprites=[bullet])
+    explosion_event = pysc.game.when_timer_reset(1200,1, associated_sprites=[bullet])
         
 
 
@@ -208,11 +208,11 @@ def create_exploding_bullet(position, rotation):
     def destory(x):
         
 
-        movement_event.remove()
-        frame_event.remove()
-        hitting_player_event.remove()
-        exit_screen_event.remove()
-        explosion_event.remove()
+        #movement_event.remove()
+        #frame_event.remove()
+        #hitting_player_event.remove()
+        #exit_screen_event.remove()
+        #explosion_event.remove()
         pysc.game.remove_sprite(bullet)
 
     exit_screen_event.add_callback(destory)
