@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, Dict, Hashable, Iterable, List, Optional, cast, override
+from typing import Any, Dict, Hashable, Iterable, List, Optional, Tuple, cast, override
 import numpy as np
 import pygame 
 import pymunk
@@ -58,9 +58,8 @@ def create_edges(edge_colour = (255, 0, 0), thickness=4, collision_type=1, game=
 
 class ScratchSprite(pygame.sprite.Sprite):
     
-    def __init__(self, frame_dict: Dict[Hashable, List[pygame.Surface]], starting_mode, pos, shape_type='box', shape_factor=1.0, body_type=pymunk.Body.KINEMATIC):
+    def __init__(self, frame_dict: Dict[Hashable, List[pygame.Surface]], starting_mode:Hashable=None, pos= (100, 100), shape_type='box', shape_factor=1.0, body_type=pymunk.Body.KINEMATIC):
         # DYNAMIC, KINEMATIC, STATIC
-        # TODO: add all the properties here
 
         super().__init__()
 
@@ -71,10 +70,14 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.frames: List[pygame.Surface] # updated on the spot
         self.frame_mode: Hashable
         
+        if starting_mode is None:
+            starting_mode = list(self.frame_dict.keys())[0]  # there must be at least one frame in the frame_dict so assuming index 0 is okay
+
         self.set_frame_mode(starting_mode)
         self.set_frame(0)
 
         self.body = pymunk.Body(1, 100, body_type=body_type)
+
         self.body.position = pos # change be updated anytime 
 
         self.shape: pymunk.Shape # swapped only during self.update
