@@ -3,7 +3,7 @@ import re, sys
 import numpy as np
 import pymunk
 from pyscratch import sensing
-from pyscratch.scratch_sprite import ScratchSprite, create_rect, rect_sprite
+from pyscratch.scratch_sprite import ScratchSprite, create_rect, create_rect_sprite
 from pyscratch.helper import get_frame_dict
 from pyscratch.game import Game
 
@@ -178,7 +178,7 @@ def create_bullet_type1(position, rotation):
 
 def create_enemy_type1(position):
 
-    enemy_sprite = rect_sprite((255, 0, 0), 50, 30, pos=position)
+    enemy_sprite = create_rect_sprite((255, 0, 0), 50, 30, pos=position)
     #game.add_sprite(enemy_sprite)
 
     enemy_sprite.add_rotation(90+(random.random()-0.5)*15)

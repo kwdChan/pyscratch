@@ -61,7 +61,7 @@ def create_standard_enemy(position, rotation, start_point, pointing_to_player, s
     
 
     # create the sprite
-    enemy_sprite = pysc.rect_sprite((255, 0, 0), 50, 30, pos=position)
+    enemy_sprite = pysc.create_rect_sprite((255, 0, 0), 50, 30, pos=position)
     #pysc.game.add_sprite(enemy_sprite)
     enemy_sprite.set_collision_type(ENEMY_TYPE)
 

@@ -12,7 +12,7 @@ def spawn_ball():
     """
 
     # create the ball
-    ball_sprite = pysc.circle_sprite(
+    ball_sprite = pysc.create_circle_sprite(
         (255, 255, 255), 
         radius=25, 
         pos=(SCREEN_WIDTH//2, SCREEN_HEIGHT//2), 

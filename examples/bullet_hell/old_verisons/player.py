@@ -3,7 +3,7 @@ import re, sys
 import numpy as np
 import pymunk
 from pyscratch import sensing
-from pyscratch.scratch_sprite import ScratchSprite, create_rect, rect_sprite
+from pyscratch.scratch_sprite import ScratchSprite, create_rect, create_rect_sprite
 from pyscratch.helper import get_frame_dict
 from pyscratch.game import Game
 from main import *
@@ -11,7 +11,7 @@ from enemy import *
 
 def game_start(data):
 
-    player = rect_sprite((0, 0, 255), 50, 30, pos=(720//2, 1200))
+    player = create_rect_sprite((0, 0, 255), 50, 30, pos=(720//2, 1200))
     game.add_sprite(player)
     game.create_edges()
     player.set_collision_type(PLAYER_TYPE)
@@ -19,7 +19,7 @@ def game_start(data):
 
     healthbar_red = create_rect((255, 0, 0), 60, 50)
 
-    healthbar_empty = rect_sprite((255, 255, 255), 60, 5, pos=(0,0))
+    healthbar_empty = create_rect_sprite((255, 255, 255), 60, 5, pos=(0,0))
 
 
 

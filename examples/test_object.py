@@ -1,4 +1,4 @@
-from pyscratch.scratch_sprite import ScratchSprite, circle_sprite, rect_sprite
+from pyscratch.scratch_sprite import ScratchSprite, create_circle_sprite, create_rect_sprite
 import pygame
 import pymunk
 from pyscratch.game import game # neccessary for image loading
@@ -33,18 +33,18 @@ frame_dict = get_frame_dict(sprite_sheet, 2, 12, {
 }, inset=0)
 
 
-sprite_rect2 = rect_sprite((255, 240,240), 1000, 20, (400, 500))
+sprite_rect2 = create_rect_sprite((255, 240,240), 1000, 20, (400, 500))
 game.add_sprite(sprite_rect2)
 sprite_rect2.set_rotation(30)
 
 
-sprite_rect = rect_sprite((255, 0,0), 100, 20, (500, 500))
+sprite_rect = create_rect_sprite((255, 0,0), 100, 20, (500, 500))
 game.add_sprite(sprite_rect)
 sprite_rect.set_draggable(True)
 sprite_rect.set_shape('box', 1, collision_allowed=True)
 
 
-sprite_cir = circle_sprite((255, 0,0), 50, (100, 100), body_type=pymunk.Body.DYNAMIC)
+sprite_cir = create_circle_sprite((255, 0,0), 50, (100, 100), body_type=pymunk.Body.DYNAMIC)
 sprite_cir.set_draggable(True)
 sprite_cir.set_shape('circle', 1, collision_allowed=True)
 game.add_sprite(sprite_cir)

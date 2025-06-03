@@ -5,7 +5,7 @@ from setting import *
 def spawn_player(event_test=False):
 
     # main sprite
-    player = pysc.rect_sprite((0, 0, 255), 50, 30, pos=(720//2, 1200))
+    player = pysc.create_rect_sprite((0, 0, 255), 50, 30, pos=(720//2, 1200))
     #pysc.game.add_sprite(player)
     player.set_collision_type(PLAYER_TYPE)
 
@@ -63,7 +63,7 @@ def spawn_player(event_test=False):
     
 
     # health bar
-    healthbar_empty = pysc.rect_sprite((255, 255, 255), 60, 5, pos=(0,0))
+    healthbar_empty = pysc.create_rect_sprite((255, 255, 255), 60, 5, pos=(0,0))
     #pysc.game.add_sprite(healthbar_empty)
     healthbar_empty.lock_to(player, (0,-30))
 

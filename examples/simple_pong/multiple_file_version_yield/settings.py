@@ -15,7 +15,7 @@ pysc.game.load_sound('bong', 'assets/sound_effects/Metal Clang-SoundBible.com-19
 
 font = pygame.font.SysFont(None, 48)  # None = default font, 48 = font size
 
-top_edge, left_edge, bottom_edge, right_edge = pysc.create_edges()
+top_edge, left_edge, bottom_edge, right_edge = pysc.create_edge_sprites()
 # variables shared across the entire game
 pysc.game.shared_data['score_left'] = 0
 pysc.game.shared_data['score_right'] = 0

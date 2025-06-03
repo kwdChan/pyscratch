@@ -21,10 +21,10 @@ from settings import *
 from ball import spawn_ball
 
 # Score display
-score_left = pysc.rect_sprite((170, 170, 170), width=100, height=50, pos=(100, SCREEN_HEIGHT//2))
+score_left = pysc.create_rect_sprite((170, 170, 170), width=100, height=50, pos=(100, SCREEN_HEIGHT//2))
 #pysc.game.add_sprite(score_left)
 
-score_right = pysc.rect_sprite((170, 170, 170), width=100, height=50, pos=(SCREEN_WIDTH-100, SCREEN_HEIGHT//2))
+score_right = pysc.create_rect_sprite((170, 170, 170), width=100, height=50, pos=(SCREEN_WIDTH-100, SCREEN_HEIGHT//2))
 #pysc.game.add_sprite(score_right)
 
 # 

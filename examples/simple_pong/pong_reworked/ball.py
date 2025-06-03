@@ -6,7 +6,7 @@ from settings import *
 ball_colour = (220, 220, 220)
 ball_radius = 25
 
-ball_sprite = pysc.circle_sprite(ball_colour, ball_radius, pos = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
+ball_sprite = pysc.create_circle_sprite(ball_colour, ball_radius, pos = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
 
 
 game_start_event = ball_sprite.when_game_start()

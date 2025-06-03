@@ -3,7 +3,7 @@ import re, sys
 import numpy as np
 import pymunk
 from pyscratch import sensing
-from pyscratch.scratch_sprite import ScratchSprite, create_rect, rect_sprite, create_edges
+from pyscratch.scratch_sprite import ScratchSprite, create_rect, create_rect_sprite, create_edge_sprites
 from pyscratch.helper import get_frame_dict
 from pyscratch.game import Game
 import pygame
@@ -45,7 +45,7 @@ frames = get_frame_dict(sprite_sheet, 36, 13, {
 
 
 
-start_buttom = rect_sprite((200, 0, 0), width=150, height=60, pos=(game.screen.get_width()//2, game.screen.get_height()//2))
+start_buttom = create_rect_sprite((200, 0, 0), width=150, height=60, pos=(game.screen.get_width()//2, game.screen.get_height()//2))
 start_buttom.write_text("Click to Start", font)
 #game.add_sprite(start_buttom)
 
@@ -259,7 +259,7 @@ def create_bullet_type1(position, rotation):
 
 def create_enemy_type1(position):
 
-    enemy_sprite = rect_sprite((255, 0, 0), 50, 30, pos=position)
+    enemy_sprite = create_rect_sprite((255, 0, 0), 50, 30, pos=position)
     #game.add_sprite(enemy_sprite)
 
     enemy_sprite.add_rotation(90+(random.random()-0.5)*15)
@@ -309,15 +309,15 @@ def create_enemy_type1(position):
 
 def game_start(data):
 
-    player = rect_sprite((0, 0, 255), 50, 30, pos=(720//2, 1200))
+    player = create_rect_sprite((0, 0, 255), 50, 30, pos=(720//2, 1200))
     #game.add_sprite(player)
-    create_edges(game)
+    create_edge_sprites(game)
     player.set_collision_type(PLAYER_TYPE)
 
 
     healthbar_red = create_rect((255, 0, 0), 60, 50)
 
-    healthbar_empty = rect_sprite((255, 255, 255), 60, 5, pos=(0,0))
+    healthbar_empty = create_rect_sprite((255, 255, 255), 60, 5, pos=(0,0))
 
 
 

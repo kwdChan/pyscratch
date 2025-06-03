@@ -4,7 +4,7 @@ from settings import *
 
 # 2. create right paddle
 
-right_paddle_sprite = pysc.rect_sprite(paddle_colour, paddle_width, paddle_height, pos=(SCREEN_WIDTH-paddle_margin, SCREEN_HEIGHT//2))
+right_paddle_sprite = pysc.create_rect_sprite(paddle_colour, paddle_width, paddle_height, pos=(SCREEN_WIDTH-paddle_margin, SCREEN_HEIGHT//2))
 #pysc.game.add_sprite(right_paddle_sprite)
 right_paddle_sprite.set_collision_type(1)
 

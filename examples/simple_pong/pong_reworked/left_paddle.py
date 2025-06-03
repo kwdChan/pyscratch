@@ -2,7 +2,7 @@ import pyscratch as pysc
 from settings import *
 
 # TODO: bad naming consistency 
-sprite = pysc.rect_sprite(paddle_colour, paddle_width, paddle_height,  pos=(paddle_margin, SCREEN_HEIGHT//2))
+sprite = pysc.create_rect_sprite(paddle_colour, paddle_width, paddle_height,  pos=(paddle_margin, SCREEN_HEIGHT//2))
 
 game_start_event = sprite.when_game_start()
 def movement():
