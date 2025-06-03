@@ -1,5 +1,6 @@
 from typing import List
 import pygame
+from .game import game
 
 def is_key_pressed(key: str) -> bool:
     keycode = pygame.key.key_code(key)
@@ -13,7 +14,7 @@ def get_mouse_pos():
 def get_mouse_presses():
     return pygame.mouse.get_pressed(num_buttons=3)
 
-def is_touching(game, sprite_a, sprite_b):
+def is_touching(sprite_a, sprite_b):
     """pymunk"""
     for pair in game.contact_pairs_set:
 
