@@ -193,12 +193,12 @@ class Game:
 
 
     def __mouse_drag_handler(self, e):
+
         if e.type == pygame.MOUSEBUTTONDOWN: 
             
             for s in reversed(list(self.all_sprites_to_show)):
                 if TYPE_CHECKING:
                     s = cast(ScratchSprite, s)
-
                 if s.shape.point_query(e.pos).distance <= 0:
                     for t in self.sprite_click_trigger[s]:
                         t.trigger()
@@ -453,7 +453,7 @@ class Game:
 
         clock = pygame.time.Clock()
 
-        draw_every_n_step = sim_step_min//(framerate*2)+1
+        draw_every_n_step = sim_step_min//framerate+1
 
         self.current_time = 0
 
@@ -461,21 +461,17 @@ class Game:
         for t in self.game_start_triggers:
             t.trigger()
 
-        draw = True
         while True:
-            dt = clock.tick(framerate*2)
+            dt = clock.tick(framerate)
             self.current_time += dt
             for i in range(draw_every_n_step): 
                 self.space.step(dt/draw_every_n_step)
 
 
-            #all_events = pygame.event.get()
 
             self.all_pygame_events = pygame.event.get()
-            # TODO: refactor
             for event in self.all_pygame_events:
                 if event.type == pygame.QUIT:
-                    #pygame.quit()
                     return 
 
 
@@ -483,43 +479,40 @@ class Game:
             #     j()
 
             # check conditions
-            if draw:
-                for c in self.all_conditions:
-                    c.check()
+            for c in self.all_conditions:
+                c.check()
 
-                # execute 
-                for t in self.all_triggers:
-                    t.handle_all(self.current_time)
-                    # TODO: is it possible to remove t in the self.all_triggers here?
-                    t.generators_proceed(self.current_time)
+            # execute 
+            for t in self.all_triggers:
+                t.handle_all(self.current_time)
+                # TODO: is it possible to remove t in the self.all_triggers here?
+                t.generators_proceed(self.current_time)
 
-                # clean up
-                self.all_conditions = list(filter(lambda t: t.stay_active, self.all_conditions))
-                self.all_simple_key_triggers = list(filter(lambda t: t.stay_active, self.all_simple_key_triggers))
-                self.all_triggers = list(filter(lambda t: t.stay_active, self.all_triggers))
+            # clean up
+            self.all_conditions = list(filter(lambda t: t.stay_active, self.all_conditions))
+            self.all_simple_key_triggers = list(filter(lambda t: t.stay_active, self.all_simple_key_triggers))
+            self.all_triggers = list(filter(lambda t: t.stay_active, self.all_triggers))
 
-                
-                if event_count: 
-                    print("all_conditions", len(self.all_conditions))
-                    print("all_triggers", len(self.all_triggers))
-                    print("all sprite", len(self.all_sprites))
-                    # print("all_simple_key_triggers", len(self.all_simple_key_triggers))
+            
+            if event_count: 
+                print("all_conditions", len(self.all_conditions))
+                print("all_triggers", len(self.all_triggers))
+                print("all sprite", len(self.all_sprites))
+                # print("all_simple_key_triggers", len(self.all_simple_key_triggers))
 
             # Drawing
 
-            if draw: 
-                self.screen.fill((30, 30, 30))
-                if not (self.__backdrop_index is None): 
-                    self.screen.blit(self.backdrops[self.__backdrop_index], (0, 0))
+            self.screen.fill((30, 30, 30))
+            if not (self.__backdrop_index is None): 
+                self.screen.blit(self.backdrops[self.__backdrop_index], (0, 0))
 
-                if debug_draw: 
-                    self.space.debug_draw(self.draw_options)
-                
-                self.all_sprites.update(self.space)
-                self.all_sprites_to_show.draw(self.screen)
-                pygame.display.flip()
+            if debug_draw: 
+                self.space.debug_draw(self.draw_options)
             
-            draw = not draw
+            self.all_sprites.update(self.space)
+            self.all_sprites_to_show.draw(self.screen)
+            pygame.display.flip()
+            
 
     def set_gravity(self, xy):
         self.space.gravity = xy
@@ -527,6 +520,7 @@ class Game:
     def add_sprite(self, sprite, to_show=True):
         self.all_sprites.add(sprite)
         self.space.add(sprite.body, sprite.shape)
+        self.sprite_click_trigger[sprite] = []
         if to_show:
             self.all_sprites_to_show.add(sprite)
 

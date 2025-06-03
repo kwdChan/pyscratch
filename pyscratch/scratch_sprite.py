@@ -397,7 +397,7 @@ class ScratchSprite(pygame.sprite.Sprite):
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_key_pressed(associated_sprites)
     
-    def when_this_sprite_clicked(self, sprite, other_associated_sprites: Iterable[ScratchSprite]=[]):
+    def when_this_sprite_clicked(self, other_associated_sprites: Iterable[ScratchSprite]=[]):
         return game.when_this_sprite_clicked(self, other_associated_sprites)
        
  
