@@ -1,16 +1,22 @@
-from typing import Any, Callable, Dict, Generator, List, Set, Tuple, Union, override
+from __future__ import annotations
+from typing import Any, Callable, Dict, Generator, Generic, List, ParamSpec, Set, Tuple, TypeVar, Union, override
 from types import GeneratorType, NoneType
 
 import pygame
 import pymunk
 import numpy as np
 
+P = ParamSpec('P')
+T = TypeVar('T')
+def declare_callback_type(obj: Trigger, func: Callable[P, Union[NoneType, Generator[float, None, None]]]) -> Trigger[P]:
+    return obj
 
-class Trigger:
+
+class Trigger(Generic[P]):
 
     def __init__(self):
-        self.__triggers = []
-        self.__callbacks: List[Callable[..., Union[NoneType, Generator[float]]]] = []
+        self.__triggers: List = []
+        self.__callbacks: List[Callable[P, Union[NoneType, Generator[float]]]] = []
         self.__stay_active = True
         self.__generators: Dict[GeneratorType, float] = {}
         
@@ -22,10 +28,11 @@ class Trigger:
         return self.__stay_active
 
 
-    def trigger(self, *args, **kwargs):
+
+    def trigger(self, *args: P.args, **kwargs: P.kwargs):
         self.__triggers.append((args, kwargs))
     
-    def add_callback(self, func: Callable[..., Union[NoneType, Generator[float, None, None]]]):
+    def add_callback(self, func: Callable[P, Union[NoneType, Generator[float, None, None]]]):
         self.__callbacks.append(func)
         return self
 
@@ -40,7 +47,7 @@ class Trigger:
         args, kwargs = self.__triggers.pop(0)
 
         for cb in self.__callbacks:
-            ret = cb(*args, **kwargs)
+            ret = cb(*args, **kwargs) # type: ignore
             if isinstance(ret, GeneratorType):
 
                 # just to schedule to run immediately 

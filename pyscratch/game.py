@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pygame
 import pymunk
-from .event import ConditionInterface, Trigger, Condition, TimerCondition
+from .event import ConditionInterface, Trigger, Condition, TimerCondition, declare_callback_type
 from pymunk.pygame_util import DrawOptions
 from typing import Any, Callable, Iterable, Optional, List, Dict, Set, Tuple, Union, cast
 from typing import TYPE_CHECKING
@@ -48,6 +48,33 @@ def collision_separate(arbiter, space, data):
         game.contact_pairs_set.remove(reverse_order)
 
 
+class CloneEventManager:
+    def __init__(self):
+        # TODO: removed sprites stay here forever
+        self.identical_sprites_and_triggers: List[Tuple[Set[ScratchSprite], List[Trigger]]] = []
+
+    def new_trigger(self, sprite:ScratchSprite, trigger:Trigger):
+        new_lineage = True
+        for identical_sprites, triggers in self.identical_sprites_and_triggers:
+            if sprite in identical_sprites: 
+                new_lineage = False
+                triggers.append(trigger)
+
+        if new_lineage: 
+            self.identical_sprites_and_triggers.append((set([sprite]), [trigger]))
+                
+
+    def on_clone(self, old_sprite:ScratchSprite, new_sprite:ScratchSprite):
+        # so that the cloning of the cloned sprite will trigger the same event
+        for identical_sprites, triggers in self.identical_sprites_and_triggers:
+            if not old_sprite in identical_sprites:
+                continue
+            identical_sprites.add(new_sprite)
+
+            for t in triggers:
+                t.trigger(new_sprite)
+
+        
 
 class SpriteEventDependencyManager:
     def __init__(self):
@@ -96,6 +123,9 @@ class Game:
         
         # sprite event dependency manager
         self.sprite_event_dependency_manager = SpriteEventDependencyManager()
+
+        # 
+        self.clone_event_manager = CloneEventManager()
 
         # collision detection
         self.trigger_to_collision_pairs = {}
@@ -207,6 +237,11 @@ class Game:
     def when_game_start(self, associated_sprites : Iterable[ScratchSprite]=[]):
         t = self.create_trigger(associated_sprites)
         self.game_start_triggers.append(t)
+
+        if TYPE_CHECKING:
+            def sample_callback()-> Any:
+                return
+            t = declare_callback_type(t, sample_callback)
         return t
             
     
@@ -214,6 +249,11 @@ class Game:
         """different to scratch: catch all keys and catch both press and release """
         t = self.create_trigger(associated_sprites)
         self.all_simple_key_triggers.append(t)
+
+        if TYPE_CHECKING:
+            def sample_callback(key:str, updown:str)-> Any:
+                return
+            t = declare_callback_type(t, sample_callback)
         return t
     
     def when_this_sprite_clicked(self, sprite, other_associated_sprites: Iterable[ScratchSprite]=[]):
@@ -223,7 +263,10 @@ class Game:
             self.sprite_click_trigger[sprite] = []
             
         self.sprite_click_trigger[sprite].append(t)
-
+        if TYPE_CHECKING:
+            def sample_callback()-> Any:
+                return
+            t = declare_callback_type(t, sample_callback)
         return t
         
  
@@ -231,6 +274,11 @@ class Game:
         """different to scratch: catch all switches"""
         t = self.create_trigger(associated_sprites)
         self.backdrop_change_triggers.append(t)
+        if TYPE_CHECKING:
+            def sample_callback(idx: int)-> Any:
+                return
+            t = declare_callback_type(t, sample_callback)
+
         return t
 
     def when_timer_above(self, t, associated_sprites : Iterable[ScratchSprite]=[]):
@@ -239,7 +287,21 @@ class Game:
     def when_receive_message(self, topic: str, associated_sprites : Iterable[ScratchSprite]=[]):
         trigger = self.create_trigger(associated_sprites)
         self.__new_subscription(topic, trigger)
+        if TYPE_CHECKING:
+            def sample_callback(data: Any)-> Any:
+                return
+            trigger = declare_callback_type(trigger, sample_callback)
         return trigger
+    
+    def when_started_as_clone(self, sprite, associated_sprites : Iterable[ScratchSprite]=[]):
+        trigger = self.create_trigger(associated_sprites)
+        self.clone_event_manager.new_trigger(sprite, trigger)
+        if TYPE_CHECKING:
+            def sample_callback(clone_sprite: ScratchSprite)-> Any:
+                return
+            trigger = declare_callback_type(trigger, sample_callback)
+        return trigger
+
     
     def boardcast_message(self, topic: str, data: Any):
         if not topic in self.all_message_subscriptions:
@@ -473,7 +535,9 @@ class Game:
         for pair in self.contact_pairs_set:
             if old_shape in pair:
                 remove_list.append(pair)
-        self.contact_pairs_set.remove(*remove_list)
+
+        for r in remove_list:
+            self.contact_pairs_set.remove(r)
         
     def remove_sprite(self, sprite: ScratchSprite):
 
