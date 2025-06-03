@@ -8,14 +8,28 @@ from .game import Game, game
 from .helper import adjust_brightness, set_transparency
 
 
+# no need for this. use the existing method. optionally put them into a image folder
+def create_animated_sprite_from_sprite_sheet(*args, **kwargs):
+    pass
 
 
-def circle_sprite(colour, radius, *args, **kwargs):
+# numbered or named. # if named, need to specify the order manually
+def create_animated_sprite_from_image_folder(*args, **kwargs):
+    pass
+
+# just pass in the path
+def create_static_image_sprite(*args, **kwargs):
+    pass
+
+
+
+
+def create_circle_sprite(colour, radius, *args, **kwargs):
     circle = create_circle(colour, radius)
     return ScratchSprite({"always":[circle]}, "always", *args, **kwargs)
 
 
-def rect_sprite(colour, width, height, *args, **kwargs):
+def create_rect_sprite(colour, width, height, *args, **kwargs):
     rect = create_rect(colour, width, height)
     return ScratchSprite({"always":[rect]}, "always", *args, **kwargs)
 
@@ -32,16 +46,16 @@ def create_rect(colour, width, height):
     return surface
 
 
-def create_edges(edge_colour = (255, 0, 0), thickness=4, collision_type=1, game=game):
+def create_edge_sprites(edge_colour = (255, 0, 0), thickness=4, collision_type=1, game=game):
     # TODO: make the edge way thicker to avoid escape due to physics inaccuracy 
     # edges
     edge_body = pymunk.Body.STATIC
     screen_w, screen_h = game.screen.get_width(), game.screen.get_height()
 
-    top_edge = rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, 0),body_type= edge_body)
-    bottom_edge = rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, screen_h),body_type= edge_body)
-    left_edge = rect_sprite(edge_colour, thickness, screen_h, (0, screen_h//2),body_type= edge_body)
-    right_edge = rect_sprite(edge_colour, thickness, screen_h, (screen_w,  screen_h//2),body_type= edge_body)
+    top_edge = create_rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, 0),body_type= edge_body)
+    bottom_edge = create_rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, screen_h),body_type= edge_body)
+    left_edge = create_rect_sprite(edge_colour, thickness, screen_h, (0, screen_h//2),body_type= edge_body)
+    right_edge = create_rect_sprite(edge_colour, thickness, screen_h, (screen_w,  screen_h//2),body_type= edge_body)
 
     top_edge.set_collision_type(collision_type)
     bottom_edge.set_collision_type(collision_type)
