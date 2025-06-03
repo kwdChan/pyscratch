@@ -1,9 +1,8 @@
 import pyscratch as pysc
 import pygame
 
-# global settings
-SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
+SCREEN_WIDTH = 1280
 
 paddle_colour = (200, 200, 200)
 paddle_width = 20
@@ -15,7 +14,8 @@ pysc.game.load_sound('bong', 'assets/sound_effects/Metal Clang-SoundBible.com-19
 
 font = pygame.font.SysFont(None, 48)  # None = default font, 48 = font size
 
-top_edge, left_edge, bottom_edge, right_edge = pysc.create_edges()
-# variables shared across the entire game
-pysc.game.shared_data['score_left'] = 0
-pysc.game.shared_data['score_right'] = 0
+top_edge, left_edge, bottom_edge, right_edge = pysc.create_edges(collision_type=1)
+
+# # variables shared across the entire game
+# pysc.game.shared_data['score_left'] = 0
+# pysc.game.shared_data['score_right'] = 0
