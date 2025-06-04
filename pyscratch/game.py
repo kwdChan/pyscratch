@@ -1,5 +1,4 @@
 from __future__ import annotations
-from os import _T2
 
 import numpy as np
 import pygame
@@ -118,6 +117,8 @@ class SpecificEventEmitter(Generic[P]):
         
 
     def on_event(self, key, *args: P.args, **kwargs: P.kwargs):
+        if not key in self.key2triggers: 
+            return
         for t in self.key2triggers[key]:
             t.trigger(*args, **kwargs)
 

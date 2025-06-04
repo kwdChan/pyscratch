@@ -407,16 +407,22 @@ class ScratchSprite(pygame.sprite.Sprite):
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_game_start(associated_sprites)
             
+    def when_key_pressed(self, key, other_associated_sprites: Iterable[ScratchSprite]=[]):
+        associated_sprites = list(other_associated_sprites) + [self]
+        return game.when_key_pressed(key, associated_sprites)
     
-    def when_key_pressed(self, other_associated_sprites: Iterable[ScratchSprite]=[]):
+    def when_any_key_pressed(self, other_associated_sprites: Iterable[ScratchSprite]=[]):
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_any_key_pressed(associated_sprites)
     
     def when_this_sprite_clicked(self, other_associated_sprites: Iterable[ScratchSprite]=[]):
         return game.when_this_sprite_clicked(self, other_associated_sprites)
        
- 
-    def when_backdrop_switched(self, other_associated_sprites : Iterable[ScratchSprite]=[]):
+    def when_backdrop_switched(self, idx, other_associated_sprites : Iterable[ScratchSprite]=[]):
+        associated_sprites = list(other_associated_sprites) + [self]
+        return game.when_backdrop_switched(idx, associated_sprites)
+    
+    def when_any_backdrop_switched(self, other_associated_sprites : Iterable[ScratchSprite]=[]):
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_any_backdrop_switched(associated_sprites)
 
