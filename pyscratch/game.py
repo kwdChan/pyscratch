@@ -1,11 +1,12 @@
 from __future__ import annotations
+from os import _T2
 
 import numpy as np
 import pygame
 import pymunk
 from .event import ConditionInterface, Trigger, Condition, TimerCondition, declare_callback_type
 from pymunk.pygame_util import DrawOptions
-from typing import Any, Callable, Iterable, Optional, List, Dict, Set, Tuple, Union, cast
+from typing import Any, Callable, Generic, Iterable, Optional, List, Dict, ParamSpec, Set, Tuple, TypeVar, Union, cast
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -101,7 +102,27 @@ class SpriteEventDependencyManager:
     
         for e in to_remove:
             e.remove()
-            
+
+T = TypeVar('T')
+# T2 = TypeVar('T2')
+P = ParamSpec('P')
+
+class SpecificEventEmitter(Generic[P]):
+    def __init__(self):
+        self.key2triggers: Dict[Any, List[Trigger[P]]] = {}
+
+    def add_event(self, key, trigger:Trigger[P]):
+        if not key in self.key2triggers: 
+            self.key2triggers[key] = []
+        self.key2triggers[key].append(trigger)
+        
+
+    def on_event(self, key, *args: P.args, **kwargs: P.kwargs):
+        for t in self.key2triggers[key]:
+            t.trigger(*args, **kwargs)
+
+
+
 class Game:
     singleton_lock = False
     def __init__(self, screen_size=(1280, 720)):
@@ -181,6 +202,10 @@ class Game:
 
     
         self.current_time: float = 0
+
+
+        self.specific_key_event_emitter: SpecificEventEmitter[str] = SpecificEventEmitter()
+        self.specific_backdrop_event_emitter: SpecificEventEmitter[[]] = SpecificEventEmitter()
         
 
 
@@ -188,8 +213,11 @@ class Game:
         up_or_down = 'down' if e.type == pygame.KEYDOWN else 'up'
         keyname = pygame.key.name(e.key)
 
+        self.specific_key_event_emitter.on_event(keyname, up_or_down)
+
         for t in self.all_simple_key_triggers:
             t.trigger(keyname, up_or_down)
+
 
 
     def __mouse_drag_handler(self, e):
@@ -245,7 +273,7 @@ class Game:
         return t
             
     
-    def when_key_pressed(self, associated_sprites : Iterable[ScratchSprite]=[]):
+    def when_any_key_pressed(self, associated_sprites : Iterable[ScratchSprite]=[]):
         """different to scratch: catch all keys and catch both press and release """
         t = self.create_trigger(associated_sprites)
         self.all_simple_key_triggers.append(t)
@@ -253,8 +281,24 @@ class Game:
         if TYPE_CHECKING:
             def sample_callback(key:str, updown:str)-> Any:
                 return
+            # this way the naming of the parameters is constrained too
             t = declare_callback_type(t, sample_callback)
+            #t = cast(Trigger[[str, str]], t)
+
         return t
+    
+    def when_key_pressed(self, key, associated_sprites : Iterable[ScratchSprite]=[]):
+        t = self.create_trigger(associated_sprites)
+
+        if TYPE_CHECKING:
+            def sample_callback(updown:str)-> Any:
+                return
+            # this way the naming of the parameters is constrained too
+            t = declare_callback_type(t, sample_callback)
+            #t = cast(Trigger[[str, str]], t)
+
+        self.specific_key_event_emitter.add_event(key, t)
+        return t    
     
     def when_this_sprite_clicked(self, sprite, other_associated_sprites: Iterable[ScratchSprite]=[]):
         t = self.create_trigger(set(list(other_associated_sprites)+[sprite]))
@@ -268,9 +312,19 @@ class Game:
                 return
             t = declare_callback_type(t, sample_callback)
         return t
-        
+    
+    def when_backdrop_switched(self, backdrop_index, associated_sprites : Iterable[ScratchSprite]=[]):
+        t = self.create_trigger(associated_sprites)
+
+        if TYPE_CHECKING:
+            def sample_callback()-> Any:
+                return
+            t = declare_callback_type(t, sample_callback)
+
+        self.specific_backdrop_event_emitter.add_event(backdrop_index, t)
+        return t
  
-    def when_backdrop_switched(self, associated_sprites : Iterable[ScratchSprite]=[]):
+    def when_any_backdrop_switched(self, associated_sprites : Iterable[ScratchSprite]=[]):
         """different to scratch: catch all switches"""
         t = self.create_trigger(associated_sprites)
         self.backdrop_change_triggers.append(t)
@@ -283,7 +337,7 @@ class Game:
 
     def when_timer_above(self, t, associated_sprites : Iterable[ScratchSprite]=[]):
         return self.when_condition_met(lambda:(self.current_time>t), 1, associated_sprites)
-   
+    
     def when_receive_message(self, topic: str, associated_sprites : Iterable[ScratchSprite]=[]):
         trigger = self.create_trigger(associated_sprites)
         self.__new_subscription(topic, trigger)
@@ -303,7 +357,7 @@ class Game:
         return trigger
 
     
-    def boardcast_message(self, topic: str, data: Any):
+    def broadcast_message(self, topic: str, data: Any):
         if not topic in self.all_message_subscriptions:
             return 
         
@@ -412,7 +466,7 @@ class Game:
         return condition
     
 
-    def create_trigger(self, associated_sprites: Iterable[ScratchSprite]=[]):
+    def create_trigger(self, associated_sprites: Iterable[ScratchSprite]=[]) -> Trigger:
 
         trigger = Trigger()
         self.all_triggers.append(trigger)
@@ -587,6 +641,7 @@ class Game:
             self.__backdrop_index = index
             for t in self.backdrop_change_triggers:
                 t.trigger(index)
+            self.specific_backdrop_event_emitter.on_event(self.__backdrop_index)
 
     def next_backdrop(self):
         if not self.__backdrop_index is None: 
