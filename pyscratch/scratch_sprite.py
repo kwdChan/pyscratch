@@ -1,28 +1,37 @@
 from __future__ import annotations
-from typing import Any, Dict, Hashable, Iterable, List, Optional, Tuple, cast, override
+from typing import Any, Dict, Hashable, Iterable, List, Optional, ParamSpec, Tuple, Union, cast, override
 import numpy as np
 import pygame 
 import pymunk
-from copy import deepcopy
 from .game import Game, game
-from .helper import adjust_brightness, set_transparency
-
-
-# no need for this. use the existing method. optionally put them into a image folder
-def create_animated_sprite_from_sprite_sheet(*args, **kwargs):
-    pass
-
-
-# numbered or named. # if named, need to specify the order manually
-def create_animated_sprite_from_image_folder(*args, **kwargs):
-    pass
-
-# just pass in the path
-def create_static_image_sprite(*args, **kwargs):
-    pass
+from .helper import adjust_brightness, set_transparency, create_rect, create_circle, load_frames_from_folder
+from pathlib import Path
 
 
 
+def create_animated_sprite(folder_path,  *args, **kwargs):
+    frame_dict = load_frames_from_folder(folder_path)
+    return ScratchSprite(frame_dict, *args, **kwargs)
+
+
+def create_single_costume_sprite(image_path, *args, **kwargs):
+    img = pygame.image.load(image_path).convert_alpha()
+    frame_dict = {"always": [img]}
+    return ScratchSprite(frame_dict, *args, **kwargs)
+
+
+def create_shared_data_display_sprite(key, font, size = (150, 50), colour=(127, 127, 127)):
+
+    w, h = size
+    sprite = create_rect_sprite(colour, w, h)
+
+    def keep_score():
+        while True: 
+            sprite.write_text(f"{key}: {game.shared_data[key]}", font=font, offset=(w/2, h/2))
+            yield 100
+
+    sprite.when_game_start().add_callback(keep_score)
+    return sprite
 
 def create_circle_sprite(colour, radius, *args, **kwargs):
     circle = create_circle(colour, radius)
@@ -32,18 +41,6 @@ def create_circle_sprite(colour, radius, *args, **kwargs):
 def create_rect_sprite(colour, width, height, *args, **kwargs):
     rect = create_rect(colour, width, height)
     return ScratchSprite({"always":[rect]}, "always", *args, **kwargs)
-
-
-def create_circle(colour, radius):
-    surface = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
-    pygame.draw.circle(surface, colour, (radius, radius), radius)
-    return surface
-
-
-def create_rect(colour, width, height):
-    surface = pygame.Surface((width, height), pygame.SRCALPHA)
-    pygame.draw.rect(surface, colour, surface.get_rect())
-    return surface
 
 
 def create_edge_sprites(edge_colour = (255, 0, 0), thickness=4, collision_type=1, game=game):
@@ -72,17 +69,18 @@ def create_edge_sprites(edge_colour = (255, 0, 0), thickness=4, collision_type=1
 
 class ScratchSprite(pygame.sprite.Sprite):
     
-    def __init__(self, frame_dict: Dict[Hashable, List[pygame.Surface]], starting_mode:Hashable=None, pos= (100, 100), shape_type='box', shape_factor=1.0, body_type=pymunk.Body.KINEMATIC):
+    def __init__(self, frame_dict: Dict[str, List[pygame.Surface]], starting_mode:Optional[str]=None, pos= (100, 100), shape_type='box', shape_factor=1.0, body_type=pymunk.Body.KINEMATIC):
         # DYNAMIC, KINEMATIC, STATIC
 
         super().__init__()
 
         #frame_dict = {k: [i.copy() for i in v] for k, v in frame_dict.items()}
-        self.frame_dict_original:Dict[Hashable, List[pygame.Surface]] = {k: [i.copy() for i in v] for k, v in frame_dict.items()} # never changed
-        self.frame_dict:Dict[Hashable, List[pygame.Surface]] = {k: [i.copy() for i in v] for k, v in frame_dict.items()} # transformed on the spot
+        self.frame_dict_original:Dict[str, List[pygame.Surface]] = {k: [i.copy() for i in v] for k, v in frame_dict.items()} # never changed
+        self.frame_dict:Dict[str, List[pygame.Surface]] = {k: [i.copy() for i in v] for k, v in frame_dict.items()} # transformed on the spot
 
         self.frames: List[pygame.Surface] # updated on the spot
-        self.frame_mode: Hashable
+        self.frame_mode: str
+        self.frame_idx: int
         
         if starting_mode is None:
             starting_mode = list(self.frame_dict.keys())[0]  # there must be at least one frame in the frame_dict so assuming index 0 is okay
@@ -412,7 +410,7 @@ class ScratchSprite(pygame.sprite.Sprite):
     
     def when_key_pressed(self, other_associated_sprites: Iterable[ScratchSprite]=[]):
         associated_sprites = list(other_associated_sprites) + [self]
-        return game.when_key_pressed(associated_sprites)
+        return game.when_any_key_pressed(associated_sprites)
     
     def when_this_sprite_clicked(self, other_associated_sprites: Iterable[ScratchSprite]=[]):
         return game.when_this_sprite_clicked(self, other_associated_sprites)
@@ -420,7 +418,7 @@ class ScratchSprite(pygame.sprite.Sprite):
  
     def when_backdrop_switched(self, other_associated_sprites : Iterable[ScratchSprite]=[]):
         associated_sprites = list(other_associated_sprites) + [self]
-        return game.when_backdrop_switched(associated_sprites)
+        return game.when_any_backdrop_switched(associated_sprites)
 
     def when_timer_above(self, t, other_associated_sprites : Iterable[ScratchSprite]=[]):
         associated_sprites = list(other_associated_sprites) + [self]
@@ -431,9 +429,9 @@ class ScratchSprite(pygame.sprite.Sprite):
         return game.when_receive_message(topic, associated_sprites)
     
 
-    def boardcast_message(self, topic: str, data: Any):
+    def broadcast_message(self, topic: str, data: Any):
         """completely unnecessary"""
-        return game.boardcast_message(topic, data)
+        return game.broadcast_message(topic, data)
     
 
     ## additional events

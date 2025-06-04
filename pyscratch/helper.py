@@ -1,5 +1,10 @@
-import pygame
+from pathlib import Path
+from typing import Dict, Union
 import random
+
+import pygame
+import numpy as np
+
 
 def cap(v, min_v, max_v):
     return max(min(max_v, v), min_v)
@@ -7,6 +12,10 @@ def cap(v, min_v, max_v):
 def random_number(min_v, max_v):
 
     return random.random()*(max_v-min_v)+min_v
+
+
+def load_image(path):
+    return pygame.image.load(path).convert_alpha()
 
 
 def get_frame(sheet, columns, rows, index, spacing=0, margin=0, inset=0):
@@ -40,7 +49,13 @@ def get_frame(sheet, columns, rows, index, spacing=0, margin=0, inset=0):
 
     return sheet.subsurface(cropped_rect)
 
-
+def save_frame_from_sprite_sheet(sheet, columns, rows, spacing=0, margin=0, inset=0, folder_path='.', suffix='png'):
+    folder_path = Path(folder_path)
+    if not folder_path.exists():
+        folder_path.mkdir()
+    for i in range(columns*rows):
+        f = get_frame(sheet, columns, rows, i, spacing, margin, inset)
+        pygame.image.save(f, folder_path/f"{i}.{suffix}")
 
 def get_frame_sequence(sheet, columns, rows, indices, spacing, margin, inset):
     return [get_frame(sheet, columns, rows, i, spacing, margin, inset) for i in indices]
@@ -54,11 +69,53 @@ def get_frame_dict(sheet, columns, rows, indices_dict, spacing=0, margin=0, inse
 
     return frame_dict
 
+def load_frames_from_folder(folder_path: Union[Path, str]):
 
-import pygame
-import numpy as np
+    def extract_images(path: Path):
+        index2image: Dict[int, pygame.Surface] = {}
+
+        for f in path.iterdir():
+            if f.is_dir():
+                continue
+
+            assert f.stem.isdigit(), "the file names must be integers"
+            index2image[int(f.stem)] = pygame.image.load(f).convert_alpha()
+        
+        return [index2image[i] for i in sorted(index2image.keys())]
+        
+
+    path = Path(folder_path)
+
+    folder_seen = False
+    file_seen = False
+
+    frame_dict = {}
+    for f in path.iterdir():
+        if f.is_dir():
+            folder_seen = True
+            assert not file_seen
+            frame_dict[f.stem] = extract_images(f)
+        else:
+            file_seen = True
+            assert not folder_seen
+
+    if not folder_seen:
+        frame_dict[path.stem] = extract_images(path)
+
+    return frame_dict
 
 
+
+def create_circle(colour, radius):
+    surface = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
+    pygame.draw.circle(surface, colour, (radius, radius), radius)
+    return surface
+
+
+def create_rect(colour, width, height):
+    surface = pygame.Surface((width, height), pygame.SRCALPHA)
+    pygame.draw.rect(surface, colour, surface.get_rect())
+    return surface
 
 def scale_and_tile(image, screen_size, scale_factor):
     """WRITTEN BY AI"""
