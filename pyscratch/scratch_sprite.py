@@ -20,10 +20,12 @@ def create_single_costume_sprite(image_path, *args, **kwargs):
     return ScratchSprite(frame_dict, *args, **kwargs)
 
 
-def create_shared_data_display_sprite(key, font, size = (150, 50), colour=(127, 127, 127)):
+def create_shared_data_display_sprite(key, font, size = (150, 50), colour=(127, 127, 127), position: Optional[Tuple[float, float]]=None, **kwargs):
 
     w, h = size
-    sprite = create_rect_sprite(colour, w, h)
+    if position is None:
+        position = w/2+25, h/2+25
+    sprite = create_rect_sprite(colour, w, h, pos=position, **kwargs)
 
     def keep_score():
         while True: 
