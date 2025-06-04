@@ -5,7 +5,7 @@ import right_paddle, left_paddle, ball, score_display
 
 pysc.game.shared_data['running']=False
 
-pysc.create_shared_data_display_sprite('left_score', font)
+pysc.create_shared_data_display_sprite('left_score', font, size=(300, 60))
 
 
 

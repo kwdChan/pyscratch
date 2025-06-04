@@ -22,8 +22,16 @@ def movement():
 
 
         # wait for 1000/60 miliseconds
-        yield 1000/60
+        yield 1/60
 
 game_start_event.add_callback(movement)
+
+
+#def test(updown):
+#    print(updown)
+
+#sprite.when_key_pressed('space').add_callback(test)
+
+#sprite.when_timer_above(1000).add_callback(lambda x: pysc.game.remove_sprite(sprite))
 
 pysc.game.shared_data['right_paddle'] = sprite

@@ -17,7 +17,7 @@ def movement():
     speed_y = 4
 
     while True: 
-        yield 1000/60
+        yield 1/60
         if pysc.game.shared_data['running']:
             pysc.game.show_sprite(ball_sprite)
             if pysc.sensing.is_touching(ball_sprite, top_edge):
