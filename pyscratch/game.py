@@ -202,7 +202,7 @@ class Game:
         self.global_timer_triggers: List[Trigger] = []
 
     
-        self.current_time: float = 0
+        self.current_time_ms: float = 0
 
 
         self.specific_key_event_emitter: SpecificEventEmitter[str] = SpecificEventEmitter()
@@ -337,7 +337,7 @@ class Game:
         return t
 
     def when_timer_above(self, t, associated_sprites : Iterable[ScratchSprite]=[]):
-        return self.when_condition_met(lambda:(self.current_time>t), 1, associated_sprites)
+        return self.when_condition_met(lambda:(self.current_time_ms>t), 1, associated_sprites)
     
     def when_receive_message(self, topic: str, associated_sprites : Iterable[ScratchSprite]=[]):
         trigger = self.create_trigger(associated_sprites)
@@ -501,7 +501,10 @@ class Game:
         s.set_volume(volume)
         s.play()
     
-
+    
+    def read_timer(self):
+        return self.current_time_ms/1000
+    
     def start(self, framerate, sim_step_min=300, debug_draw=False, event_count=False):
 
 
@@ -510,7 +513,7 @@ class Game:
 
         draw_every_n_step = sim_step_min//framerate+1
 
-        self.current_time = 0
+        self.current_time_ms = 0
 
 
         for t in self.game_start_triggers:
@@ -518,7 +521,7 @@ class Game:
 
         while True:
             dt = clock.tick(framerate)
-            self.current_time += dt
+            self.current_time_ms += dt
             for i in range(draw_every_n_step): 
                 self.space.step(dt/draw_every_n_step)
 
@@ -539,9 +542,9 @@ class Game:
 
             # execute 
             for t in self.all_triggers:
-                t.handle_all(self.current_time)
+                t.handle_all(self.current_time_ms)
                 # TODO: is it possible to remove t in the self.all_triggers here?
-                t.generators_proceed(self.current_time)
+                t.generators_proceed(self.current_time_ms)
 
             # clean up
             self.all_conditions = list(filter(lambda t: t.stay_active, self.all_conditions))

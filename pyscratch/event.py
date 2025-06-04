@@ -64,7 +64,7 @@ class Trigger(Generic[P]):
             next_t = t
             while next_t<=current_t_ms:
                 try:
-                    next_t = next_t+next(g)
+                    next_t = next_t+next(g)*1000
                     self.__generators[g] = next_t
                 except StopIteration:
                     next_t = np.inf
@@ -153,18 +153,18 @@ class TimerCondition(ConditionInterface):
 
 class Timer:
     def __init__(self, reset_period=np.inf):
-        self.t0 = pygame.time.get_ticks()
+        self.t0 = pygame.time.get_ticks()/1000
         self.reset_period = reset_period
         self.n_period = 0
 
     def read(self):
-        dt = pygame.time.get_ticks() - self.t0
+        dt = pygame.time.get_ticks()/1000 - self.t0
         self.n_period = int(dt // self.reset_period)
         return dt % self.reset_period
     
     def reset(self):
         self.n_period = 0
-        self.t0 = pygame.time.get_ticks()
+        self.t0 = pygame.time.get_ticks()/1000
 
     
 
