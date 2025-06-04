@@ -95,7 +95,7 @@ def create_standard_enemy(position, rotation, start_point, pointing_to_player, s
 
     ## 3. hitting a player
     when_hit_player = pysc.game.when_condition_met(lambda: pysc.sensing.is_touching(pysc.game, enemy_sprite, pysc.game.shared_data['player']), repeats=1, associated_sprites=[enemy_sprite])
-    when_hit_player.add_callback(lambda x: pysc.game.boardcast_message('player_health', -1))
+    when_hit_player.add_callback(lambda x: pysc.game.broadcast_message('player_health', -1))
 
     ## 4. hit by player buller
     when_hit_by_player_bullet = pysc.game.create_type2type_collision_trigger(PLAYER_BULLET_TYPE, ENEMY_TYPE, associated_sprites=[enemy_sprite])

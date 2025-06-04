@@ -29,7 +29,7 @@ def create_bullet_attracted(position):
     
     def explode_and_destroy(a):
         bullet.set_frame_mode('star_explosion')
-        game.boardcast_message('player_health', -1)
+        game.broadcast_message('player_health', -1)
         movement_event.remove()
         game.when_timer_reset(200, 1).add_callback(destory)
 
@@ -70,7 +70,7 @@ def create_bullet_start_pointing(position, _):
     
     def explode_and_destroy(a):
         bullet.set_frame_mode('star_explosion')
-        game.boardcast_message('player_health', -1)
+        game.broadcast_message('player_health', -1)
         movement_event.remove()
         game.when_timer_reset(200, 1).add_callback(destory)
 
@@ -119,7 +119,7 @@ def create_bullet_move_sine(position, rotation):
     
     def explode_and_destroy(a):
         bullet.set_frame_mode('star_explosion')
-        game.boardcast_message('player_health', -1)
+        game.broadcast_message('player_health', -1)
         movement_event.remove()
         game.when_timer_reset(200, 1).add_callback(destory)
 
@@ -155,7 +155,7 @@ def create_bullet_type1(position, rotation):
     
     def explode_and_destroy(a):
         bullet.set_frame_mode('star_explosion')
-        game.boardcast_message('player_health', -1)
+        game.broadcast_message('player_health', -1)
         movement_event.remove()
         game.when_timer_reset(200, 1).add_callback(destory)
 
@@ -215,7 +215,7 @@ def create_enemy_type1(position):
             destroy(None)
 
     when_hit_player.add_callback(destroy)
-    when_hit_player.add_callback(lambda x: game.boardcast_message('player_health', -1))
+    when_hit_player.add_callback(lambda x: game.broadcast_message('player_health', -1))
     
     when_leaving_screen.add_callback(destroy)
 

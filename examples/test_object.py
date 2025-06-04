@@ -100,10 +100,10 @@ game.when_condition_met(lambda: pygame.mouse.get_pos()[0] < 100, 100).add_callba
 hello_word_trigger = game.when_receive_message('hello_world')
 hello_word_trigger.add_callback(lambda x: print(x))
 
-simple_key_event = game.when_key_pressed()
+simple_key_event = game.when_any_key_pressed()
 
 def on_key_press(key, updown):
-    game.boardcast_message('hello_world', dict(x=key))
+    game.broadcast_message('hello_world', dict(x=key))
     print(game.all_message_subscriptions)
 
 

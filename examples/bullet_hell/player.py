@@ -55,7 +55,7 @@ def spawn_player(event_test=False):
     shoot_bullet_event = pysc.game.when_condition_met(condition)
 
     def shoot_bullet(n):
-        pysc.game.boardcast_message('player_shoot_bullet', player)
+        pysc.game.broadcast_message('player_shoot_bullet', player)
         bullet_timer.reset()
 
     shoot_bullet_event.add_callback(shoot_bullet)

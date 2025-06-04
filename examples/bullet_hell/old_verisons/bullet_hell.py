@@ -57,7 +57,7 @@ def on_click():
     
     def start_game(x):
         start_buttom.scale_by(1/0.9)
-        game.boardcast_message('game_start', {'count': 0})
+        game.broadcast_message('game_start', {'count': 0})
         game.remove_sprite(start_buttom)
 
     on_condition.add_callback(start_game)
@@ -110,7 +110,7 @@ def create_bullet_attracted(position):
     
     def explode_and_destroy(a):
         bullet.set_frame_mode('star_explosion')
-        game.boardcast_message('player_health', -1)
+        game.broadcast_message('player_health', -1)
         movement_event.remove()
         game.when_timer_reset(200, 1).add_callback(destory)
 
@@ -151,7 +151,7 @@ def create_bullet_start_pointing(position, _):
     
     def explode_and_destroy(a):
         bullet.set_frame_mode('star_explosion')
-        game.boardcast_message('player_health', -1)
+        game.broadcast_message('player_health', -1)
         movement_event.remove()
         game.when_timer_reset(200, 1).add_callback(destory)
 
@@ -200,7 +200,7 @@ def create_bullet_move_sine(position, rotation):
     
     def explode_and_destroy(a):
         bullet.set_frame_mode('star_explosion')
-        game.boardcast_message('player_health', -1)
+        game.broadcast_message('player_health', -1)
         movement_event.remove()
         game.when_timer_reset(200, 1).add_callback(destory)
 
@@ -236,7 +236,7 @@ def create_bullet_type1(position, rotation):
     
     def explode_and_destroy(a):
         bullet.set_frame_mode('star_explosion')
-        game.boardcast_message('player_health', -1)
+        game.broadcast_message('player_health', -1)
         movement_event.remove()
         game.when_timer_reset(200, 1).add_callback(destory)
 
@@ -296,7 +296,7 @@ def create_enemy_type1(position):
             destroy(None)
 
     when_hit_player.add_callback(destroy)
-    when_hit_player.add_callback(lambda x: game.boardcast_message('player_health', -1))
+    when_hit_player.add_callback(lambda x: game.broadcast_message('player_health', -1))
     
     when_leaving_screen.add_callback(destroy)
 

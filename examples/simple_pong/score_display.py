@@ -35,9 +35,10 @@ def right_score(data):
 right_score_event.add_callback(right_score)
 
 on_click = score_board.when_this_sprite_clicked()
-resume_game_event = pysc.game.when_key_pressed()
+resume_game_event = pysc.game.when_any_key_pressed()
 
 def resume_game():
+    print('hi')
     pysc.game.shared_data['running'] = True
     pysc.game.hide_sprite(score_board)
 

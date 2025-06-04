@@ -28,11 +28,11 @@ def movement():
 
             if pysc.sensing.is_touching(ball_sprite, left_edge):
                 speed_x = abs(speed_x)
-                ball_sprite.boardcast_message('right_score', None)
+                ball_sprite.broadcast_message('right_score', None)
 
             if pysc.sensing.is_touching( ball_sprite, right_edge):
                 speed_x = -abs(speed_x)
-                ball_sprite.boardcast_message('left_score', None)
+                ball_sprite.broadcast_message('left_score', None)
 
             if pysc.sensing.is_touching( ball_sprite, pysc.game.shared_data['right_paddle']):
                 speed_x = -abs(speed_x)
