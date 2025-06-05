@@ -318,10 +318,10 @@ class ScratchSprite(pygame.sprite.Sprite):
         return self.body.rotation_vector.angle_degrees
     
     def set_rotation(self, degree):
-        self.body.angle = degree/180*3.14159265
+        self.body.angle = degree/180*np.pi
 
     def add_rotation(self, degree):
-        self.body.angle += degree/180*3.14159265
+        self.body.angle += degree/180*np.pi
 
     def set_frame(self, idx):
         self.frame_idx = idx
