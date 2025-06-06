@@ -3,15 +3,32 @@ title: Getting Started
 nav_order: 1
 ---
 # Getting Started 
+{: .no_toc }
+
 ---
-This section shows you how to create your first minimalistic game using python. 
+This section shows you how to create your first minimalistic pong game using python. 
 
-## Setup
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
+
+## Setup 
 ### 1. Have Python installed. You only need to do it once in your computer. 
+{: .no_toc }
 
-### 2. Open a new folder that will contain everything about the game
 
-### 3. Clone the repo from [github](https://github.com/kwdChan/pyscratch) into the new folder
+### 2. Open a new folder that will contain everything about the game 
+{: .no_toc }
+
+
+### 3. Clone the repo from [github](https://github.com/kwdChan/pyscratch) into the new folder 
+{: .no_toc }
+
 
 Your folder should look like this
 
@@ -21,9 +38,13 @@ Your folder should look like this
         ├─ ...
 ```
 
-### 4. Pip install the library
+### 4. Pip install the library 
+{: .no_toc }
 
-### 5. You are good to go! 
+
+### 5. You are good to go!  
+{: .no_toc }
+
 
 
 ## Now, start the game with an empty scene
@@ -36,7 +57,8 @@ Create a file called `main.py` in the folder. This is how the folder should look
 ```
 
 
-Add these lines in and run the script `main.py`. 
+Add these lines in and run the script `main.py`. You should see a pygame window open. The program finishes when you close the window. 
+
 ```python
 import pyscratch as pysc
 
