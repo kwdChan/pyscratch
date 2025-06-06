@@ -1,5 +1,5 @@
 ---
-title: Event Functions
+title: Corresponding Blocks
 parent: Events
 nav_order: 1
 ---
