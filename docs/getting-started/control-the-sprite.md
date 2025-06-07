@@ -4,7 +4,7 @@ parent: Getting Started
 nav_order: 2
 ---
 # Control the Sprite
-If you are working in Scratch, you would have your sprite created by now you would be programming the behaviour of the sprite using the code blocks. This is what we are going to do in Python. 
+If you are working in Scratch, you would have your sprite created by now and you would be programming the behaviour of the sprite using the code blocks. This is what we are going to do now in Python. 
 
 
 We want the left paddle to move up when the 'w' key is down, and to move down when the 's' key is down. 
@@ -40,5 +40,6 @@ game_start_event.add_callback(movement)
 ```
 
 
-In scratch, every stack of code blocks start from an event. An event happens, and the event triggers the code to start running. Without the event on the top, the code blocks will never run.
+In scratch, every stack of code blocks start from an event. An event happens, and the event triggers the code to start running. Without the event on the top, the code blocks will never run. 
 
+In the similar way, in Python, a function without being passed on to an event is similar to a headless Scratch block stack without the event on top. 
