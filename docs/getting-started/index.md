@@ -10,7 +10,7 @@ This section shows you how to create your first minimalistic pong game using pyt
 
 <details open markdown="block">
   <summary>
-    Table of contents
+    In-page navigation 
   </summary>
   {: .text-delta }
 1. TOC
