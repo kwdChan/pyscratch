@@ -390,6 +390,8 @@ class ScratchSprite(pygame.sprite.Sprite):
             shape_factor = self.shape_factor, 
             body_type = self.body.body_type, 
         )
+        if not self in game.all_sprites_to_show:
+            game.hide_sprite(sprite)
         sprite.set_rotation(self.get_rotation())
         sprite.scale_by(self.scale_factor)
         sprite.set_frame(self.frame_idx)
@@ -400,6 +402,9 @@ class ScratchSprite(pygame.sprite.Sprite):
         game.clone_event_manager.on_clone(self, sprite)
         return sprite
     
+
+
+    # alias of pygame method
     def when_started_as_clone(self, associated_sprites: Iterable[ScratchSprite]=[]):
         
         return game.when_started_as_clone(self, associated_sprites)    
@@ -468,3 +473,9 @@ class ScratchSprite(pygame.sprite.Sprite):
     
     def is_touching_mouse(self):
         return sensing.is_touching_mouse(self)
+    
+    def hide(self):
+        game.hide_sprite(self)
+
+    def show(self):
+        game.show_sprite(self)
