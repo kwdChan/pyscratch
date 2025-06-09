@@ -10,11 +10,7 @@ This section shows you how to create your first minimalistic flappy bird game us
 
 <details open markdown="block">
   <summary>
-<<<<<<< HEAD:docs/getting-started/0-index.md
     In-Page Navigation
-=======
-    In-page navigation 
->>>>>>> 35903ad76c90555c51acedbe973fb718eb7e012e:docs/getting-started/index.md
   </summary>
   {: .text-delta }
 1. TOC
