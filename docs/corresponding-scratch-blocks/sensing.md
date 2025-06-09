@@ -9,6 +9,7 @@ nav_order: 6
 **touching [mouse-pointer/edge/sprite]**
 - `pysc.sensing.is_touching(sprite_a, sprite_b)`
 - `pysc.sensing.is_touching_mouse(sprite)`
+- `sprite.is_touching(sprite_b)`
 - edges are created as sprites
 
 **touching color / color is touching color**

@@ -6,11 +6,11 @@ nav_order: 1
 {: .no_toc }
 
 ---
-This section shows you how to create your first minimalistic pong game using python. 
+This section shows you how to create your first minimalistic flappy bird game using python. 
 
 <details open markdown="block">
   <summary>
-    Table of contents
+    In-Page Navigation
   </summary>
   {: .text-delta }
 1. TOC
@@ -47,7 +47,7 @@ Your folder should look like this
 
 
 
-## Now, start the game with an empty scene
+## Start the game with an empty scene
 Create a file called `main.py` in the folder. This is how the folder should look like:
 ```
 ├─ my_first_game

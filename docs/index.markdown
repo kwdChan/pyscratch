@@ -36,6 +36,7 @@ The current process of adding sprites, backdrops and sound is now sufficiently s
 Possible new features: 
 - Some kinds of scene assembling tools
 - Pixel grids to help finding the coordinates for scene design. 
+- Save and reload sprite locations 
 
 ## Ready-to-use Assets (Not implemented yet)
 The coding itself isn't the only challenge in game development. Finding suitable arts on the internet and correctly process them before incorporating them into the game can be a painful process. Some ready-to-use charactors would be very helpful to keep the users motivated. 

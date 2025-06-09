@@ -26,10 +26,13 @@ paddle_colour = (200, 200, 200)
 paddle_width = 20
 paddle_height = 130
 
-sprite = pysc.create_rect_sprite(paddle_colour, paddle_width, paddle_height)
-sprite.set_draggable(True)
+left_paddle = pysc.create_rect_sprite(paddle_colour, paddle_width, paddle_height)
+left_paddle.set_draggable(True)
 ```
-This time we used `pysc.create_rect_sprite` to create the sprite. The other optional creating new sprites are listed [here](/pyscratch/assets-processing-functions/)
+
+Here you created a rectanglar sprite and you assigned it to a variable named `left_paddle`. 
+
+
 
 ## Import the sprite to `main.py` and run it
 Firstly, `main.py` is always where you start your game program, not any sprite files like this `left_paddle.py`. If you just run `left_paddle.py`, nothing will happen. 
