@@ -18,7 +18,7 @@ Assuming that you have already created the empty scene following the [previous p
     ├─ left_paddle.py
 ```
 
-And put these lines in to create a new rectangle sprite.
+And put these lines in to `left_paddle.py` to create a new rectangle sprite.
 ```python
 import pyscratch as pysc
 
