@@ -3,6 +3,8 @@ from typing import Any, Dict, Hashable, Iterable, List, Optional, ParamSpec, Tup
 import numpy as np
 import pygame 
 import pymunk
+
+from pyscratch import sensing
 from .game import Game, game
 from .helper import adjust_brightness, set_transparency, create_rect, create_circle, load_frames_from_folder
 from pathlib import Path
@@ -459,3 +461,10 @@ class ScratchSprite(pygame.sprite.Sprite):
     
     def create_specific_collision_trigger(self, other_sprite: ScratchSprite, other_associated_sprites: Iterable[ScratchSprite]=[]):
         return game.create_specific_collision_trigger(self, other_sprite, other_associated_sprites)
+    
+
+    def is_touching(self, other_sprite):
+        return sensing.is_touching(self, other_sprite)
+    
+    def is_touching_mouse(self):
+        return sensing.is_touching_mouse(self)
