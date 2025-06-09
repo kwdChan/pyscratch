@@ -50,13 +50,7 @@ game_start_event.add_callback(movement)
 
 A function in python is similar to the stack of code blocks without the event on top (without the event on top, the code blocks will never run); and passing the function to the event as the handler is essentially attaching the stack of code blocks to the event block in Scratch. 
 
-<<<<<<< HEAD:docs/getting-started/2-control-the-sprite.md
 
 
 ## How do I know what functions to use? How does these functions work? 
 This library is designed to be highly analogous to Scratch, and most of the Scratch blocks that you are familiar with has a corresponding Python function. All of these functions are listed and explained [here](../corresponding-scratch-blocks/). 
-=======
-In scratch, every stack of code blocks start from an event. An event happens, and the event triggers the code to start running. Without the event on the top, the code blocks will never run. 
-
-In the similar way, in Python, a function without being passed on to an event is similar to a headless Scratch block stack without the event on top. 
->>>>>>> 35903ad76c90555c51acedbe973fb718eb7e012e:docs/getting-started/control-the-sprite.md
