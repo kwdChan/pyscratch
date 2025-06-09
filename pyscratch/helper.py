@@ -49,7 +49,7 @@ def get_frame(sheet, columns, rows, index, spacing=0, margin=0, inset=0):
 
     return sheet.subsurface(cropped_rect)
 
-def save_frame_from_sprite_sheet(sheet, columns, rows, spacing=0, margin=0, inset=0, folder_path='.', suffix='png'):
+def save_frame_from_sprite_sheet(sheet: pygame.Surface, columns, rows, spacing=0, margin=0, inset=0, folder_path='.', suffix='png'):
     folder_path = Path(folder_path)
     if not folder_path.exists():
         folder_path.mkdir()
