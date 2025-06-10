@@ -1,4 +1,5 @@
 from __future__ import annotations
+from enum import Enum
 from typing import Any, Dict, Hashable, Iterable, List, Optional, ParamSpec, Tuple, Union, cast, override
 import numpy as np
 import pygame 
@@ -9,6 +10,10 @@ from .game import Game, game
 from .helper import adjust_brightness, set_transparency, create_rect, create_circle, load_frames_from_folder
 from pathlib import Path
 
+class RotationStyle(Enum):
+    ALL_AROUND = 0
+    LEFTRIGHT = 1
+    FIXED = 2
 
 
 def create_animated_sprite(folder_path,  *args, **kwargs):
@@ -126,6 +131,9 @@ class ScratchSprite(pygame.sprite.Sprite):
 
         self.collision_type:int = 1
 
+
+        self.rotation_style: RotationStyle = RotationStyle.ALL_AROUND
+
         game.add_sprite(self)
 
     def is_mouse_selected(self):
@@ -157,8 +165,24 @@ class ScratchSprite(pygame.sprite.Sprite):
 
         x, y = self.body.position
         img = self.frames[self.frame_idx]
+
+        self_angle = self.body.rotation_vector.angle_degrees
+        if self.rotation_style == RotationStyle.ALL_AROUND: 
+            img = pygame.transform.rotate(img, -self_angle)
+    
+        elif self.rotation_style == RotationStyle.LEFTRIGHT:
+            if self_angle > -90 and self_angle < 90:
+                pass
+            else:
+                img = pygame.transform.flip(img, True, False)
+             
+        elif self.rotation_style == RotationStyle.FIXED:
+            pass
+
+        
         img = pygame.transform.flip(img, self.flip_x, self.flip_y)
-        img = pygame.transform.rotate(img, -self.body.rotation_vector.angle_degrees)
+
+
         self.image = img
 
         img_w, img_h = self.image.get_width(), self.image.get_height()
@@ -379,6 +403,16 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.lock_to_sprite = None
         self.lock_offset = None
         pass
+
+    def set_rotation_style_all_around(self):
+        self.rotation_style = RotationStyle.ALL_AROUND
+
+    def set_rotation_style_left_right(self):
+        self.rotation_style = RotationStyle.LEFTRIGHT
+
+    def set_rotation_style_no_rotation(self):
+        self.rotation_style = RotationStyle.FIXED
+
 
     def clone_myself(self):
 
