@@ -305,10 +305,6 @@ class ScratchSprite(pygame.sprite.Sprite):
         
     def restore_frame(self):
         pass
-    
-    @override
-    def remove(self, *groups):
-        raise NotImplementedError("use game.remove_sprite this remove this sprite from the game")
 
 
     def blit(self, surface: pygame.Surface, offset=(0,0), reset=True):
@@ -515,3 +511,7 @@ class ScratchSprite(pygame.sprite.Sprite):
 
     def show(self):
         game.show_sprite(self)
+
+    @override
+    def remove(self, *_):
+        game.remove_sprite(self)
