@@ -432,6 +432,8 @@ class ScratchSprite(pygame.sprite.Sprite):
         sprite.set_draggable(self.draggable)
         sprite.set_elasticity(self.elasticity)
         sprite.set_friction(self.friction)
+        sprite.rotation_style = self.rotation_style
+
 
         game.clone_event_manager.on_clone(self, sprite)
         return sprite
