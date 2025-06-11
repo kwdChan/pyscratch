@@ -37,7 +37,7 @@ def spawn_player(event_test=False):
 
         player.set_xy((cap(player.x, 50, SCREEN_WIDTH-50), cap(player.y, SCREEN_HEIGHT-900, SCREEN_HEIGHT)))
     
-    movement_event.add_callback(movement)
+    movement_event.add_handler(movement)
 
 
     ## 2. health changes on message
@@ -46,7 +46,7 @@ def spawn_player(event_test=False):
     def health_change(change):
         pysc.game.shared_data['player_health'] += change
 
-    health_change_event.add_callback(health_change)
+    health_change_event.add_handler(health_change)
 
 
     ## 3. bullets 
@@ -58,7 +58,7 @@ def spawn_player(event_test=False):
         pysc.game.broadcast_message('player_shoot_bullet', player)
         bullet_timer.reset()
 
-    shoot_bullet_event.add_callback(shoot_bullet)
+    shoot_bullet_event.add_handler(shoot_bullet)
 
     
 
@@ -78,7 +78,7 @@ def spawn_player(event_test=False):
         healthbar_red = pysc.create_rect((255, 0, 0), 60*(new_health/10), 50)
         healthbar_empty.blit(healthbar_red)
     
-    health_change_event.add_callback(on_health_change)
+    health_change_event.add_handler(on_health_change)
 
     if event_test: 
         shoot_bullet_event.remove()

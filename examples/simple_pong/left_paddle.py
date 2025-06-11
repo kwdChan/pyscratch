@@ -21,7 +21,7 @@ def movement():
         yield 1/60
         
 game_start_event = sprite.when_game_start()
-game_start_event.add_callback(movement)
+game_start_event.add_handler(movement)
 
 
 

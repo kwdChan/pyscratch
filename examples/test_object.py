@@ -78,27 +78,27 @@ import random
 
 
 timer = game.when_timer_reset(100)
-timer.add_callback(lambda x: sprite1.next_frame())
+timer.add_handler(lambda x: sprite1.next_frame())
 #timer_event.add_handler(lambda: sprite1.add_rotation(3))
 # timer_event.add_handler(lambda: sprite1.point_towards(sprite2))
 # timer_event.add_handler(lambda: sprite1.point_towards_mouse())
 
 
-game.when_this_sprite_clicked(sprite2).add_callback(lambda: print('sprite2'))
-game.when_this_sprite_clicked(sprite1).add_callback(lambda: print('sprite1'))
+game.when_this_sprite_clicked(sprite2).add_handler(lambda: print('sprite2'))
+game.when_this_sprite_clicked(sprite1).add_handler(lambda: print('sprite1'))
 
-game.create_specific_collision_trigger(sprite2, sprite_cir).add_callback(lambda x: game.play_sound('bong', 0.2))
+game.create_specific_collision_trigger(sprite2, sprite_cir).add_handler(lambda x: game.play_sound('bong', 0.2))
 
 
 timer2 = game.when_timer_reset(500, 3)
-timer2.add_callback(lambda x: sprite1.add_rotation(15))
+timer2.add_handler(lambda x: sprite1.add_rotation(15))
 
 
-game.when_condition_met(lambda: pygame.mouse.get_pos()[0] < 100, 100).add_callback(lambda x: print(x))
+game.when_condition_met(lambda: pygame.mouse.get_pos()[0] < 100, 100).add_handler(lambda x: print(x))
 
 
 hello_word_trigger = game.when_receive_message('hello_world')
-hello_word_trigger.add_callback(lambda x: print(x))
+hello_word_trigger.add_handler(lambda x: print(x))
 
 simple_key_event = game.when_any_key_pressed()
 
@@ -108,7 +108,7 @@ def on_key_press(key, updown):
 
 
     
-simple_key_event.add_callback(on_key_press)
+simple_key_event.add_handler(on_key_press)
 
 
 
@@ -161,7 +161,7 @@ def when_key_down(e):
     elif e.key  == pygame.key.key_code("6"):
         keydown_event.remove()
 
-keydown_event.add_callback(when_key_down)
+keydown_event.add_handler(when_key_down)
 
 game.remove_sprite(sprite1)
 #game.all_sprites.remove(sprite1)

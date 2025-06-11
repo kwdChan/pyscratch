@@ -34,4 +34,4 @@ def heart_display():
     
 #game_start_event = pysc.game.when_game_start([heart1, heart2, heart3])
 game_start_event = pysc.game.when_game_start([heart1, heart2, heart3])
-game_start_event.add_callback(heart_display)
+game_start_event.add_handler(heart_display)

@@ -32,7 +32,7 @@ class Trigger(Generic[P]):
     def trigger(self, *args: P.args, **kwargs: P.kwargs):
         self.__triggers.append((args, kwargs))
     
-    def add_callback(self, func: Callable[P, Union[NoneType, Generator[float, None, None]]]):
+    def add_handler(self, func: Callable[P, Union[NoneType, Generator[float, None, None]]]):
         self.__callbacks.append(func)
         return self
 
@@ -109,8 +109,8 @@ class Condition(ConditionInterface):
         if not self.repeat_remains:
             self.remove()
         
-    def add_callback(self, callback: Callable[[int], Any]):
-        self.trigger.add_callback(callback)
+    def add_handler(self, callback: Callable[[int], Any]):
+        self.trigger.add_handler(callback)
         return self
 
     def change_checker(self, checker= lambda: False):
@@ -146,8 +146,8 @@ class TimerCondition(ConditionInterface):
             self.remove()
         
 
-    def add_callback(self, callback: Callable[[int], Any]):
-        self.trigger.add_callback(callback)
+    def add_handler(self, callback: Callable[[int], Any]):
+        self.trigger.add_handler(callback)
         return self
 
 
