@@ -44,7 +44,7 @@ pysc.game.switch_backdrop(0)
 ```
 
 
-Your `main.py` should look like this: 
+## Your `main.py` should look like this
 ```python
 import pyscratch as pysc
 from settings import *
