@@ -6,7 +6,7 @@ nav_order: 1
 {: .no_toc }
 
 ---
-This section shows you how to create your first minimalistic flappy bird game using python. 
+This section shows you how to create your first example game using python. 
 
 <details open markdown="block">
   <summary>
@@ -24,22 +24,25 @@ This section shows you how to create your first minimalistic flappy bird game us
 
 ### 2. Open a new folder that will contain everything about the game 
 {: .no_toc }
+Name the new folder, let say, `my_first_game`
 
 
-### 3. Clone the repo from [github](https://github.com/kwdChan/pyscratch) into the new folder 
+### 3. Clone the [Pyscratch github repo](https://github.com/kwdChan/pyscratch) into the new folder 
 {: .no_toc }
 
 
 Your folder should look like this
 
 ```
-├─ my_first_game
-    ├─ pyscratch
+├─ my_first_game/
+    ├─ pyscratch/
         ├─ ...
 ```
 
 ### 4. Pip install the library 
 {: .no_toc }
+Open the folder `my_first_game` using vscode, and then run 
+`pip install -e pyscratch`
 
 
 ### 5. You are good to go!  
@@ -48,24 +51,34 @@ Your folder should look like this
 
 
 ## Start the game with an empty scene
-Create a file called `main.py` in the folder. This is how the folder should look like:
+Create two files in the folder, one called `main.py`, another one called `settings.py` 
+
+This is how the folder should look like:
 ```
-├─ my_first_game
-    ├─ pyscratch
-        ├─ ...
+├─ my_first_game/
+    ├─ pyscratch/
     ├─ main.py
+    ├─ settings.py
 ```
 
+`settings.py` is where you put some constant variables for the entire game. For now, you only need these three lines in this file.
 
-Add these lines in and run the script `main.py`. You should see a pygame window open. The program finishes when you close the window. 
+```python
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
+FRAMERATE = 60 # 60 frames per second
+```
+`main.py` is where you start the game. Put in these lines below and run the script `main.py`. 
 
 ```python
 import pyscratch as pysc
+from settings import * # import all the variables from settings.py
 
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
-FRAMERATE = 60
+# set screen size
+pysc.game.update_screen_mode((SCREEN_WIDTH, SCREEN_HEIGHT)) 
 
-pysc.game.update_screen_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pysc.game.start(FRAMERATE)
+# start the game with a the framerate
+pysc.game.start(FRAMERATE) 
 ```
+
+You should see a pygame window open. The program finishes when you close the window. 

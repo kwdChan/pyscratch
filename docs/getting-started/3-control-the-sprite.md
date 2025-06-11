@@ -1,40 +1,35 @@
 ---
 title: Control the Sprite
 parent: Getting Started
-nav_order: 2
+nav_order: 3
 ---
 # Control the Sprite
 If you are working in Scratch, you would have your sprite created by now and you would be programming the behaviour of the sprite using the code blocks. This is what we are going to do now in Python. 
 
-
-We want the left paddle to move up when the 'w' key is down, and to move down when the 's' key is down. 
-
-In Scratch, you will have a forever loop, triggered by the "when green flag clicked" event, testing if the keys are pressed. In Python, we create the loop first and then pass it on to the event. 
+We want the movement of the player using the wasd keys. In Scratch, you will have a forever loop, triggered by the "when green flag clicked" event, testing if the keys are pressed. We will do the same in Python here. 
 
 ```python
-import pyscratch as pysc
-
-paddle_colour = (200, 200, 200)
-paddle_width = 20
-paddle_height = 130
-
-left_paddle = pysc.create_rect_sprite(paddle_colour, paddle_width, paddle_height)
-left_paddle.set_draggable(True)
-
+player.set_rotation_style_left_right()
 def movement():
-
-    # This is a forever loop
-    while True: 
-        
+    while True:
         if pysc.sensing.is_key_pressed('w'):
-            left_paddle.y -= 8
+            player.y -= 4
 
         if pysc.sensing.is_key_pressed('s'):
-            left_paddle.y += 8
+            player.y += 4
+
+        if pysc.sensing.is_key_pressed('a'):
+            player.direction = 180
+            player.x -= 4
+            
+        if pysc.sensing.is_key_pressed('d'):
+            player.direction = 0
+            player.x += 4
+
 
         # wait for one frame (1/60th of a second)
         # can go lower or higher. doesn't really matter. 
-        yield 1/60
+        yield 1/FRAMERATE
     
         # used the keyword yield to wait for a certain time. 
         # for example, yield 1 means wait for 1 second 
@@ -43,8 +38,9 @@ def movement():
 
 
 # passing the function to the event as the event handler
-game_start_event = sprite.when_game_start()
+game_start_event = player.when_game_start()
 game_start_event.add_callback(movement)
+
 
 ```
 
