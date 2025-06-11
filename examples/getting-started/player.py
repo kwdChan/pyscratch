@@ -2,9 +2,11 @@ import pyscratch as pysc
 from settings import *
 
 
-player = pysc.create_single_costume_sprite("assets/fishes/107.png")
+player = pysc.create_single_costume_sprite("assets/kenney/player.png")
 player.set_draggable(True)
 player.set_rotation_style_left_right()
+player.private_data['size'] = 1
+
 
 # def movement():
 #     while True:
@@ -31,21 +33,26 @@ def movement():
     speed_x = 0
 
     while True:
+        player.set_scale(player.private_data['size'])
+        max_speed = 4#/player.private_data['size']
+
+
         if pysc.sensing.is_key_pressed('w'):
-            speed_y = -4
+            speed_y = -max_speed
 
         elif pysc.sensing.is_key_pressed('s'):
-            speed_y = 4
+            speed_y = max_speed
+
         else:
             speed_y *= speed_decay
 
         if pysc.sensing.is_key_pressed('a'):
             player.direction = 180
-            speed_x = -4
+            speed_x = -max_speed
             
         elif pysc.sensing.is_key_pressed('d'):
             player.direction = 0
-            speed_x = 4
+            speed_x = max_speed
         else:
             speed_x *= speed_decay
 

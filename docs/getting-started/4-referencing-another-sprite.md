@@ -1,7 +1,8 @@
 ---
 title: Functions that Reference to Other Sprites
 parent: Getting Started
-nav_order: 2
+nav_order: 4
+
 ---
 # Functions that Reference to other sprites
 

@@ -2,10 +2,10 @@ import pyscratch as pysc
 import player, enemy, hearts
 from settings import *
 
-background = pysc.helper.load_image('assets/medium-vecteezy_the-blue-underwater-sea-with_22967094_medium.jpg')
-pysc.game.set_backdrops([background])
+background_image = pysc.helper.load_image('assets/vecteezy/my_background.jpg')
+pysc.game.set_backdrops([background_image])
 pysc.game.switch_backdrop(0)
 
 pysc.game.update_screen_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pysc.game.start(FRAMERATE, debug_draw=True)
+pysc.game.start(FRAMERATE, debug_draw=False)
 
