@@ -35,7 +35,7 @@ import pyscratch as pysc
 from settings import *
 
 player = pysc.create_single_costume_sprite("assets/player.png")
-player.set_draggable(True) 
+player.set_draggable(True) # optionally: make the sprite draggable
 ```
 
 Here you created a sprite and you assigned it to a variable named `player`. To optionally make this sprite draggable, you run `player.set_draggable(True)`. 
@@ -44,9 +44,10 @@ Here you created a sprite and you assigned it to a variable named `player`. To o
 ## Import the sprite to `main.py` and run it
 Firstly, `main.py` is always where you start your game program, not any sprite files like this `player.py`. If you just run `player.py`, nothing will happen. 
 
-Secondly, if you just run `main.py` as it was, you won't see your new sprite. You need to add `import player` in order to tell python to include your code in `player` to the main program. 
+Secondly, if you just run `main.py` as it was, you won't see your new sprite. You need to add `import player` in order to tell python to include your code in `player` to the main program. And now you will see your sprite in the scene when you run `main.py`.
 
-Your `main.py` should look like this. 
+
+## Your `main.py` should look like this
 ```python
 import pyscratch as pysc
 from settings import *
@@ -60,4 +61,3 @@ pysc.game.update_screen_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pysc.game.start(FRAMERATE)
 ```
 
-And now you will see your sprite in the scene when you run `main.py`.

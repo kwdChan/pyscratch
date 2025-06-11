@@ -4,11 +4,11 @@ from settings import *
 
 player = pysc.create_single_costume_sprite("assets/kenney/player.png")
 player.set_draggable(True)
-player.set_rotation_style_left_right()
 player.private_data['size'] = 1
 
 
 # def movement():
+#     player.set_rotation_style_left_right()
 #     while True:
 #         if pysc.sensing.is_key_pressed('w'):
 #             player.y -= 4
@@ -24,10 +24,11 @@ player.private_data['size'] = 1
 #             player.direction = 0
 #             player.x += 4
 
-#         yield 1/60
+#         yield 1/FRAMERATE
 
 
 def movement():
+    player.set_rotation_style_left_right()
     speed_decay = 0.9
     speed_y = 0
     speed_x = 0
@@ -60,7 +61,7 @@ def movement():
         player.y += speed_y
         player.x += speed_x
 
-        yield 1/60
+        yield 1/FRAMERATE
 
 
 game_start_event = player.when_game_start()
