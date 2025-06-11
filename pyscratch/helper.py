@@ -78,7 +78,9 @@ def load_frames_from_folder(folder_path: Union[Path, str]):
             if f.is_dir():
                 continue
 
-            assert f.stem.isdigit(), "the file names must be integers"
+            if not f.stem.isdigit(): 
+                print(f'skipping: {f.name}')
+                continue
             index2image[int(f.stem)] = pygame.image.load(f).convert_alpha()
         
         return [index2image[i] for i in sorted(index2image.keys())]
