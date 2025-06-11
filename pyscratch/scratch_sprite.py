@@ -78,7 +78,7 @@ def create_edge_sprites(edge_colour = (255, 0, 0), thickness=4, collision_type=1
 
 class ScratchSprite(pygame.sprite.Sprite):
     
-    def __init__(self, frame_dict: Dict[str, List[pygame.Surface]], starting_mode:Optional[str]=None, pos= (100, 100), shape_type='box', shape_factor=1.0, body_type=pymunk.Body.KINEMATIC):
+    def __init__(self, frame_dict: Dict[str, List[pygame.Surface]], starting_mode:Optional[str]=None, pos= (100, 100), shape_type='circle', shape_factor=0.8, body_type=pymunk.Body.KINEMATIC):
         # DYNAMIC, KINEMATIC, STATIC
 
         super().__init__()
@@ -221,7 +221,7 @@ class ScratchSprite(pygame.sprite.Sprite):
     def set_friction(self, friction):
         self.friction = friction
     
-    def set_shape(self, shape_type='box', shape_factor=1.0, collision_allowed=False):
+    def set_shape(self, shape_type='circle', shape_factor=0.8, collision_allowed=False):
         # could be a function or a string
         # TODO: raise error when invalid mode is selected
         self.shape_type = shape_type
