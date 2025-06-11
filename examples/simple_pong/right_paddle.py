@@ -24,7 +24,7 @@ def movement():
         # wait for 1000/60 miliseconds
         yield 1/60
 
-game_start_event.add_callback(movement)
+game_start_event.add_handler(movement)
 
 
 pysc.game.shared_data['right_paddle'] = sprite

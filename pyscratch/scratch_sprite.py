@@ -39,7 +39,7 @@ def create_shared_data_display_sprite(key, font, size = (150, 50), colour=(127, 
             sprite.write_text(f"{key}: {game.shared_data[key]}", font=font, offset=(w/2, h/2))
             yield 100
 
-    sprite.when_game_start().add_callback(keep_score)
+    sprite.when_game_start().add_handler(keep_score)
     return sprite
 
 def create_circle_sprite(colour, radius, *args, **kwargs):

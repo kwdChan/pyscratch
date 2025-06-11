@@ -70,7 +70,7 @@ def game_start(data):
 
 
     game.when_timer_reset(1000/120).on_reset(run_forever)
-    game.when_receive_message('player_health').add_callback(on_health_change)
+    game.when_receive_message('player_health').add_handler(on_health_change)
 
 
 game.when_timer_reset(0.1, 1).on_reset(game_start)

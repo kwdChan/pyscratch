@@ -19,7 +19,7 @@ def create_enemy():
         enemy.clone_myself()
         yield 2
 
-enemy.when_game_start().add_callback(create_enemy)
+enemy.when_game_start().add_handler(create_enemy)
 
 
 # clone movement
@@ -64,7 +64,7 @@ def clone_movement(clone_sprite: pysc.ScratchSprite):
         clone_sprite.move_indir(2/size)
         yield 1/FRAMERATE
 
-enemy.when_started_as_clone().add_callback(clone_movement)
+enemy.when_started_as_clone().add_handler(clone_movement)
 
 # clone touch the player 
 def clone_touch_the_player(clone_sprite: pysc.ScratchSprite):
@@ -81,4 +81,4 @@ def clone_touch_the_player(clone_sprite: pysc.ScratchSprite):
 
         yield 1/FRAMERATE
     
-enemy.when_started_as_clone().add_callback(clone_touch_the_player)
+enemy.when_started_as_clone().add_handler(clone_touch_the_player)

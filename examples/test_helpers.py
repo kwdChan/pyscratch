@@ -16,5 +16,5 @@ def forever():
 
         yield 100
 
-x.when_game_start().add_callback(forever)
+x.when_game_start().add_handler(forever)
 pysc.game.start(60)

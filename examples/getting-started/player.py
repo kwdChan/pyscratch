@@ -64,7 +64,7 @@ def movement():
 
 
 game_start_event = player.when_game_start()
-game_start_event.add_callback(movement)
+game_start_event.add_handler(movement)
 
 
 
@@ -76,7 +76,7 @@ def check_health():
         yield 1/60
 
 
-game_start_event.add_callback(check_health)
+game_start_event.add_handler(check_health)
 
 
 pysc.game.shared_data['player'] = player

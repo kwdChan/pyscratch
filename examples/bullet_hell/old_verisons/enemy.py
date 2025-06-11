@@ -20,10 +20,10 @@ def create_bullet_attracted(position):
     bullet.point_towards_sprite(game.shared_data['player'])
 
 
-    movement_event = game.when_timer_reset(20).add_callback(lambda x: bullet.move_indir(speed))
-    following_event = game.when_timer_reset(200, 5).add_callback(lambda x: bullet.point_towards_sprite(game.shared_data['player']))
+    movement_event = game.when_timer_reset(20).add_handler(lambda x: bullet.move_indir(speed))
+    following_event = game.when_timer_reset(200, 5).add_handler(lambda x: bullet.point_towards_sprite(game.shared_data['player']))
 
-    frame_event = game.when_timer_reset(200).add_callback(lambda x: bullet.next_frame())
+    frame_event = game.when_timer_reset(200).add_handler(lambda x: bullet.next_frame())
     hitting_player_event = game.create_specific_collision_trigger(bullet, game.shared_data['player'])
 
     
@@ -31,7 +31,7 @@ def create_bullet_attracted(position):
         bullet.set_frame_mode('star_explosion')
         game.broadcast_message('player_health', -1)
         movement_event.remove()
-        game.when_timer_reset(200, 1).add_callback(destory)
+        game.when_timer_reset(200, 1).add_handler(destory)
 
 
     def destory(x):
@@ -42,8 +42,8 @@ def create_bullet_attracted(position):
         game.remove_sprite(bullet)
 
     when_exit_screen = game.when_condition_met(lambda: bullet.y > HEIGHT, repeats=1)
-    when_exit_screen.add_callback(destory)
-    hitting_player_event.add_callback(explode_and_destroy)
+    when_exit_screen.add_handler(destory)
+    hitting_player_event.add_handler(explode_and_destroy)
 
 
 
@@ -60,11 +60,11 @@ def create_bullet_start_pointing(position, _):
     bullet.point_towards_sprite(game.shared_data['player'])
 
 
-    movement_event = game.when_timer_reset(20).add_callback(lambda x: bullet.move_indir(speed))
+    movement_event = game.when_timer_reset(20).add_handler(lambda x: bullet.move_indir(speed))
     #movement_event = game.create_timer_trigger(20).on_reset(lambda x: bullet.move_across_dir((random.random()-0.5)*speed*0.3))
 
 
-    frame_event = game.when_timer_reset(200).add_callback(lambda x: bullet.next_frame())
+    frame_event = game.when_timer_reset(200).add_handler(lambda x: bullet.next_frame())
     hitting_player_event = game.create_specific_collision_trigger(bullet, game.shared_data['player'])
 
     
@@ -72,7 +72,7 @@ def create_bullet_start_pointing(position, _):
         bullet.set_frame_mode('star_explosion')
         game.broadcast_message('player_health', -1)
         movement_event.remove()
-        game.when_timer_reset(200, 1).add_callback(destory)
+        game.when_timer_reset(200, 1).add_handler(destory)
 
 
     def destory(x):
@@ -82,8 +82,8 @@ def create_bullet_start_pointing(position, _):
         game.remove_sprite(bullet)
 
     when_exit_screen = game.when_condition_met(lambda: bullet.y > HEIGHT, repeats=1)
-    when_exit_screen.add_callback(destory)
-    hitting_player_event.add_callback(explode_and_destroy)
+    when_exit_screen.add_handler(destory)
+    hitting_player_event.add_handler(explode_and_destroy)
     pass
 
 
@@ -110,10 +110,10 @@ def create_bullet_move_sine(position, rotation):
         bullet.move_indir(speed)
 
     
-    movement_event.add_callback(move)
+    movement_event.add_handler(move)
 
 
-    frame_event = game.when_timer_reset(200).add_callback(lambda x: bullet.next_frame())
+    frame_event = game.when_timer_reset(200).add_handler(lambda x: bullet.next_frame())
     hitting_player_event = game.create_specific_collision_trigger(bullet, game.shared_data['player'])
 
     
@@ -121,7 +121,7 @@ def create_bullet_move_sine(position, rotation):
         bullet.set_frame_mode('star_explosion')
         game.broadcast_message('player_health', -1)
         movement_event.remove()
-        game.when_timer_reset(200, 1).add_callback(destory)
+        game.when_timer_reset(200, 1).add_handler(destory)
 
 
     def destory(x):
@@ -131,8 +131,8 @@ def create_bullet_move_sine(position, rotation):
         game.remove_sprite(bullet)
 
     when_exit_screen = game.when_condition_met(lambda: (bullet.y > HEIGHT) or (bullet.y < 0) or (bullet.x <0) or (bullet.x>WIDTH) , repeats=1)
-    when_exit_screen.add_callback(destory)
-    hitting_player_event.add_callback(explode_and_destroy)
+    when_exit_screen.add_handler(destory)
+    hitting_player_event.add_handler(explode_and_destroy)
 
 
 
@@ -145,11 +145,11 @@ def create_bullet_type1(position, rotation):
     speed = random.random()*15+5
     #speed = 15
 
-    movement_event = game.when_timer_reset(20).add_callback(lambda x: bullet.move_indir(speed))
+    movement_event = game.when_timer_reset(20).add_handler(lambda x: bullet.move_indir(speed))
     #movement_event = game.create_timer_trigger(20).on_reset(lambda x: bullet.move_across_dir((random.random()-0.5)*speed*0.3))
 
 
-    frame_event = game.when_timer_reset(200).add_callback(lambda x: bullet.next_frame())
+    frame_event = game.when_timer_reset(200).add_handler(lambda x: bullet.next_frame())
     hitting_player_event = game.create_specific_collision_trigger(bullet, game.shared_data['player'])
 
     
@@ -157,7 +157,7 @@ def create_bullet_type1(position, rotation):
         bullet.set_frame_mode('star_explosion')
         game.broadcast_message('player_health', -1)
         movement_event.remove()
-        game.when_timer_reset(200, 1).add_callback(destory)
+        game.when_timer_reset(200, 1).add_handler(destory)
 
     when_exit_screen = game.when_condition_met(lambda: bullet.y > HEIGHT, repeats=1)
 
@@ -168,8 +168,8 @@ def create_bullet_type1(position, rotation):
         game.remove_sprite(bullet)
         when_exit_screen.remove()
 
-    when_exit_screen.add_callback(destory)
-    hitting_player_event.add_callback(explode_and_destroy)
+    when_exit_screen.add_handler(destory)
+    hitting_player_event.add_handler(explode_and_destroy)
 
 
 
@@ -190,8 +190,8 @@ def create_enemy_type1(position):
 
 
 
-    movement_event = game.when_timer_reset(20).add_callback(lambda x: enemy_sprite.move_indir(speed))
-    bullet_event = game.when_timer_reset(150).add_callback(lambda x: create_bullet_type1((enemy_sprite.x, enemy_sprite.y), enemy_sprite.get_rotation()))
+    movement_event = game.when_timer_reset(20).add_handler(lambda x: enemy_sprite.move_indir(speed))
+    bullet_event = game.when_timer_reset(150).add_handler(lambda x: create_bullet_type1((enemy_sprite.x, enemy_sprite.y), enemy_sprite.get_rotation()))
     #bullet_event = game.create_timer_trigger(1500).on_reset(lambda x: create_bullet_attracted((enemy_sprite.x, enemy_sprite.y)))
 
     when_hit_player = game.when_condition_met(lambda: sensing.is_touching(game, enemy_sprite, game.shared_data['player']), repeats=1)
@@ -214,12 +214,12 @@ def create_enemy_type1(position):
         if enemy_sprite.shape in a.shapes:
             destroy(None)
 
-    when_hit_player.add_callback(destroy)
-    when_hit_player.add_callback(lambda x: game.broadcast_message('player_health', -1))
+    when_hit_player.add_handler(destroy)
+    when_hit_player.add_handler(lambda x: game.broadcast_message('player_health', -1))
     
-    when_leaving_screen.add_callback(destroy)
+    when_leaving_screen.add_handler(destroy)
 
-    when_hit_by_player_bullet.add_callback(check_collision)
+    when_hit_by_player_bullet.add_handler(check_collision)
 
 
     

@@ -10,11 +10,11 @@ def shoot_player_bullet(player):
     bullet.set_collision_type(PLAYER_BULLET_TYPE)
     bullet.set_rotation(-90)
 
-    movement_timer = pysc.game.when_timer_reset(1000/240).add_callback(
+    movement_timer = pysc.game.when_timer_reset(1000/240).add_handler(
         lambda x: bullet.move_indir(2)
     )
 
-    next_frame_timer = pysc.game.when_timer_reset(100).add_callback(
+    next_frame_timer = pysc.game.when_timer_reset(100).add_handler(
         lambda x: bullet.next_frame()
     )
 
@@ -26,9 +26,9 @@ def shoot_player_bullet(player):
 
 
     destroy_condition = pysc.game.when_condition_met(lambda: (bullet.y < 0), repeats=1)
-    destroy_condition.add_callback(destroy_when_exit)
+    destroy_condition.add_handler(destroy_when_exit)
 
 
 
 
-pysc.game.when_receive_message('player_shoot_bullet').add_callback(shoot_player_bullet)
+pysc.game.when_receive_message('player_shoot_bullet').add_handler(shoot_player_bullet)

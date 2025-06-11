@@ -55,6 +55,6 @@ def movement():
 
     
 
-game_start_event.add_callback(movement)
+game_start_event.add_handler(movement)
 
 pysc.game.shared_data['ball_sprite'] = ball_sprite

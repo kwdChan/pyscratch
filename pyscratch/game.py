@@ -178,7 +178,7 @@ class Game:
         
         # key events 
         key_event = self.create_pygame_event_trigger([pygame.KEYDOWN, pygame.KEYUP])
-        key_event.add_callback(self.__key_event_handler)
+        key_event.add_handler(self.__key_event_handler)
         self.all_simple_key_triggers: List[Trigger] = [] # these are to be triggered by self.__key_event_handler only
 
         # mouse dragging event
@@ -187,7 +187,7 @@ class Game:
 
         self.sprite_click_trigger:Dict[ScratchSprite, List[Trigger]] = {}  #TODO: need to be able to destory the trigger here when the sprite is destoryed
         mouse_drag_trigger = self.create_pygame_event_trigger([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
-        mouse_drag_trigger.add_callback(self.__mouse_drag_handler)
+        mouse_drag_trigger.add_handler(self.__mouse_drag_handler)
 
         ## Backdrops
         self.backdrops = []

@@ -12,7 +12,7 @@ def display_score():
     r = pysc.game.shared_data['right_score'] 
     score_board.write_text(f'{l} - {r}', font, offset=(150//2, 70//2))
 
-game_start_event.add_callback(display_score)
+game_start_event.add_handler(display_score)
 
 
 left_score_event = score_board.when_receive_message('left_score')
@@ -22,7 +22,7 @@ def left_score(data):
 
     display_score()
 
-left_score_event.add_callback(left_score)
+left_score_event.add_handler(left_score)
 
 
 right_score_event = score_board.when_receive_message('right_score')
@@ -32,7 +32,7 @@ def right_score(data):
 
     display_score()
 
-right_score_event.add_callback(right_score)
+right_score_event.add_handler(right_score)
 
 on_click = score_board.when_this_sprite_clicked()
 resume_game_event = pysc.game.when_any_key_pressed()
@@ -46,7 +46,7 @@ def on_space_release(key, updown):
         resume_game()
 
 
-resume_game_event.add_callback(on_space_release)
-on_click.add_callback(resume_game)
+resume_game_event.add_handler(on_space_release)
+on_click.add_handler(resume_game)
 
 

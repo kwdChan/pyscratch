@@ -81,21 +81,21 @@ def create_standard_enemy(position, rotation, start_point, pointing_to_player, s
 
     ## 1. move a straight line   
     movement_event = enemy_sprite.when_timer_reset(20)
-    movement_event.add_callback(lambda x: enemy_sprite.move_indir(speed))
+    movement_event.add_handler(lambda x: enemy_sprite.move_indir(speed))
 
     if pointing_to_player: 
-        movement_event.add_callback(
+        movement_event.add_handler(
             lambda x: enemy_sprite.point_towards_sprite(pysc.game.shared_data['player'])
         )
 
 
     ## 2. shoot bullets (of type based on the level) at a constant interval (based on the level)
-    bullet_event = enemy_sprite.when_timer_reset(bullet_period).add_callback(lambda x: create_straight_bullet((enemy_sprite.x, enemy_sprite.y), enemy_sprite.get_rotation()))
+    bullet_event = enemy_sprite.when_timer_reset(bullet_period).add_handler(lambda x: create_straight_bullet((enemy_sprite.x, enemy_sprite.y), enemy_sprite.get_rotation()))
 
 
     ## 3. hitting a player
     when_hit_player = pysc.game.when_condition_met(lambda: pysc.sensing.is_touching(pysc.game, enemy_sprite, pysc.game.shared_data['player']), repeats=1, associated_sprites=[enemy_sprite])
-    when_hit_player.add_callback(lambda x: pysc.game.broadcast_message('player_health', -1))
+    when_hit_player.add_handler(lambda x: pysc.game.broadcast_message('player_health', -1))
 
     ## 4. hit by player buller
     when_hit_by_player_bullet = pysc.game.create_type2type_collision_trigger(PLAYER_BULLET_TYPE, ENEMY_TYPE, associated_sprites=[enemy_sprite])
@@ -116,16 +116,16 @@ def create_standard_enemy(position, rotation, start_point, pointing_to_player, s
         if enemy_sprite.shape in a.shapes:
             destroy(None)
     
-    when_hit_by_player_bullet.add_callback(check_collision)
-    when_hit_player.add_callback(destroy)
-    when_leaving_screen.add_callback(destroy)
+    when_hit_by_player_bullet.add_handler(check_collision)
+    when_hit_player.add_handler(destroy)
+    when_leaving_screen.add_handler(destroy)
 
 
 # testing only
-pysc.game.when_timer_reset(500, 20).add_callback(spawn_random)
+pysc.game.when_timer_reset(500, 20).add_handler(spawn_random)
 
 
-pysc.game.when_timer_reset(3000, 1).add_callback(spawn_6_side_entry)
-pysc.game.when_timer_reset(2000, 1).add_callback(spawn_line)
+pysc.game.when_timer_reset(3000, 1).add_handler(spawn_6_side_entry)
+pysc.game.when_timer_reset(2000, 1).add_handler(spawn_line)
 
 

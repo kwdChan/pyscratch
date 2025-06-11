@@ -24,7 +24,7 @@ def create_enemy(_):
             enemy.move_indir(1)
             yield 1/FRAMERATE
     # TODO: soft remove the event so the generator still get run 
-    enemy.when_timer_above(0).add_callback(movement)
+    enemy.when_timer_above(0).add_handler(movement)
 
 
-pysc.game.when_timer_reset(2).add_callback(create_enemy)
+pysc.game.when_timer_reset(2).add_handler(create_enemy)
