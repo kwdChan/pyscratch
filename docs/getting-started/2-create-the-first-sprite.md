@@ -35,7 +35,7 @@ import pyscratch as pysc
 from settings import *
 
 player = pysc.create_single_costume_sprite("assets/player.png")
-player.set_draggable(True) # optionally: make the sprite draggable
+player.set_draggable(True) # optional: make the sprite draggable
 ```
 
 Here you created a sprite and you assigned it to a variable named `player`. To optionally make this sprite draggable, you run `player.set_draggable(True)`. 

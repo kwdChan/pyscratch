@@ -4,6 +4,7 @@ parent: Getting Started
 nav_order: 3
 ---
 # Control the Sprite
+---
 If you are working in Scratch, you would have your sprite created by now and you would be programming the behaviour of the sprite using the code blocks. This is what we are going to do now in Python. 
 
 We want the movement of the player using the wasd keys. In Scratch, you will have a forever loop, triggered by the "when green flag clicked" event, testing if the keys are pressed. We will do the same in Python here. 
@@ -63,6 +64,12 @@ This library is designed to be highly analogous to Scratch, and most of the Scra
 
 ## Now your `player.py` look like this
 ```python
+import pyscratch as pysc
+from settings import *
+
+player = pysc.create_single_costume_sprite("assets/player.png")
+player.set_draggable(True) # optional: make the sprite draggable
+
 def movement():
     player.set_rotation_style_left_right()
 
