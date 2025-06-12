@@ -48,6 +48,11 @@ Secondly, if you just run `main.py` as it was, you won't see your new sprite. Yo
 
 
 ## Your `main.py` should look like this
+<details markdown="block">
+  <summary>
+    main.py
+  </summary>
+
 ```python
 import pyscratch as pysc
 from settings import *
@@ -61,3 +66,4 @@ pysc.game.update_screen_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pysc.game.start(FRAMERATE)
 ```
 
+</details>

@@ -17,7 +17,6 @@ Let's create some other fishes to the game.
 </details>
 
 ## Create the parent sprite
-{: .no_toc }
 
 First, we create the sprite as uaual.
 
@@ -53,13 +52,26 @@ We want to clone the sprite every 2 seconds and make them appear in a somewhat r
 ```python
 def clone_every_2_sec():
     while True:
-        # analogous to `create clone of [enemy]` in scratch
-        enemy.clone_myself()
+        enemy.clone_myself() # analogous to `create clone of [enemy]` in scratch
         yield 2
 
-game_start_event = enemy.when_game_start()
-game_start_event.add_handler(create_enemy)
+enemy.when_game_start().add_handler(create_enemy)
+
+# the above is the same as: 
+# game_start_event = enemy.when_game_start()
+# game_start_event.add_handler(create_enemy)
+
 ```
+
+<details open markdown="block">
+  <summary>
+    Analogous Scratch Code
+  </summary>
+  <img src="create-clone.png" alt="create-clone" width="200"/>
+</details>
+
+
+
 
 **2. When I start as a clone**
 We use the `when_started_as_clone` event to program the movement of the clone. 
@@ -83,9 +95,22 @@ def clone_movement(clone_sprite):
 
         yield 1/FRAMERATE
 
-clone_event = enemy.when_started_as_clone()
-clone_event.add_handler(clone_movement)
+enemy.when_started_as_clone().add_handler(clone_movement)
+
+# the above is the same as: 
+# clone_event = enemy.when_started_as_clone()
+# clone_event.add_handler(clone_movement)
 ```
+<details open markdown="block">
+  <summary>
+    Analogous Scratch Code
+  </summary>
+  <img src="clone-movement.png" alt="clone-movement" width="300"/>
+
+  Note that in this library, the top-left corner is (x=0, y=0) and buttom-right corner is (x=1280, y=720) in this example depending your `SCREEN_WIDTH` and `SCREEN_HEIGHT`.
+
+</details>
+
 
 Note that the `enemy` variable represents only the parent sprite that we clone from, not the clone itself. If you are unsure what this means, try running this incorrect version below: 
 
@@ -101,16 +126,17 @@ def clone_movement(clone_sprite):
 
         yield 1/FRAMERATE
 
-clone_event = enemy.when_started_as_clone()
-clone_event.add_handler(clone_movement)
+enemy.when_started_as_clone().add_handler(clone_movement)
 ```
 
-You will see the parent fish get moved but the clone fish does not.  
+You will see the parent fish get moved but the clone fish does not. This behaviour cannot be achieved by Scratch.
 
 
-## Your folder should look like this:
 
-<details open markdown="block">
+## Your folder should look like this
+{: .no_toc }
+
+<details markdown="block">
   <summary>
     Folder Structure
   </summary>
@@ -128,7 +154,7 @@ You will see the parent fish get moved but the clone fish does not.
 ```
 </details>
 
-<details open markdown="block">
+<details markdown="block">
   <summary>
     enemy.py
   </summary>
@@ -143,12 +169,10 @@ enemy = pysc.create_single_costume_sprite("assets/other_fishes.png")
 ## event: when game start -> create the clone
 def clone_every_2_sec():
     while True:
-        # analogous to `create clone of [enemy]` in scratch
-        enemy.clone_myself()
+        enemy.clone_myself() 
         yield 2
 
-game_start_event = enemy.when_game_start()
-game_start_event.add_handler(create_enemy)
+enemy.when_game_start().add_handler(create_enemy)
 
 ## event: when started as clone -> movement
 def clone_movement(clone_sprite):
@@ -164,14 +188,13 @@ def clone_movement(clone_sprite):
 
         yield 1/FRAMERATE
 
-clone_event = enemy.when_started_as_clone()
-clone_event.add_handler(clone_movement)
+enemy.when_started_as_clone().add_handler(clone_movement)
 
 ```
 </details>
 
 
-<details open markdown="block">
+<details markdown="block">
   <summary>
     main.py
   </summary>
