@@ -1,9 +1,9 @@
 ---
-title: Clone a Sprite
+title: Cloning a Sprite
 parent: Getting Started
 nav_order: 4
 ---
-# Clone a Sprite
+# Cloning a Sprite
 {: .no_toc }
 ---
 Let's create some other fishes to the game. 
@@ -67,7 +67,7 @@ enemy.when_game_start().add_handler(create_enemy)
   <summary>
     Analogous Scratch Code
   </summary>
-  <img src="create-clone.png" alt="create-clone" width="200"/>
+  <img src="img/create-clone.png" alt="img/create-clone" width="200"/>
 </details>
 
 
@@ -105,7 +105,7 @@ enemy.when_started_as_clone().add_handler(clone_movement)
   <summary>
     Analogous Scratch Code
   </summary>
-  <img src="clone-movement.png" alt="clone-movement" width="300"/>
+  <img src="img/clone-movement.png" alt="img/clone-movement" width="300"/>
 
   Note that in this library, the top-left corner is (x=0, y=0) and buttom-right corner is (x=1280, y=720) in this example depending your `SCREEN_WIDTH` and `SCREEN_HEIGHT`.
 
@@ -203,10 +203,6 @@ enemy.when_started_as_clone().add_handler(clone_movement)
 import pyscratch as pysc
 from settings import *
 import player, enemy
-
-background_image = pysc.helper.load_image('assets/my_background.jpg')
-pysc.game.set_backdrops([background_image])
-pysc.game.switch_backdrop(0)
 
 pysc.game.update_screen_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pysc.game.start(FRAMERATE)

@@ -29,14 +29,15 @@ def clone_touch_the_player(clone_sprite):
         yield 1/FRAMERATE
     
 enemy.when_started_as_clone().add_handler(clone_touch_the_player)
-
 ```
+
+Note that in this library, the parent and clones are treated as separate sprites. So `player.is_touching(enemy)` will only detect the touching between the player and the parent enemy, not clone enemies. Therefore, the touching of the clone should detected by the clone instead of the player. 
 
 <details open markdown="block">
   <summary>
     Analogous Scratch Code
   </summary>
-  <img src="collision-detection.png" alt="collision-detection" width="300"/>
+  <img src="img/collision-detection.png" alt="img/collision-detection" width="200"/>
 </details>
 
 

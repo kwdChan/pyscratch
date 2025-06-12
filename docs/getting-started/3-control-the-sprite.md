@@ -42,9 +42,12 @@ def movement():
 game_start_event = player.when_game_start()
 game_start_event.add_handler(movement)
 ```
-
 A function in python is similar to the stack of code blocks without the event on top (without the event on top, the code blocks will never run); and passing the function to the event as the handler is essentially attaching the stack of code blocks to the event block in Scratch. 
 
+In this library, we use `yield` as as the wait block in Scratch. But unlike Scratch, the wait is necessary within the loop. Without waiting, python will put everything aside 
+to attempt to run the loop as quickly as possible. A repeat loop (`for` loop) for 100 times will be finished instantly, but a forever loop will halt the program. 
+
+Here we wait for 1/60th of a second, which is the duration of one frame when the framerate is 60, so the movement appears smoothly. However, the choice of this value is arbitrary. You can do 1/30, 1/120, 0.01 or whatever. 
 
 Note that in this library, 180 is pointing to the left; 0 is pointing to the right. The top-left corner is (x=0, y=0) and the buttom-right corner is (x=1280, y=720) in this example depending your `SCREEN_WIDTH` and `SCREEN_HEIGHT`.
 
@@ -53,7 +56,7 @@ Note that in this library, 180 is pointing to the left; 0 is pointing to the rig
   <summary>
     Analogous Scratch Code
   </summary>
-  <img src="basic-movement.png" alt="basic-movement.png" width="300"/>
+  <img src="img/basic-movement.png" alt="img/basic-movement.png" width="300"/>
   
 </details>
 

@@ -8,10 +8,13 @@ nav_order: 2
 Let's first create the player sprite. First, you need to find an image for this sprite. 
 
 ## Find a suitable image for the sprite
-1. Locate this image `my_first_game/pyscratch/example/getting-started/assets/kenney/player.png`. Open it and have a look.
+1. Create a new folder called `assets`. All the media, including images, sound and fonts will be put inside this folder. 
 
-2. Copy and paste it inside the `assets` folder. 
+2. We have already prepared a sprite image for this tutorial. Locate this image `my_first_game/pyscratch/example/getting-started/assets/kenney/player.png`. Open it and have a look.
 
+3. Copy and paste it inside the `assets` folder. 
+
+Assuming that you have already created the empty scene following the [previous page](index), now your folder should look like this. 
 
 ## Open a new file for a new sprite
 In Pyscratch, each sprite should have its own python file that contains the codes controlling the sprite. This is analogous to Scratch having different tabs for different sprites. 
@@ -21,7 +24,6 @@ We open a new file called `player.py`
 ├─ my_first_game/
     ├─ pyscratch/
     ├─ assets/
-        ├─ my_background.jpg
         ├─ player.png
     ├─ main.py
     ├─ settings.py
@@ -57,10 +59,6 @@ Secondly, if you just run `main.py` as it was, you won't see your new sprite. Yo
 import pyscratch as pysc
 from settings import *
 import player
-
-background_image = pysc.helper.load_image('assets/my_background.jpg')
-pysc.game.set_backdrops([background_image])
-pysc.game.switch_backdrop(0)
 
 pysc.game.update_screen_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pysc.game.start(FRAMERATE)
