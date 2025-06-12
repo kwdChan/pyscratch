@@ -21,7 +21,7 @@ These are just different functional parts that serve different purposes. They ar
 ## Core Functions
 A minimal set of functions that is highly analogous to the Scratch blocks for easy transitioning from Scratch to python. It should be possible to "translate" the majority of the Scratch programs into python using the core features with some [exceptions](corresponding-scratch-blocks/exceptions.html).  
 
-The major development of this part of the library is considered completed but small updates and testing is still required. 
+The major development of this part of the library is considered completed but some small updates and testings are still required. 
 
 
 ## Extended Functions

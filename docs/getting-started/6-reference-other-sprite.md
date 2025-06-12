@@ -23,13 +23,21 @@ Now, you can detect the collision
 # clone touch the player 
 def clone_touch_the_player(clone_sprite):
     player = pysc.game.shared_data['player']
-
     while True:
         if clone_sprite.is_touching(player):
             clone_sprite.remove()
-
         yield 1/FRAMERATE
     
 enemy.when_started_as_clone().add_handler(clone_touch_the_player)
 
 ```
+
+<details open markdown="block">
+  <summary>
+    Analogous Scratch Code
+  </summary>
+  <img src="collision-detection.png" alt="collision-detection" width="300"/>
+</details>
+
+
+
