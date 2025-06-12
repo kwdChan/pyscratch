@@ -16,7 +16,7 @@ pysc.game.shared_data['player'] = player
 ```
 
 
-Now, you can detect the collision 
+Now, you can detect the collision by adding this event to `enemy.py`
 
 ```python 
 
