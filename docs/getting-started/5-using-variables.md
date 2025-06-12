@@ -66,7 +66,7 @@ Note that the variables defined inside the function is not accessible outside th
   <summary>
     Analogous Scratch Code
   </summary>
-  <img src="movement-drift.png" alt="movement-drift" width="300"/>
+  <img src="img/movement-drift.png" alt="img/movement-drift" width="300"/>
 </details>
 
 
@@ -98,7 +98,7 @@ pysc.game.when_game_start().add_handler(ocean_current_change)
   <summary>
     Analogous Scratch Code
   </summary>
-  <img src="current-changes.png" alt="current-changes" width="300"/>
+  <img src="img/current-changes.png" alt="img/current-changes" width="300"/>
 </details>
 
 
@@ -118,7 +118,7 @@ enemy.when_started_as_clone().add_handler(ocean_current_movement)
   <summary>
     Analogous Scratch Code
   </summary>
-  <img src="moved-by-current-clone.png" alt="moved-by-current-clone" width="200"/>
+  <img src="img/moved-by-current-clone.png" alt="img/moved-by-current-clone" width="200"/>
 </details>
 
 
@@ -139,7 +139,7 @@ player.when_game_start().add_handler(ocean_current_movement)
   <summary>
     Analogous Scratch Code
   </summary>
-  <img src="moved-by-current.png" alt="moved-by-current" width="200"/>
+  <img src="img/moved-by-current.png" alt="img/moved-by-current" width="200"/>
 </details>
 
 
