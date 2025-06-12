@@ -146,6 +146,8 @@ class ScratchSprite(pygame.sprite.Sprite):
         self.is_dragging = is_dragging
 
     def set_frame_mode(self, new_mode):
+        if new_mode == self.frame_mode:
+            return 
         self.frame_mode = new_mode
         self.frames = self.frame_dict[new_mode]
         self.set_frame(0)
