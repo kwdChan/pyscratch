@@ -7,13 +7,12 @@ nav_order: 6
 # Sensing
 ---
 **touching [mouse-pointer/edge/sprite]**
-- `pysc.sensing.is_touching(sprite_a, sprite_b)`
-- `pysc.sensing.is_touching_mouse(sprite)`
-- `sprite.is_touching(sprite_b)`
-- edges are created as sprites
+- `sprite_a.is_touching(sprite_b)`
+- `sprite_a.is_touching_mouse()`
+- edges need to be created as sprites using `pysc.create_edge_sprites()`
 
-**touching color / color is touching color**
-- impossible to implement and unimportant
+**touching [color] / [color1] is touching [color2]**
+- impossible to implement 
 
 **distance to [mouse-pointer/edge/sprite]**
 - `sprite.distance_to(position)`
@@ -31,7 +30,7 @@ nav_order: 6
 **mouse x / mouse y**
 - `pysc.sensing.get_mouse_pos()`
 
-**set drag mode** 
+**set drag mode [draggable/not draggable]** 
 - `sprite.set_draggable(True)`
 
 **timer**
