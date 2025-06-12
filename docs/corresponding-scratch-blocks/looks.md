@@ -10,11 +10,11 @@ nav_order: 2
 - will likely be implemented in the future 
 
 **switch costume to [costume]  / next costume**
-- `sprite.set_frame(index: int)
+- `sprite.set_frame(index: int)`
 - `sprite.next_frame()`
 - extended feature: `sprite.set_frame_mode(mode: str)`
 
-**switch backdrop to [backdrop] / next backdrop
+**switch backdrop to [backdrop] / next backdrop**
 - `pysc.game.switch_backdrop(index: int)`
 - `pysc.game.next_backdrop()`
 
@@ -33,8 +33,8 @@ nav_order: 2
 - just set the effects to 1
 
 **show** / **hide**
-- ==`pysc.game.show_sprite(sprite)` ==
-- ==`pysc.game.hide_sprite(sprite)`==
+- `sprite.show()`
+- `sprite.hide()`
 
 **go to [front/back] layer**
 - `pysc.game.move_to_back(sprite)`

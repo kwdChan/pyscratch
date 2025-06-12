@@ -2,7 +2,7 @@
 title: Assets Proceessing Functions
 nav_order: 5
 ---
-
+TODO: link to reference manual 
 
 ## Adding a sprite to the scene 
 **Basic shapes**
@@ -14,6 +14,7 @@ nav_order: 5
 
 **Animated sprite** (multiple costumes with different mode)
 - `pysc.create_animated_sprite`
+- `pysc.helper.save_frame_from_sprite_sheet`
 
 
 
@@ -24,6 +25,7 @@ nav_order: 5
 	- `pysc.helper.scale_to_fit_aspect`
 	- `pysc.helper.scale_and_tile`
 - `game.set_backdrops([background])`
+
 
 
 
