@@ -11,7 +11,7 @@ sprite_sheet = pygame.image.load("assets/Sprout Lands - Sprites - Basic pack/Cha
 
 background = pygame.image.load('assets/kenney_fish-pack_2/Sample.png').convert() # TODO: convert is needed 
 #background = scale_to_fit_aspect(background, game.screen.get_size())
-background = scale_to_fill_screen(background, game.screen.get_size())
+background = scale_to_fill_screen(background, game._screen.get_size())
 #background = scale_and_tile(background, game.screen.get_size(), 0.5)
 
 
