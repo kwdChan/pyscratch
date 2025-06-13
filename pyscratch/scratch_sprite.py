@@ -94,6 +94,7 @@ class ScratchSprite(pygame.sprite.Sprite):
         if starting_mode is None:
             starting_mode = list(self.frame_dict.keys())[0]  # there must be at least one frame in the frame_dict so assuming index 0 is okay
 
+        self.frame_mode = ''
         self.set_frame_mode(starting_mode)
         self.set_frame(0)
 
@@ -284,7 +285,7 @@ class ScratchSprite(pygame.sprite.Sprite):
                 for f in frames]
 
         # 
-        self.set_frame_mode(self.frame_mode)
+        self.frames = self.frame_dict[self.frame_mode]
         self.__request_update_shape()
 
     def set_brightness(self, factor):
@@ -422,7 +423,7 @@ class ScratchSprite(pygame.sprite.Sprite):
             shape_factor = self.shape_factor, 
             body_type = self.body.body_type, 
         )
-        if not self in game.all_sprites_to_show:
+        if not self in game._all_sprites_to_show:
             game.hide_sprite(sprite)
         sprite.set_rotation(self.get_rotation())
         sprite.scale_by(self.scale_factor)
