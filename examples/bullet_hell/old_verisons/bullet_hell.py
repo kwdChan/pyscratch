@@ -45,7 +45,7 @@ frames = get_frame_dict(sprite_sheet, 36, 13, {
 
 
 
-start_buttom = create_rect_sprite((200, 0, 0), width=150, height=60, pos=(game.screen.get_width()//2, game.screen.get_height()//2))
+start_buttom = create_rect_sprite((200, 0, 0), width=150, height=60, pos=(game._screen.get_width()//2, game._screen.get_height()//2))
 start_buttom.write_text("Click to Start", font)
 #game.add_sprite(start_buttom)
 

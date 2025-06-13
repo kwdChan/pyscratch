@@ -56,7 +56,7 @@ def create_edge_sprites(edge_colour = (255, 0, 0), thickness=4, collision_type=1
     # TODO: make the edge way thicker to avoid escape due to physics inaccuracy 
     # edges
     edge_body = pymunk.Body.STATIC
-    screen_w, screen_h = game.screen.get_width(), game.screen.get_height()
+    screen_w, screen_h = game._screen.get_width(), game._screen.get_height()
 
     top_edge = create_rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, 0),body_type= edge_body)
     bottom_edge = create_rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, screen_h),body_type= edge_body)
@@ -434,7 +434,7 @@ class ScratchSprite(pygame.sprite.Sprite):
         sprite.rotation_style = self.rotation_style
 
 
-        game.clone_event_manager.on_clone(self, sprite)
+        game._clone_event_manager.on_clone(self, sprite)
         return sprite
     
 
