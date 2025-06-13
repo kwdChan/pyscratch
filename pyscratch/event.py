@@ -9,6 +9,7 @@ import numpy as np
 P = ParamSpec('P')
 T = TypeVar('T')
 def declare_callback_type(obj: Trigger, func: Callable[P, Union[NoneType, Generator[float, None, None]]]) -> Trigger[P]:
+    """@private"""
     return obj
 
 
@@ -27,8 +28,6 @@ class Trigger(Generic[P]):
     def stay_active(self):
         return self.__stay_active
 
-
-
     def trigger(self, *args: P.args, **kwargs: P.kwargs):
         self.__triggers.append((args, kwargs))
     
@@ -37,10 +36,13 @@ class Trigger(Generic[P]):
         return self
 
     def handle_all(self, current_t_ms):
+        """@private"""
         while self.handle_one(current_t_ms):
             pass
         
     def handle_one(self, current_t_ms):
+        """@private"""
+
         if not len(self.__triggers): 
             return False
         
@@ -57,6 +59,7 @@ class Trigger(Generic[P]):
         return True
     
     def generators_proceed(self, current_t_ms):
+        """@private"""
         # cannot have yield 0
         to_remove = []
 
@@ -75,6 +78,8 @@ class Trigger(Generic[P]):
 
 
 class ConditionInterface:
+    """@private"""
+
     def check(self):
         pass
     
