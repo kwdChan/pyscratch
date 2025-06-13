@@ -1,6 +1,6 @@
 ---
 title: Adding an Animated Sprite
-parent: Programming Guideline
+parent: Guides
 nav_order: 2
 ---
 # Adding an Animated Sprite
@@ -69,22 +69,18 @@ def movement():
 player.when_game_start().add_handler(movement)
 ```
 
-## Setting collision shape
-
 ## Follow through tutorial
 TODO: prepare the material
 
 
 ## Where to find good images for my sprite
 TODO: 
+
 https://kenney.nl/assets/space-shooter-redux
+
 https://www.gamedevmarket.net/
+
 https://opengameart.org/content/a-platformer-in-the-forest
-
-
-
-## Cutting a sprite sheet
-TODO: 
 
 
 

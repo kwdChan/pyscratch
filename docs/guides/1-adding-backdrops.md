@@ -1,6 +1,6 @@
 ---
 title: Adding a Backdrop
-parent: Programming Guideline
+parent: Guides
 nav_order: 1
 ---
 # Adding a Backdrop
@@ -53,11 +53,6 @@ background_image = pysc.helper.scale_to_fill_screen(background_image, screen_siz
 # background_image = pysc.helper.scale_to_fit_aspect(background_image, screen_size)
 # background_image = pysc.helper.scale_and_tile(background_image, screen_size)
 ```
-
-
-## Where to find good images for backdrops
-Search for 'stock images' in any search engine will get you a lot of choices. 
-
 
 ## Your `main.py` should look like this
 ```python

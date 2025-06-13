@@ -1,6 +1,6 @@
 ---
-title: ScratchSprite
+title: game
 parent: Reference Manual
-nav_order: 1
+nav_order: 2
 ---
 
