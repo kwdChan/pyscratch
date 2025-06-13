@@ -1,6 +1,6 @@
 ---
 title: Adding Sound
-parent: Programming Guideline
+parent: Guides
 nav_order: 3
 ---
 # Adding Sound
@@ -26,5 +26,7 @@ pysc.game.play_sound('pong', volume=0.7)
 
 ## Where to find good sound effects
 https://freesound.org/
+
 https://soundbible.com/1781-Metal-Clang.html
+
 https://www.freesoundeffects.com/

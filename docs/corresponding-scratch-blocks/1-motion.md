@@ -30,7 +30,7 @@ nav_order: 1
 - assignment of `sprite.x`, `sprite.y`
 
 **glide**
-- no correspondence but achievable though coding
+- no corresponding functions but achievable though coding
 
 **point in direction [N]**
 - assignment of `sprite.direction` 
