@@ -1,4 +1,0 @@
-pymunk
-pygame
-jupyterlab 
-numpy

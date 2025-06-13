@@ -1,4 +1,5 @@
 from __future__ import annotations
+from os import PathLike
 
 import numpy as np
 import pygame
@@ -14,6 +15,7 @@ if TYPE_CHECKING:
 
 
 def collision_begin(arbiter, space, data):
+    """@private"""
     game = cast(Game, data['game'])
     game.contact_pairs_set.add(arbiter.shapes) 
 
@@ -37,6 +39,7 @@ def collision_begin(arbiter, space, data):
     return collision_allowed
 
 def collision_separate(arbiter, space, data):
+    """@private"""
     game = cast(Game, data['game'])
 
     if arbiter.shapes in game.contact_pairs_set:
@@ -49,6 +52,8 @@ def collision_separate(arbiter, space, data):
 
 
 class CloneEventManager:
+    """@private"""
+
     def __init__(self):
         # TODO: removed sprites stay here forever
         self.identical_sprites_and_triggers: List[Tuple[Set[ScratchSprite], List[Trigger]]] = []
@@ -77,6 +82,8 @@ class CloneEventManager:
         
 
 class SpriteEventDependencyManager:
+    """@private"""
+
     def __init__(self):
 
         self.sprites: Dict[ScratchSprite, List[Union[Trigger, ConditionInterface]]] = {}
@@ -103,10 +110,14 @@ class SpriteEventDependencyManager:
             e.remove()
 
 T = TypeVar('T')
-# T2 = TypeVar('T2')
+"""@private"""
+
 P = ParamSpec('P')
+"""@private"""
 
 class SpecificEventEmitter(Generic[P]):
+    """@private"""
+
     def __init__(self):
         self.key2triggers: Dict[Any, List[Trigger[P]]] = {}
 
@@ -125,44 +136,74 @@ class SpecificEventEmitter(Generic[P]):
 
 
 class Game:
+    """
+    This is the class that the `game` object belongs to. You cannot create another Game object. 
+    """
+    
     singleton_lock = False
+    """@private"""
     def __init__(self, screen_size=(1280, 720)):
+        """@private"""
         pygame.init()
 
         assert not Game.singleton_lock, "Already instantiated."
         Game.singleton_lock = True
 
-        self.screen  = pygame.display.set_mode(screen_size, vsync=1)
-        self.space = pymunk.Space()
+        self.screen: pygame.Surface  = pygame.display.set_mode(screen_size, vsync=1)
+        """@private"""
+
+        self.space: pymunk.Space = pymunk.Space()
+        """@private"""
+
         self.draw_options = DrawOptions(self.screen)
+        """@private"""
 
         # sounds
         self.mixer = pygame.mixer.init()
+        """@private"""
+
         self.sounds = {}
+        """@private"""
 
         # shared variables 
-        self.shared_data = {}
+        self.shared_data: Dict[Any, Any] = {}
+        """A dictionary of variables shared across the entire game. You can put anything in it."""
         
         # sprite event dependency manager
         self.sprite_event_dependency_manager = SpriteEventDependencyManager()
+        """@private"""
 
         # 
         self.clone_event_manager = CloneEventManager()
+        """@private"""
 
         # collision detection
         self.trigger_to_collision_pairs = {}
+        """@private"""
+
         self.collision_type_pair_to_trigger: Dict[Tuple[int, int], List[Trigger]] = {}
+        """@private"""
+
         self.collision_type_to_trigger: Dict[int, Tuple[bool, List[Trigger]]] = {}
+        """@private"""
 
         self.contact_pairs_set: Set[Tuple[pymunk.Shape, pymunk.Shape]] = set() 
+        """@private"""
+
+
         self.collision_handler = self.space.add_default_collision_handler()
+        """@private"""
+
         self.collision_handler.data['game'] = self
         self.collision_handler.begin = collision_begin
         self.collision_handler.separate = collision_separate
         
         # sprites updating and drawing
         self.all_sprites = pygame.sprite.Group()
+        """@private"""
+
         self.all_sprites_to_show = pygame.sprite.LayeredUpdates()
+        """@private"""
 
 
         # # scheduled jobs
@@ -171,43 +212,63 @@ class Game:
 
 
         self.all_pygame_events = []
+        #"""@private"""
+
         self.all_triggers: List[Trigger] = [] # these are to be executed every iteration
+        #"""@private"""
+
         self.all_conditions: List[ConditionInterface] = [] # these are to be checked every iteration
+        #"""@private"""
+
         #self.all_forever_jobs: List[Callable[[], None]] = []
         self.all_message_subscriptions: Dict[str, List[Trigger]] = {}
-        
+        #"""@private"""
+
         # key events 
         key_event = self.create_pygame_event_trigger([pygame.KEYDOWN, pygame.KEYUP])
         key_event.add_handler(self.__key_event_handler)
         self.all_simple_key_triggers: List[Trigger] = [] # these are to be triggered by self.__key_event_handler only
+        #"""@private"""
 
         # mouse dragging event
         self.dragged_sprite = None
+        #"""@private"""
         self.drag_offset = 0, 0
+        #"""@private"""
 
         self.sprite_click_trigger:Dict[ScratchSprite, List[Trigger]] = {}  #TODO: need to be able to destory the trigger here when the sprite is destoryed
+        #"""@private"""
+
         mouse_drag_trigger = self.create_pygame_event_trigger([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
         mouse_drag_trigger.add_handler(self.__mouse_drag_handler)
 
         ## Backdrops
         self.backdrops = []
+        #"""@private"""
+
         self.__backdrop_index = None
         self.backdrop_change_triggers: List[Trigger] = []
+        #"""@private"""
+
 
 
         ## start event
         self.game_start_triggers: List[Trigger] = []
+        #"""@private"""
 
         ## global timer event
         self.global_timer_triggers: List[Trigger] = []
+        #"""@private"""
 
     
         self.current_time_ms: float = 0
 
-
         self.specific_key_event_emitter: SpecificEventEmitter[str] = SpecificEventEmitter()
+        #"""@private"""
+
         self.specific_backdrop_event_emitter: SpecificEventEmitter[[]] = SpecificEventEmitter()
-        
+        #"""@private"""
+
 
 
     def __key_event_handler(self, e):
@@ -255,7 +316,225 @@ class Game:
 
 
     def update_screen_mode(self, *arg, **kwargs):
+        """
+        Update the screen, taking the arguments for [`pygame.display.set_mode`](https://www.pygame.org/docs/ref/display.html#pygame.display.set_mode)
+        
+
+        Use this method to change the screen size:
+
+        `game.update_screen_mode((SCREEN_WIDTH, SCREEN_HEIGHT))`
+        """
         self.screen  = pygame.display.set_mode( *arg, **kwargs)
+
+
+
+    def start(self, framerate, sim_step_min=300, debug_draw=False, event_count=False):
+        """
+        Start the game. 
+
+        Parameters
+        ---
+        framerate : int
+            The number of frames per second
+
+        sim_step_min: int
+            The number of physics steps per second. Increase this value if the physics is unstable and decrease it if the game runs slow.
+        
+        debug_draw: bool
+            Whether or not to draw the collision shape for debugging purposes
+
+        event_count: bool
+            Whether or not to print out the number of active events for debugging purposes
+
+        """
+
+
+        clock = pygame.time.Clock()
+
+        draw_every_n_step = sim_step_min//framerate+1
+
+        self.current_time_ms = 0
+
+
+        for t in self.game_start_triggers:
+            t.trigger()
+
+        while True:
+            dt = clock.tick(framerate)
+            self.current_time_ms += dt
+            for i in range(draw_every_n_step): 
+                self.space.step(dt/draw_every_n_step)
+
+
+
+            self.all_pygame_events = pygame.event.get()
+            for event in self.all_pygame_events:
+                if event.type == pygame.QUIT:
+                    return 
+
+
+            # for j in self.all_forever_jobs:
+            #     j()
+
+            # check conditions
+            for c in self.all_conditions:
+                c.check()
+
+            # execute 
+            for t in self.all_triggers:
+                t.handle_all(self.current_time_ms)
+                # TODO: is it possible to remove t in the self.all_triggers here?
+                t.generators_proceed(self.current_time_ms)
+
+            # clean up
+            self.all_conditions = list(filter(lambda t: t.stay_active, self.all_conditions))
+            self.all_simple_key_triggers = list(filter(lambda t: t.stay_active, self.all_simple_key_triggers))
+            self.all_triggers = list(filter(lambda t: t.stay_active, self.all_triggers))
+
+            
+            if event_count: 
+                print("all_conditions", len(self.all_conditions))
+                print("all_triggers", len(self.all_triggers))
+                print("all sprite", len(self.all_sprites))
+                # print("all_simple_key_triggers", len(self.all_simple_key_triggers))
+
+            # Drawing
+
+            self.screen.fill((30, 30, 30))
+            if not (self.__backdrop_index is None): 
+                self.screen.blit(self.backdrops[self.__backdrop_index], (0, 0))
+
+            if debug_draw: 
+                self.space.debug_draw(self.draw_options)
+            
+            self.all_sprites.update(self.space)
+            self.all_sprites_to_show.draw(self.screen)
+            pygame.display.flip()
+
+
+
+    def load_sound(self, key: str, path: PathLike) :
+        """
+        Load the sound given a path, and index it with the key so it can be played later by `play_sound`
+        e.g. 
+        ```python
+        game.load_sound('sound1', 'path/to/sound.wav')
+        game.play_sound('sound1', volume=0.5)
+        ```
+        """
+        if key in self.sounds: 
+            raise KeyError(f'{key} already loaded. Choose a different key name.')
+        
+        self.sounds[key] = pygame.mixer.Sound(path)
+
+    def play_sound(self, key:str, volume=1.0):
+        """
+        Play the sound given a key. 
+        This method does not wait for the sound to finish playing. 
+        """        
+        s = self.sounds[key]
+        s.set_volume(volume)
+        s.play()
+    
+    
+    def read_timer(self) -> float:
+        """get the time since the game started"""
+        return self.current_time_ms/1000
+    
+
+    def set_gravity(self, xy: Tuple[float, float]):
+        """
+        Change the gravity of the space. Works for sprites with dynamic body type only.
+        """
+        self.space.gravity = xy
+
+    def add_sprite(self, sprite, to_show=True):
+        """
+        @private
+        """
+        self.all_sprites.add(sprite)
+        self.space.add(sprite.body, sprite.shape)
+        self.sprite_click_trigger[sprite] = []
+        if to_show:
+            self.all_sprites_to_show.add(sprite)
+
+    def cleanup_old_shape(self, old_shape):
+        """@private"""
+
+        remove_list = []
+        for pair in self.contact_pairs_set:
+            if old_shape in pair:
+                remove_list.append(pair)
+
+        for r in remove_list:
+            self.contact_pairs_set.remove(r)
+        
+    def remove_sprite(self, sprite: ScratchSprite):
+        """
+        @private
+        """
+        self.all_sprites.remove(sprite)
+        self.all_sprites_to_show.remove(sprite) 
+
+        self.trigger_to_collision_pairs = {k: v for k, v in self.trigger_to_collision_pairs.items() if not sprite in v}
+
+        
+        self.cleanup_old_shape(sprite.shape)
+
+        try: 
+            self.space.remove(sprite.body, sprite.shape)
+        except:
+            print('removing non-existing shape or body')
+
+        self.sprite_event_dependency_manager.sprite_removal(sprite)
+
+
+    def show_sprite(self, sprite):
+        """@private"""
+
+        self.all_sprites_to_show.add(sprite)
+
+    def hide_sprite(self, sprite):
+        """@private"""
+
+        self.all_sprites_to_show.remove(sprite)
+
+    def bring_to_front(self, sprite):
+        self.all_sprites_to_show.move_to_front(sprite)
+
+    def move_to_back(self, sprite):
+        self.all_sprites_to_show.move_to_back(sprite)
+
+    def change_layer(self, sprite, layer):
+        self.all_sprites_to_show.change_layer(sprite, layer)
+
+
+    def change_layer_by(self, sprite, by):
+        layer = self.all_sprites_to_show.get_layer_of_sprite(sprite)
+        self.all_sprites_to_show.change_layer(sprite, layer + by)
+
+    def get_layer_of_sprite(self, sprite):
+        self.all_sprites_to_show.get_layer_of_sprite(sprite)
+
+    def set_backdrops(self, images: List[pygame.Surface]):
+        self.backdrops = images
+    
+    @property
+    def backdrop_index(self):
+        return self.__backdrop_index
+
+    def switch_backdrop(self, index:Optional[int]=None):
+
+        if index != self.__backdrop_index:
+            self.__backdrop_index = index
+            for t in self.backdrop_change_triggers:
+                t.trigger(index)
+            self.specific_backdrop_event_emitter.on_event(self.__backdrop_index)
+
+    def next_backdrop(self):
+        if not self.__backdrop_index is None: 
+            self.switch_backdrop((self.__backdrop_index+1) % len(self.backdrops))
+        
 
 
 
@@ -264,6 +543,7 @@ class Game:
     ## scratch events
 
     def when_game_start(self, associated_sprites : Iterable[ScratchSprite]=[]):
+
         t = self.create_trigger(associated_sprites)
         self.game_start_triggers.append(t)
 
@@ -274,8 +554,11 @@ class Game:
         return t
             
     
-    def when_any_key_pressed(self, associated_sprites : Iterable[ScratchSprite]=[]):
-        """different to scratch: catch all keys and catch both press and release """
+    def when_any_key_pressed(self, associated_sprites : Iterable[ScratchSprite]=[]) -> Trigger[[str, str]]:
+        """
+        Catch all keys and catch both press and release. 
+        Returns an event (a `Trigger` object) that takes in two str argments
+        """
         t = self.create_trigger(associated_sprites)
         self.all_simple_key_triggers.append(t)
 
@@ -288,7 +571,7 @@ class Game:
 
         return t
     
-    def when_key_pressed(self, key, associated_sprites : Iterable[ScratchSprite]=[]):
+    def when_key_pressed(self, key, associated_sprites : Iterable[ScratchSprite]=[])-> Trigger[[str]]:
         t = self.create_trigger(associated_sprites)
 
         if TYPE_CHECKING:
@@ -296,7 +579,6 @@ class Game:
                 return
             # this way the naming of the parameters is constrained too
             t = declare_callback_type(t, sample_callback)
-            #t = cast(Trigger[[str, str]], t)
 
         self.specific_key_event_emitter.add_event(key, t)
         return t    
@@ -401,7 +683,7 @@ class Game:
      
         return trigger
 
-    def create_type2type_collision_trigger(self, type_a, type_b, collision_suppressed=False, associated_sprites: Iterable[ScratchSprite]=[]):
+    def create_type2type_collision_trigger(self, type_a:int, type_b:int, collision_suppressed=False, associated_sprites: Iterable[ScratchSprite]=[]):
         pair = (type_a, type_b) if type_a>type_b else (type_b, type_a)
 
         h = self.space.add_collision_handler(*pair)
@@ -430,7 +712,7 @@ class Game:
         return trigger
 
 
-    def create_type_collision_trigger(self, collision_type, collision_suppressed=False, associated_sprites: Iterable[ScratchSprite]=[]):
+    def create_type_collision_trigger(self, collision_type:int , collision_suppressed=False, associated_sprites: Iterable[ScratchSprite]=[]):
         trigger = self.create_trigger(associated_sprites)
 
         collision_allowed = not collision_suppressed
@@ -490,172 +772,8 @@ class Game:
             t_list = self.collision_type_to_trigger[collision_type][1]
             self.collision_type_to_trigger[collision_type] = collision_allowed, t_list
 
-    def load_sound(self, key, path) :
-        if key in self.sounds: 
-            raise KeyError(f'{key} already loaded. Choose a different key name.')
-        
-        self.sounds[key] = pygame.mixer.Sound(path)
-
-    def play_sound(self, key, volume=1.0):
-        s = self.sounds[key]
-        s.set_volume(volume)
-        s.play()
-    
-    
-    def read_timer(self):
-        return self.current_time_ms/1000
-    
-    def start(self, framerate, sim_step_min=300, debug_draw=False, event_count=False):
-
-
-
-        clock = pygame.time.Clock()
-
-        draw_every_n_step = sim_step_min//framerate+1
-
-        self.current_time_ms = 0
-
-
-        for t in self.game_start_triggers:
-            t.trigger()
-
-        while True:
-            dt = clock.tick(framerate)
-            self.current_time_ms += dt
-            for i in range(draw_every_n_step): 
-                self.space.step(dt/draw_every_n_step)
-
-
-
-            self.all_pygame_events = pygame.event.get()
-            for event in self.all_pygame_events:
-                if event.type == pygame.QUIT:
-                    return 
-
-
-            # for j in self.all_forever_jobs:
-            #     j()
-
-            # check conditions
-            for c in self.all_conditions:
-                c.check()
-
-            # execute 
-            for t in self.all_triggers:
-                t.handle_all(self.current_time_ms)
-                # TODO: is it possible to remove t in the self.all_triggers here?
-                t.generators_proceed(self.current_time_ms)
-
-            # clean up
-            self.all_conditions = list(filter(lambda t: t.stay_active, self.all_conditions))
-            self.all_simple_key_triggers = list(filter(lambda t: t.stay_active, self.all_simple_key_triggers))
-            self.all_triggers = list(filter(lambda t: t.stay_active, self.all_triggers))
-
-            
-            if event_count: 
-                print("all_conditions", len(self.all_conditions))
-                print("all_triggers", len(self.all_triggers))
-                print("all sprite", len(self.all_sprites))
-                # print("all_simple_key_triggers", len(self.all_simple_key_triggers))
-
-            # Drawing
-
-            self.screen.fill((30, 30, 30))
-            if not (self.__backdrop_index is None): 
-                self.screen.blit(self.backdrops[self.__backdrop_index], (0, 0))
-
-            if debug_draw: 
-                self.space.debug_draw(self.draw_options)
-            
-            self.all_sprites.update(self.space)
-            self.all_sprites_to_show.draw(self.screen)
-            pygame.display.flip()
-            
-
-    def set_gravity(self, xy):
-        self.space.gravity = xy
-
-    def add_sprite(self, sprite, to_show=True):
-        self.all_sprites.add(sprite)
-        self.space.add(sprite.body, sprite.shape)
-        self.sprite_click_trigger[sprite] = []
-        if to_show:
-            self.all_sprites_to_show.add(sprite)
-
-    def cleanup_old_shape(self, old_shape):
-        remove_list = []
-        for pair in self.contact_pairs_set:
-            if old_shape in pair:
-                remove_list.append(pair)
-
-        for r in remove_list:
-            self.contact_pairs_set.remove(r)
-        
-    def remove_sprite(self, sprite: ScratchSprite):
-
-        self.all_sprites.remove(sprite)
-        self.all_sprites_to_show.remove(sprite) 
-
-        self.trigger_to_collision_pairs = {k: v for k, v in self.trigger_to_collision_pairs.items() if not sprite in v}
-
-        
-        self.cleanup_old_shape(sprite.shape)
-
-        try: 
-            self.space.remove(sprite.body, sprite.shape)
-        except:
-            print('removing non-existing shape or body')
-
-        self.sprite_event_dependency_manager.sprite_removal(sprite)
-
-
-    def show_sprite(self, sprite):
-        self.all_sprites_to_show.add(sprite)
-
-    def hide_sprite(self, sprite):
-        self.all_sprites_to_show.remove(sprite)
-
-    def bring_to_front(self, sprite):
-        self.all_sprites_to_show.move_to_front(sprite)
-
-    def move_to_back(self, sprite):
-        self.all_sprites_to_show.move_to_back(sprite)
-
-    def change_layer(self, sprite, layer):
-        self.all_sprites_to_show.change_layer(sprite, layer)
-
-
-    def change_layer_by(self, sprite, by):
-        layer = self.all_sprites_to_show.get_layer_of_sprite(sprite)
-        self.all_sprites_to_show.change_layer(sprite, layer + by)
-
-    def get_layer_of_sprite(self, sprite):
-        self.all_sprites_to_show.get_layer_of_sprite(sprite)
-
-    def set_backdrops(self, images: List[pygame.Surface]):
-        self.backdrops = images
-    
-    @property
-    def backdrop_index(self):
-        return self.__backdrop_index
-
-    def switch_backdrop(self, index:Optional[int]=None):
-
-        if index != self.__backdrop_index:
-            self.__backdrop_index = index
-            for t in self.backdrop_change_triggers:
-                t.trigger(index)
-            self.specific_backdrop_event_emitter.on_event(self.__backdrop_index)
-
-    def next_backdrop(self):
-        if not self.__backdrop_index is None: 
-            self.switch_backdrop((self.__backdrop_index+1) % len(self.backdrops))
-        
-
-
-    
-        
-        
 game = Game()
-
+"""
+The singleton Game object. This is the object that represent the game.   
+"""
         
