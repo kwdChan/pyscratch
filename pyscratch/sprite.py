@@ -76,27 +76,121 @@ def create_edge_sprites(edge_colour = (255, 0, 0), thickness=4, collision_type=1
     return top_edge, left_edge, bottom_edge, right_edge
 
 
-class _ImageManager:
-    def __init__(self):
-        self.scale: float
-        self.frames: List
-        self.frame_idx: int
-        self.rotation_style: RotationStyle
-        self.flip_x: bool
-        self.flip_y: bool
+_FrameDictType = Dict[str, List[pygame.Surface]]
+class _DrawingManager:
+    def __init__(self, frame_dict, starting_frame_mode):
+
+        
+        self.frame_dict_original: _FrameDictType = {k: [i.copy() for i in v] for k, v in frame_dict.items()} # never changed
+        self.frame_dict: _FrameDictType = {k: [i.copy() for i in v] for k, v in frame_dict.items()} # transformed on the spot
+        
+
+        self.frame_mode = starting_frame_mode
+        self.frames = self.frame_dict[self.frame_mode]
+        self.frame_idx: int = 0
+
+        # transforming parameters -> performed during update, but only when the transform is requested
+        self.request_transform = False
+        self.transparency_factor = 1.0
+        self.brightness_factor = 1.0
+        self.scale_factor: float = 1.0
+        self.rotation_offset: float # TODO: to be implemented
+
+        def create_blit_surfaces():
+            blit_surfaces = {}
+            for k in self.frame_dict_original:
+                for i in range(len(self.frame_dict_original[k])):
+                    blit_surfaces[(k, i)] = []
+            return blit_surfaces
+        self.blit_surfaces: Dict[Tuple[str, int], List[Tuple[pygame.Surface, Tuple[float, float]]]] = create_blit_surfaces()
 
 
-    def on_update(self, x, y, self_angle) -> pygame.Surface:
+        # rotation and flips -> performed every update on the current frame
+        self.rotation_style: RotationStyle = RotationStyle.ALL_AROUND
+        self.flip_x: bool = False
+        self.flip_y: bool = False
 
+    def set_rotation_style(self, flag: RotationStyle):
+        self.rotation_style = flag
 
+    def flip_horizontal(self):
+        self.flip_x = not self.flip_x
+
+    def flip_vertical(self):
+        self.flip_y = not self.flip_y
+
+    def set_frame_mode(self, new_mode):
+        if new_mode == self.frame_mode:
+            return 
+        self.frame_mode = new_mode
+        self.frames = self.frame_dict[new_mode]
+        self.frame_idx = 0
+
+    def set_frame(self, idx):
+        # also allow direct setting of frame_idx
+        self.frame_idx = idx
+
+    def next_frame(self):
+        self.frame_idx = (self.frame_idx+1) % len(self.frames)
+
+    # core transform requests 
+    def set_scale(self, factor):
+        self.scale_factor = factor
+        self.request_transform = True
+
+    def set_brightness(self, factor):
+        self.brightness_factor = factor
+        self.request_transform = True
+
+    def set_transparency(self, factor):
+        self.transparency_factor = factor
+        self.request_transform = True
+
+    def blit_persist(self, surface: pygame.Surface, offset=(0,0), centre=True):
+        w, h = surface.get_width(), surface.get_height()
+        if centre:
+            offset = (offset[0]-w/2, offset[1]-h/2)
+        
+        self.blit_surfaces[(self.frame_mode, self.frame_idx)].append((surface, offset))
+        self.request_transform = True
+        
+    # transform related helper
+    def scale_by(self, factor):
+        self.set_scale(self.scale_factor*factor)
+
+    def write_text(self, text: str, font: pygame.font.Font, colour=(255,255,255), offset=(0,0), centre=True):
+        text_surface = font.render(text, True, colour) 
+        self.blit_persist(text_surface, offset, centre=centre)
+
+    # transform
+    def transform_frames(self):
+        self.request_transform = False
+        for k, frames in self.frame_dict_original.items():
+            new_frames = []
+            for idx, f in enumerate(frames):
+                f_new = f
+                for s, o in self.blit_surfaces[(k, idx)]:
+                    f_new.blit(s, o)
+                f_new = set_transparency(f_new, self.transparency_factor)
+                f_new = adjust_brightness(f_new, self.brightness_factor)
+                f_new = pygame.transform.scale_by(f_new, self.scale_factor)
+                new_frames.append(f_new)
+
+            self.frame_dict[k] = new_frames
+            
+        self.frames = self.frame_dict[self.frame_mode]
+
+    def on_update(self, x, y, angle) -> Tuple[pygame.Surface, pygame.Rect]:
+        if self.request_transform:
+            self.transform_frames()
 
         img = self.frames[self.frame_idx]
 
         if self.rotation_style == RotationStyle.ALL_AROUND: 
-            img = pygame.transform.rotate(img, -self_angle)
+            img = pygame.transform.rotate(img, -angle)
     
         elif self.rotation_style == RotationStyle.LEFTRIGHT:
-            if self_angle > -90 and self_angle < 90:
+            if angle > -90 and angle < 90:
                 pass
             else:
                 img = pygame.transform.flip(img, True, False)
@@ -104,20 +198,17 @@ class _ImageManager:
         elif self.rotation_style == RotationStyle.FIXED:
             pass
 
-        
         img = pygame.transform.flip(img, self.flip_x, self.flip_y)
-
 
         self.image = img
 
-        img_w, img_h = self.image.get_width(), self.image.get_height()
-        self.rect = self.image.get_rect(
+        img_w, img_h = img.get_width(), img.get_height()
+        rect = img.get_rect(
             center=(x, y),
               width=img_w,
               height=img_h,
               )
-
-
+        return img, rect
 
 class _ShapeManager:
     def __init__(self):
@@ -130,31 +221,22 @@ class _ShapeManager:
 
     def on_update(self):
         pass 
-    
+
+
+
 class Sprite(pygame.sprite.Sprite):
     
     def __init__(self, frame_dict: Dict[str, List[pygame.Surface]], starting_mode:Optional[str]=None, pos= (100, 100), shape_type='circle', shape_factor=0.8, body_type=pymunk.Body.KINEMATIC):
 
         super().__init__()
-
-        #frame_dict = {k: [i.copy() for i in v] for k, v in frame_dict.items()}
-        self.frame_dict_original:Dict[str, List[pygame.Surface]] = {k: [i.copy() for i in v] for k, v in frame_dict.items()} # never changed
-        self.frame_dict:Dict[str, List[pygame.Surface]] = {k: [i.copy() for i in v] for k, v in frame_dict.items()} # transformed on the spot
-
-        self.frames: List[pygame.Surface] # updated on the spot
-        self.frame_mode: str
-        self.frame_idx: int
-        
         if starting_mode is None:
-            starting_mode = list(self.frame_dict.keys())[0]  # there must be at least one frame in the frame_dict so assuming index 0 is okay
+            starting_mode = next(iter(frame_dict))
 
-        self.frame_mode = ''
-        self.set_frame_mode(starting_mode)
-        self.set_frame(0)
+        self._drawing_manager = _DrawingManager(frame_dict, starting_mode)
 
         self.body = pymunk.Body(1, 100, body_type=body_type)
 
-        self.body.position = pos # change be updated anytime 
+        self.body.position = pos # change are updated anytime 
 
         self.shape: pymunk.Shape # swapped only during self.update
         self.new_shape: Optional[pymunk.Shape] # swapped only during self.update
@@ -163,55 +245,87 @@ class Sprite(pygame.sprite.Sprite):
         self.rect: pygame.Rect # depends on the rotated image and thus should be redefined during self.update
 
 
-        
         self.scale_factor = 1
 
         self.set_shape(shape_type, shape_factor)
         self.shape, self.new_shape = cast(pymunk.Shape, self.new_shape), None
 
         self.mouse_selected = False
-        self.is_dragging = False
+        self.__is_dragging = False
         self.draggable = False
         self.elasticity: float = .99
         self.friction: float = 0
 
         self.private_data = {}
-        self.flip_y = False
-        self.flip_x = False
-        self.transparency_factor = 1.0
-        self.brightness_factor = 1.0
+
 
         self.lock_to_sprite = None
         self.lock_offset = 0, 0
 
         self.collision_type:int = 1
 
-
-        self.rotation_style: RotationStyle = RotationStyle.ALL_AROUND
-
         game.add_sprite(self)
 
     def is_mouse_selected(self):
+        # TODO: wtf 
         return self.mouse_selected
     
     def set_draggable(self, draggable):
         self.draggable = draggable
 
-    def set_is_dragging(self, is_dragging):
-        self.is_dragging = is_dragging
+    def _set_is_dragging(self, is_dragging):
+        self.__is_dragging = is_dragging
 
+    # START: drawing related
     def set_frame_mode(self, new_mode):
-        if new_mode == self.frame_mode:
-            return 
-        self.frame_mode = new_mode
-        self.frames = self.frame_dict[new_mode]
-        self.set_frame(0)
+        self._drawing_manager.set_frame_mode(new_mode)
 
     def flip_horizontal(self):
-        self.flip_x = not self.flip_x
+        self._drawing_manager.flip_horizontal()
 
     def flip_vertical(self):
-        self.flip_y = not self.flip_y
+        self._drawing_manager.flip_vertical()
+
+    def set_rotation_style_all_around(self):
+        self._drawing_manager.set_rotation_style(RotationStyle.ALL_AROUND)
+
+    def set_rotation_style_left_right(self):
+        self._drawing_manager.set_rotation_style(RotationStyle.LEFTRIGHT)
+
+    def set_rotation_style_no_rotation(self):
+        self._drawing_manager.set_rotation_style(RotationStyle.FIXED)
+
+
+
+    def set_scale(self, factor):
+        self.scale_factor = factor
+        self._drawing_manager.set_scale(factor)
+        self.__request_update_shape()
+
+    def scale_by(self, factor):
+        self.set_scale(self.scale_factor*factor)
+    
+    def set_brightness(self, factor):
+        self._drawing_manager.set_brightness(factor)
+
+    def set_transparency(self, factor):
+        self._drawing_manager.set_transparency(factor)
+
+    def write_text(self, text: str, font: pygame.font.Font, colour=(255,255,255), offset=(0,0), centre=True):
+        text_surface = font.render(text, True, colour) 
+        self._drawing_manager.blit_persist(text_surface, offset, centre=centre)
+
+    def set_frame(self, idx):
+        self._drawing_manager.set_frame(idx)
+    
+    def next_frame(self):
+        self._drawing_manager.next_frame()
+
+    @property
+    def frame_idx(self):
+        return self._drawing_manager.frame_idx
+
+    # END: drawing related        
 
     @override
     def update(self, space):
@@ -221,35 +335,9 @@ class Sprite(pygame.sprite.Sprite):
             self.body.velocity = 0, 0 
 
         x, y = self.body.position
-        img = self.frames[self.frame_idx]
-
         self_angle = self.body.rotation_vector.angle_degrees
-        if self.rotation_style == RotationStyle.ALL_AROUND: 
-            img = pygame.transform.rotate(img, -self_angle)
-    
-        elif self.rotation_style == RotationStyle.LEFTRIGHT:
-            if self_angle > -90 and self_angle < 90:
-                pass
-            else:
-                img = pygame.transform.flip(img, True, False)
-             
-        elif self.rotation_style == RotationStyle.FIXED:
-            pass
-
+        self.image, self.rect = self._drawing_manager.on_update(x, y, self_angle)
         
-        img = pygame.transform.flip(img, self.flip_x, self.flip_y)
-
-
-        self.image = img
-
-        img_w, img_h = self.image.get_width(), self.image.get_height()
-        self.rect = self.image.get_rect(
-            center=(x, y),
-              width=img_w,
-              height=img_h,
-              )
-
-
         if self.new_shape: 
             game.cleanup_old_shape(self.shape)
 
@@ -260,7 +348,7 @@ class Sprite(pygame.sprite.Sprite):
 
             space.add(self.shape)
 
-        if self.is_dragging:
+        if self.__is_dragging:
             self.body.velocity=0,0 
             # TODO: should be done every physics loop or reset location every frame
             # or can i change it to kinamatic temporarily
@@ -298,7 +386,7 @@ class Sprite(pygame.sprite.Sprite):
         """create the shape based on the self.frames and put it in self.new_shape"""
 
         # the rect of the un
-        rect = self.frames[self.frame_idx].get_rect()
+        rect = self._drawing_manager.frames[self._drawing_manager.frame_idx].get_rect()
         width = int(rect.width*self.shape_factor)
         height = int(rect.height*self.shape_factor)
         
@@ -325,49 +413,6 @@ class Sprite(pygame.sprite.Sprite):
 
 
 
-
-    def set_scale(self, factor):
-        self.scale_factor = factor
-
-        for k, frames in self.frame_dict_original.items():
-            self.frame_dict[k] = [
-                pygame.transform.scale_by(
-                    adjust_brightness(
-                        set_transparency(f, self.transparency_factor), 
-                        self.brightness_factor),
-                    factor) 
-                for f in frames]
-
-        # 
-        self.frames = self.frame_dict[self.frame_mode]
-        self.__request_update_shape()
-
-    def set_brightness(self, factor):
-        self.brightness_factor = factor
-        self.set_scale(self.scale_factor)
-
-    def set_transparency(self, factor):
-        self.transparency_factor = factor
-        self.set_scale(self.scale_factor)
-
-    
-    def scale_by(self, factor):
-        self.set_scale(self.scale_factor*factor)
-
-    def write_text(self, text: str, font: pygame.font.Font, colour=(255,255,255), offset=(0,0)):
-        text_surface = font.render(text, True, colour)  # White text
-        w, h = text_surface.get_width(), text_surface.get_height()
-
-        self.blit(text_surface, (offset[0]-w/2, offset[1]-h/2))
-        
-    def restore_frame(self):
-        pass
-
-
-    def blit(self, surface: pygame.Surface, offset=(0,0), reset=True):
-        if reset: 
-            self.frames[self.frame_idx] = self.frame_dict_original[self.frame_mode][self.frame_idx].copy()
-        self.frames[self.frame_idx].blit(surface, offset)
 
     @property
     def direction(self):
@@ -402,11 +447,7 @@ class Sprite(pygame.sprite.Sprite):
     def add_rotation(self, degree):
         self.body.angle += degree/180*np.pi
 
-    def set_frame(self, idx):
-        self.frame_idx = idx
-    
-    def next_frame(self):
-        self.set_frame((self.frame_idx+1) % len(self.frames))
+
 
 
     def move_indir(self, length):
@@ -457,21 +498,12 @@ class Sprite(pygame.sprite.Sprite):
         self.lock_offset = None
         pass
 
-    def set_rotation_style_all_around(self):
-        self.rotation_style = RotationStyle.ALL_AROUND
-
-    def set_rotation_style_left_right(self):
-        self.rotation_style = RotationStyle.LEFTRIGHT
-
-    def set_rotation_style_no_rotation(self):
-        self.rotation_style = RotationStyle.FIXED
-
 
     def clone_myself(self):
 
         sprite = type(self)(
-            frame_dict = self.frame_dict_original, 
-            starting_mode = self.frame_mode, 
+            frame_dict = self._drawing_manager.frame_dict_original, 
+            starting_mode = self._drawing_manager.frame_mode, 
             pos = (self.x, self.y),
             shape_type = self.shape_type, 
             shape_factor = self.shape_factor, 
@@ -481,11 +513,11 @@ class Sprite(pygame.sprite.Sprite):
             game.hide_sprite(sprite)
         sprite.set_rotation(self.get_rotation())
         sprite.scale_by(self.scale_factor)
-        sprite.set_frame(self.frame_idx)
+        sprite.set_frame(self._drawing_manager.frame_idx)
         sprite.set_draggable(self.draggable)
         sprite.set_elasticity(self.elasticity)
         sprite.set_friction(self.friction)
-        sprite.rotation_style = self.rotation_style
+        sprite._drawing_manager.set_rotation_style(self._drawing_manager.rotation_style)
 
 
         game._clone_event_manager.on_clone(self, sprite)

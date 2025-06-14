@@ -263,7 +263,7 @@ class Game:
                     if not s.draggable:
                         continue
 
-                    s.set_is_dragging (True)
+                    s._set_is_dragging (True)
                     self._dragged_sprite = s
                     offset_x = s.body.position[0]  - e.pos[0]
                     offset_y = s.body.position[1]  - e.pos[1]
@@ -272,7 +272,7 @@ class Game:
 
         elif e.type == pygame.MOUSEBUTTONUP:
             if self._dragged_sprite: 
-                self._dragged_sprite.set_is_dragging(False)
+                self._dragged_sprite._set_is_dragging(False)
                 self._dragged_sprite = None
 
         elif e.type == pygame.MOUSEMOTION and self._dragged_sprite:
