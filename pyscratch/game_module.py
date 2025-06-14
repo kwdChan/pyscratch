@@ -1,3 +1,8 @@
+"""
+Everything in this module is directly under the pyscratch namespace. 
+For example, instead of `pysc.game_module.is_key_pressed`, you can also directly do `pysc.is_key_pressed`
+"""
+
 from __future__ import annotations
 from os import PathLike
 
@@ -255,7 +260,7 @@ class Game:
             for s in reversed(list(self._all_sprites_to_show)):
                 if TYPE_CHECKING:
                     s = cast(Sprite, s)
-                if s.shape.point_query(e.pos).distance <= 0:
+                if s._shape.point_query(e.pos).distance <= 0:
                     for t in self._sprite_click_trigger[s]:
                         t.trigger()
 
@@ -264,8 +269,8 @@ class Game:
 
                     s._set_is_dragging (True)
                     self._dragged_sprite = s
-                    offset_x = s.body.position[0]  - e.pos[0]
-                    offset_y = s.body.position[1]  - e.pos[1]
+                    offset_x = s._body.position[0]  - e.pos[0]
+                    offset_y = s._body.position[1]  - e.pos[1]
                     self._drag_offset = offset_x, offset_y
                     break 
 
@@ -455,10 +460,10 @@ class Game:
         self._trigger_to_collision_pairs = {k: v for k, v in self._trigger_to_collision_pairs.items() if not sprite in v}
 
         
-        self._cleanup_old_shape(sprite.shape)
+        self._cleanup_old_shape(sprite._shape)
 
         try: 
-            self._space.remove(sprite.body, sprite.shape)
+            self._space.remove(sprite._body, sprite._shape)
         except:
             print('removing non-existing shape or body')
 

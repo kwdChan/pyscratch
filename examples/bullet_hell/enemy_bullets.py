@@ -199,7 +199,7 @@ def create_exploding_bullet(position, rotation):
 
     def spawn_sub_bullets(_):
         for i in range(12):
-            create_straight_bullet(bullet.body.position, rotation=i*30)
+            create_straight_bullet(bullet._body.position, rotation=i*30)
 
     def delayed_spawn_sub_bullets(_):
         pysc.game.when_timer_reset(200, 1).add_handler(spawn_sub_bullets)

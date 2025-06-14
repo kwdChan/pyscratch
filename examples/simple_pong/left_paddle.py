@@ -3,7 +3,7 @@ from settings import *
 
 # TODO: bad naming consistency 
 sprite = pysc.create_rect_sprite(paddle_colour, paddle_width, paddle_height,  position=(paddle_margin, SCREEN_HEIGHT//2))
-
+sprite.set_draggable(True)
 def movement():
     speed = 0
     while True: 
