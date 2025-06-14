@@ -302,7 +302,7 @@ class _PhysicsManager:
 
             new_shape = self.create_new_shape(image)
 
-            game.cleanup_old_shape(self.shape)
+            game._cleanup_old_shape(self.shape)
             self.space.remove(self.shape)
 
             self.shape = new_shape
@@ -345,7 +345,7 @@ class Sprite(pygame.sprite.Sprite):
         self.lock_to_sprite = None
         self.lock_offset = 0, 0
 
-        game.add_sprite(self)
+        game._add_sprite(self)
 
     def is_mouse_selected(self):
         # TODO: wtf 

@@ -34,12 +34,12 @@ frame_dict = get_frame_dict(sprite_sheet, 2, 12, {
 
 
 sprite_rect2 = create_rect_sprite((255, 240,240), 1000, 20, (400, 500))
-game.add_sprite(sprite_rect2)
+game._add_sprite(sprite_rect2)
 sprite_rect2.set_rotation(30)
 
 
 sprite_rect = create_rect_sprite((255, 0,0), 100, 20, (500, 500))
-game.add_sprite(sprite_rect)
+game._add_sprite(sprite_rect)
 sprite_rect.set_draggable(True)
 sprite_rect.set_shape('box', 1, collision_allowed=True)
 
@@ -47,14 +47,14 @@ sprite_rect.set_shape('box', 1, collision_allowed=True)
 sprite_cir = create_circle_sprite((255, 0,0), 50, (100, 100), body_type=pymunk.Body.DYNAMIC)
 sprite_cir.set_draggable(True)
 sprite_cir.set_shape('circle', 1, collision_allowed=True)
-game.add_sprite(sprite_cir)
+game._add_sprite(sprite_cir)
 
 
 sprite1 = Sprite(frame_dict,  "1", (100,100), body_type=pymunk.Body.KINEMATIC)
 sprite1.set_shape('box', shape_factor=.4)
 
 sprite1.set_draggable(True)
-game.add_sprite(sprite1)
+game._add_sprite(sprite1)
 game.set_gravity((0,0.002))
 sprite1.scale_by(2)
 
@@ -67,7 +67,7 @@ sprite1.scale_by(3)
 #sprite1.set_scale(6)
 sprite2.set_scale(4)
 
-game.add_sprite(sprite2)
+game._add_sprite(sprite2)
 
 
 sprite1.lock_to(sprite2, (200,-200))

@@ -56,7 +56,7 @@ def spawn_player(event_test=False):
 
     def shoot_bullet(n):
         pysc.game.broadcast_message('player_shoot_bullet', player)
-        bullet_timer.reset()
+        bullet_timer.full_reset()
 
     shoot_bullet_event.add_handler(shoot_bullet)
 

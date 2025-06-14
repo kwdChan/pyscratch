@@ -4,7 +4,7 @@ from os import PathLike
 import numpy as np
 import pygame
 import pymunk
-from .event import ConditionInterface, Trigger, Condition, TimerCondition, declare_callback_type
+from .event import _ConditionInterface, Event, Condition, TimerCondition, _declare_callback_type
 from pymunk.pygame_util import DrawOptions
 from typing import Any, Callable, Generic, Iterable, Optional, List, Dict, ParamSpec, Set, Tuple, TypeVar, Union, cast
 from typing import TYPE_CHECKING
@@ -49,14 +49,13 @@ def _collision_separate(arbiter, space, data):
         game._contact_pairs_set.remove(reverse_order)
 
 
-class CloneEventManager:
-    """@private"""
+class _CloneEventManager:
 
     def __init__(self):
         # TODO: removed sprites stay here forever
-        self.identical_sprites_and_triggers: List[Tuple[Set[Sprite], List[Trigger]]] = []
+        self.identical_sprites_and_triggers: List[Tuple[Set[Sprite], List[Event]]] = []
 
-    def new_trigger(self, sprite:Sprite, trigger:Trigger):
+    def new_trigger(self, sprite:Sprite, trigger:Event):
         new_lineage = True
         for identical_sprites, triggers in self.identical_sprites_and_triggers:
             if sprite in identical_sprites: 
@@ -79,14 +78,13 @@ class CloneEventManager:
 
         
 
-class SpriteEventDependencyManager:
-    """@private"""
+class _SpriteEventDependencyManager:
 
     def __init__(self):
 
-        self.sprites: Dict[Sprite, List[Union[Trigger, ConditionInterface]]] = {}
+        self.sprites: Dict[Sprite, List[Union[Event, _ConditionInterface]]] = {}
 
-    def add_event(self, event: Union[ConditionInterface, Trigger], sprites: Iterable[Sprite]):
+    def add_event(self, event: Union[_ConditionInterface, Event], sprites: Iterable[Sprite]):
         """
         TODO: if the event is dependent to multiple sprites, the event will not be
         completely dereferenced until all the sprites on which it depends are removed
@@ -111,13 +109,13 @@ T = TypeVar('T')
 """@private"""
 P = ParamSpec('P')
 """@private"""
-class SpecificEventEmitter(Generic[P]):
-    """@private"""
+
+class _SpecificEventEmitter(Generic[P]):
 
     def __init__(self):
-        self.key2triggers: Dict[Any, List[Trigger[P]]] = {}
+        self.key2triggers: Dict[Any, List[Event[P]]] = {}
 
-    def add_event(self, key, trigger:Trigger[P]):
+    def add_event(self, key, trigger:Event[P]):
         if not key in self.key2triggers: 
             self.key2triggers[key] = []
         self.key2triggers[key].append(trigger)
@@ -160,18 +158,18 @@ class Game:
         """A dictionary of variables shared across the entire game. You can put anything in it."""
         
         # sprite event dependency manager
-        self._sprite_event_dependency_manager = SpriteEventDependencyManager()
+        self._sprite_event_dependency_manager = _SpriteEventDependencyManager()
 
         # 
-        self._clone_event_manager = CloneEventManager()
+        self._clone_event_manager = _CloneEventManager()
         """@private"""
 
         # collision detection
         self._trigger_to_collision_pairs = {}
 
-        self._collision_type_pair_to_trigger: Dict[Tuple[int, int], List[Trigger]] = {}
+        self._collision_type_pair_to_trigger: Dict[Tuple[int, int], List[Event]] = {}
 
-        self._collision_type_to_trigger: Dict[int, Tuple[bool, List[Trigger]]] = {}
+        self._collision_type_to_trigger: Dict[int, Tuple[bool, List[Event]]] = {}
 
         self._contact_pairs_set: Set[Tuple[pymunk.Shape, pymunk.Shape]] = set() 
 
@@ -195,46 +193,47 @@ class Game:
 
         self._all_pygame_events = []
 
-        self._all_triggers: List[Trigger] = [] # these are to be executed every iteration
+        self._all_triggers: List[Event] = [] # these are to be executed every iteration
 
-        self._all_conditions: List[ConditionInterface] = [] # these are to be checked every iteration
+        self._all_conditions: List[_ConditionInterface] = [] # these are to be checked every iteration
 
         #self.all_forever_jobs: List[Callable[[], None]] = []
-        self._all_message_subscriptions: Dict[str, List[Trigger]] = {}
+        self._all_message_subscriptions: Dict[str, List[Event]] = {}
 
         # key events 
         key_event = self.create_pygame_event_trigger([pygame.KEYDOWN, pygame.KEYUP])
         key_event.add_handler(self.__key_event_handler)
-        self._all_simple_key_triggers: List[Trigger] = [] # these are to be triggered by self.__key_event_handler only
+        self._all_simple_key_triggers: List[Event] = [] # these are to be triggered by self.__key_event_handler only
 
         # mouse dragging event
         self._dragged_sprite = None
         self._drag_offset = 0, 0
 
-        self._sprite_click_trigger:Dict[Sprite, List[Trigger]] = {}  #TODO: need to be able to destory the trigger here when the sprite is destoryed
+        self._sprite_click_trigger:Dict[Sprite, List[Event]] = {}  #TODO: need to be able to destory the trigger here when the sprite is destoryed
         mouse_drag_trigger = self.create_pygame_event_trigger([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
         mouse_drag_trigger.add_handler(self.__mouse_drag_handler)
 
         ## Backdrops
         self.backdrops: List[pygame.Surface] = []
+        """A list of all the loaded backdrop images. You will not need to interact with this property directly."""
 
         self.__backdrop_index = None
-        self._backdrop_change_triggers: List[Trigger] = []
+        self._backdrop_change_triggers: List[Event] = []
 
 
 
         ## start event
-        self._game_start_triggers: List[Trigger] = []
+        self._game_start_triggers: List[Event] = []
 
         ## global timer event
-        self._global_timer_triggers: List[Trigger] = []
+        self._global_timer_triggers: List[Event] = []
 
     
         self._current_time_ms: float = 0
 
-        self._specific_key_event_emitter: SpecificEventEmitter[str] = SpecificEventEmitter()
+        self._specific_key_event_emitter: _SpecificEventEmitter[str] = _SpecificEventEmitter()
 
-        self._specific_backdrop_event_emitter: SpecificEventEmitter[[]] = SpecificEventEmitter()
+        self._specific_backdrop_event_emitter: _SpecificEventEmitter[[]] = _SpecificEventEmitter()
 
 
 
@@ -284,7 +283,8 @@ class Game:
 
     def update_screen_mode(self, *arg, **kwargs):
         """
-        Update the screen, taking the arguments for [`pygame.display.set_mode`](https://www.pygame.org/docs/ref/display.html#pygame.display.set_mode)
+        Update the screen, taking the arguments for 
+        [`pygame.display.set_mode`](https://www.pygame.org/docs/ref/display.html#pygame.display.set_mode).
         
 
         Use this method to change the screen size:
@@ -345,13 +345,13 @@ class Game:
 
             # check conditions
             for c in self._all_conditions:
-                c.check()
+                c._check()
 
             # execute 
             for t in self._all_triggers:
-                t.handle_all(self._current_time_ms)
+                t._handle_all(self._current_time_ms)
                 # TODO: is it possible to remove t in the self.all_triggers here?
-                t.generators_proceed(self._current_time_ms)
+                t._generators_proceed(self._current_time_ms)
 
             # clean up
             self._all_conditions = list(filter(lambda t: t.stay_active, self._all_conditions))
@@ -380,10 +380,11 @@ class Game:
 
 
 
-    def load_sound(self, key: str, path: PathLike) :
+    def load_sound(self, key: str, path: str) :
         """
         Load the sound given a path, and index it with the key so it can be played later by `play_sound`
-        e.g. 
+
+        Example:
         ```python
         game.load_sound('sound1', 'path/to/sound.wav')
         game.play_sound('sound1', volume=0.5)
@@ -398,6 +399,12 @@ class Game:
         """
         Play the sound given a key. 
         This method does not wait for the sound to finish playing. 
+
+        Example:
+        ```python
+        game.load_sound('sound1', 'path/to/sound.wav')
+        game.play_sound('sound1', volume=0.5)
+        ```        
         """        
         s = self._sounds[key]
         s.set_volume(volume)
@@ -405,25 +412,27 @@ class Game:
     
     
     def read_timer(self) -> float:
-        """get the time since the game started"""
+        """get the time (in seconds) since the game started."""
         return self._current_time_ms/1000
     
 
     def set_gravity(self, xy: Tuple[float, float]):
         """
-        Change the gravity of the space. Works for sprites with dynamic body type only.
+        *EXTENDED FEATURE*
+        
+        Change the gravity of the space. Works for sprites with dynamic body type only, which is not the default.
+        It will NOT work unless you explicitly make the sprite to have a dynamic body. 
         """
         self._space.gravity = xy
 
-    def add_sprite(self, sprite, to_show=True):
-
+    def _add_sprite(self, sprite, to_show=True):
         self._all_sprites.add(sprite)
         #self._space.add(sprite.body, sprite.shape)
         self._sprite_click_trigger[sprite] = []
         if to_show:
             self._all_sprites_to_show.add(sprite)
 
-    def cleanup_old_shape(self, old_shape):
+    def _cleanup_old_shape(self, old_shape):
 
         remove_list = []
         for pair in self._contact_pairs_set:
@@ -434,6 +443,11 @@ class Game:
             self._contact_pairs_set.remove(r)
         
     def remove_sprite(self, sprite: Sprite):
+        """
+        Remove the sprite from the game.
+
+        You can use the alias `Sprite.remove()` to do the same. 
+        """
 
         self._all_sprites.remove(sprite)
         self._all_sprites_to_show.remove(sprite) 
@@ -441,7 +455,7 @@ class Game:
         self._trigger_to_collision_pairs = {k: v for k, v in self._trigger_to_collision_pairs.items() if not sprite in v}
 
         
-        self.cleanup_old_shape(sprite.shape)
+        self._cleanup_old_shape(sprite.shape)
 
         try: 
             self._space.remove(sprite.body, sprite.shape)
@@ -451,39 +465,87 @@ class Game:
         self._sprite_event_dependency_manager.sprite_removal(sprite)
 
 
-    def show_sprite(self, sprite):
-
+    def show_sprite(self, sprite: Sprite):
+        """
+        Show the sprite. 
+        
+        You can use the alias `sprite.show()` to do the same. 
+        """
         self._all_sprites_to_show.add(sprite)
 
-    def hide_sprite(self, sprite):
-
+    def hide_sprite(self, sprite: Sprite):
+        """
+        Hide the sprite. 
+        
+        You can use the alias `sprite.hide()` to do the same. 
+        """
         self._all_sprites_to_show.remove(sprite)
 
-    def bring_to_front(self, sprite):
+    def bring_to_front(self, sprite: Sprite):
+        """
+        Bring the sprite to the front. 
+        Analogous to the "go to [front] layer" block in Scratch
+        """
         self._all_sprites_to_show.move_to_front(sprite)
 
-    def move_to_back(self, sprite):
+    def move_to_back(self, sprite: Sprite):
+        """
+        Move the sprite to the back. 
+        Analogous to the "go to [back] layer" block in Scratch
+        """        
         self._all_sprites_to_show.move_to_back(sprite)
 
-    def change_layer(self, sprite, layer):
+    def change_layer(self, sprite: Sprite, layer: int):
+        """
+        Bring the sprite to a specific layer. 
+        """              
         self._all_sprites_to_show.change_layer(sprite, layer)
 
 
-    def change_layer_by(self, sprite, by):
+    def change_layer_by(self, sprite: Sprite, by: int):
+        """
+        Analogous to the "go to [forward/backward] [N] layer" block in Scratch
+        """           
         layer = self._all_sprites_to_show.get_layer_of_sprite(sprite)
         self._all_sprites_to_show.change_layer(sprite, layer + by)
 
-    def get_layer_of_sprite(self, sprite):
+    def get_layer_of_sprite(self, sprite: Sprite):
+        """
+        Returns the layer number of the given sprite
+        """
         self._all_sprites_to_show.get_layer_of_sprite(sprite)
 
     def set_backdrops(self, images: List[pygame.Surface]):
+        """
+        Set the list of all available backdrops. This function is meant to be run before the game start. 
+
+        Example: 
+        ```python
+        # load the image into python 
+        background_image = pysc.helper.load_image('assets/my_background.jpg')
+        background_image2 = pysc.helper.load_image('assets/my_background2.jpg')
+        background_image3 = pysc.helper.load_image('assets/my_background3.jpg')
+
+        # pass in a list of all the available backdrops. 
+        pysc.game.set_backdrops([background_image, background_image2, background_image3])
+
+        # choose the backdrop at index 1 (background_image2)
+        pysc.game.switch_backdrop(1) 
+        ```
+        """
         self.backdrops = images
     
     @property
     def backdrop_index(self):
+        """
+        The index of the current backdrops. For example, if you do `game.switch_backdrop(0)`, `game.backdrop_index` would be `0`.
+        """
         return self.__backdrop_index
 
     def switch_backdrop(self, index:Optional[int]=None):
+        """
+        Change the backdrop by specifying the index of the backdrop.  
+        """
 
         if index != self.__backdrop_index:
             self.__backdrop_index = index
@@ -492,59 +554,122 @@ class Game:
             self._specific_backdrop_event_emitter.on_event(self.__backdrop_index)
 
     def next_backdrop(self):
+        """
+        Switch to the next backdrop. 
+        """
         if not self.__backdrop_index is None: 
             self.switch_backdrop((self.__backdrop_index+1) % len(self.backdrops))
         
-
-
-
     # all events 
 
     ## scratch events
 
-    def when_game_start(self, associated_sprites : Iterable[Sprite]=[]):
+    def when_game_start(self, associated_sprites : Iterable[Sprite]=[])->Event[[]]:
+        """
+        It is recommended to use the `Sprite.when_game_start` alias instead of this method, 
+        so you don't need to specify the `associated_sprites` in every event.
 
-        t = self.create_trigger(associated_sprites)
+        Returns an event that is triggered when you call `game.start`. 
+        The event handler does not take in any parameter.
+
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+        
+
+        t = self.create_event(associated_sprites)
         self._game_start_triggers.append(t)
 
         if TYPE_CHECKING:
             def sample_callback()-> Any:
                 return
-            t = declare_callback_type(t, sample_callback)
+            t = _declare_callback_type(t, sample_callback)
         return t
             
     
-    def when_any_key_pressed(self, associated_sprites : Iterable[Sprite]=[]) -> Trigger[[str, str]]:
+    def when_any_key_pressed(self, associated_sprites : Iterable[Sprite]=[]) -> Event[[str, str]]:
         """
-        Catch all keys and catch both press and release. 
-        Returns an event (a `Trigger` object) that takes in two str argments
+        It is recommended to use the `Sprite.when_any_key_pressed` alias instead of this method, 
+        so you don't need to specify the `associated_sprites` in every event.  
+
+        Returns an event that is triggered when a key is pressed or released. 
+        
+        The event handler have to take two parameters:
+        - **key** (str): The key that is pressed. For example, 'w', 'd', 'left', 'right', 'space'. 
+            Uses [pygame.key.key_code](https://www.pygame.org/docs/ref/key.html#pygame.key.key_code) under the hood. 
+        
+        - **updown** (str): Either 'up' or 'down' that indicates whether it is a press or a release
+
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+    
         """
-        t = self.create_trigger(associated_sprites)
+        t = self.create_event(associated_sprites)
         self._all_simple_key_triggers.append(t)
 
         if TYPE_CHECKING:
             def sample_callback(key:str, updown:str)-> Any:
                 return
             # this way the naming of the parameters is constrained too
-            t = declare_callback_type(t, sample_callback)
+            t = _declare_callback_type(t, sample_callback)
             #t = cast(Trigger[[str, str]], t)
 
         return t
     
-    def when_key_pressed(self, key, associated_sprites : Iterable[Sprite]=[])-> Trigger[[str]]:
-        t = self.create_trigger(associated_sprites)
+    def when_key_pressed(self, key, associated_sprites : Iterable[Sprite]=[])-> Event[[str]]:
+        """
+        It is recommended to use the `Sprite.when_key_pressed` alias instead of this method, 
+        so you don't need to specify the `associated_sprites` in every event.  
+        
+        Returns an event that is triggered when a specific key is pressed or released. 
+
+        The event handler have to take one parameter:
+        - **updown** (str): Either 'up' or 'down' that indicates whether it is a press or a release
+        
+        Parameters
+        ---
+        key: str
+            The key that triggers the event. For example, 'w', 'd', 'left', 'right', 'space'. 
+            Uses [pygame.key.key_code](https://www.pygame.org/docs/ref/key.html#pygame.key.key_code) under the hood. 
+
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+        
+        t = self.create_event(associated_sprites)
 
         if TYPE_CHECKING:
             def sample_callback(updown:str)-> Any:
                 return
             # this way the naming of the parameters is constrained too
-            t = declare_callback_type(t, sample_callback)
+            t = _declare_callback_type(t, sample_callback)
 
         self._specific_key_event_emitter.add_event(key, t)
         return t    
     
     def when_this_sprite_clicked(self, sprite, other_associated_sprites: Iterable[Sprite]=[]):
-        t = self.create_trigger(set(list(other_associated_sprites)+[sprite]))
+        """
+        It is recommended to use the `Sprite.when_this_sprite_clicked` alias instead of this method, 
+        so you don't need to specify the `other_associated_sprites` in every event.  
+        
+        Returns an event that is triggered when the given sprite is clicked by mouse.  
+        The event handler does not take in any parameter.
+
+        Parameters
+        ---
+        sprite: Sprite
+            The sprite on which you want the click to be detected. The removal of this sprite will lead to the removal of this event so
+            it does not need to be included in `other_assoicated_sprite`
+        
+        other_associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+        
+        t = self.create_event(set(list(other_associated_sprites)+[sprite]))
 
         if not sprite in self._sprite_click_trigger:
             self._sprite_click_trigger[sprite] = []
@@ -553,54 +678,160 @@ class Game:
         if TYPE_CHECKING:
             def sample_callback()-> Any:
                 return
-            t = declare_callback_type(t, sample_callback)
+            t = _declare_callback_type(t, sample_callback)
         return t
     
     def when_backdrop_switched(self, backdrop_index, associated_sprites : Iterable[Sprite]=[]):
-        t = self.create_trigger(associated_sprites)
+        """
+        It is recommended to use the `Sprite.when_backdrop_switched` alias instead of this method, 
+        so you don't need to specify the `associated_sprites` in every event.  
+
+        Returns an event that is triggered when the game is switched to a backdrop at `backdrop_index`.
+
+        The event handler does not take in any parameter.
+
+        Parameters
+        ---
+        backdrop_index: int
+            The index of the backdrop  
+
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+        
+                
+        t = self.create_event(associated_sprites)
 
         if TYPE_CHECKING:
             def sample_callback()-> Any:
                 return
-            t = declare_callback_type(t, sample_callback)
+            t = _declare_callback_type(t, sample_callback)
 
         self._specific_backdrop_event_emitter.add_event(backdrop_index, t)
         return t
  
     def when_any_backdrop_switched(self, associated_sprites : Iterable[Sprite]=[]):
+        """
+        It is recommended to use the `Sprite.when_any_backdrop_switched` alias instead of this method, 
+        so you don't need to specify the `associated_sprites` in every event.  
+        
+        Returns an event that is triggered when the backdrop is switched. 
+
+        The event handler have to take one parameter:
+        - **idx** (int): The index of the new backdrop  
+        
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+        
         """different to scratch: catch all switches"""
-        t = self.create_trigger(associated_sprites)
+        t = self.create_event(associated_sprites)
         self._backdrop_change_triggers.append(t)
         if TYPE_CHECKING:
             def sample_callback(idx: int)-> Any:
                 return
-            t = declare_callback_type(t, sample_callback)
+            t = _declare_callback_type(t, sample_callback)
 
         return t
 
     def when_timer_above(self, t, associated_sprites : Iterable[Sprite]=[]):
+        """
+        It is recommended to use the `Sprite.when_timer_above` alias instead of this method, 
+        so you don't need to specify the `associated_sprites` in every event.  
+        
+        Returns an event that is triggered after the game have started for `t` seconds.
+
+        The event handler have to take one parameter:
+        - **n** (int): This value will always be zero
+
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+        t = t*1000
         return self.when_condition_met(lambda:(self._current_time_ms>t), 1, associated_sprites)
     
-    def when_receive_message(self, topic: str, associated_sprites : Iterable[Sprite]=[]):
-        trigger = self.create_trigger(associated_sprites)
-        self.__new_subscription(topic, trigger)
-        if TYPE_CHECKING:
-            def sample_callback(data: Any)-> Any:
-                return
-            trigger = declare_callback_type(trigger, sample_callback)
-        return trigger
-    
     def when_started_as_clone(self, sprite, associated_sprites : Iterable[Sprite]=[]):
-        trigger = self.create_trigger(associated_sprites)
+        """
+        It is recommended to use the `Sprite.when_started_as_clone` alias instead of this method, 
+        so you don't need to specify the `associated_sprites` in every event.  
+
+        Returns an event that is triggered after the given sprite is cloned by `Sprite.clone_myself`.
+
+        The event handler have to take one parameter:
+        - **clone_sprite** (Sprite): The newly created clone.
+                
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+        
+        
+        trigger = self.create_event(associated_sprites)
         self._clone_event_manager.new_trigger(sprite, trigger)
         if TYPE_CHECKING:
             def sample_callback(clone_sprite: Sprite)-> Any:
                 return
-            trigger = declare_callback_type(trigger, sample_callback)
+            trigger = _declare_callback_type(trigger, sample_callback)
+        return trigger
+
+    def when_receive_message(self, topic: str, associated_sprites : Iterable[Sprite]=[]):
+        """
+        It is recommended to use the `Sprite.when_receive_message` alias instead of this method, 
+        so you don't need to specify the `associated_sprites` in every event.  
+
+        Returns an event that is triggered after a message of the given `topic` is broadcasted.
+
+        The event handler have to take one parameter:
+        - **data** (Any): This parameter can be anything passed on by the message.
+
+        Parameters
+        ---
+        topic: str
+            Can be any string. If the topic equals the topic of a broadcast, the event will be triggered. 
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+        
+        
+        trigger = self.create_event(associated_sprites)
+        self.__new_subscription(topic, trigger)
+        if TYPE_CHECKING:
+            def sample_callback(data: Any)-> Any:
+                return
+            trigger = _declare_callback_type(trigger, sample_callback)
         return trigger
 
     
     def broadcast_message(self, topic: str, data: Any):
+        """
+        Sends a message of a given `topic` and `data`.
+        Triggers any event that subscribes to the topic. 
+        The handlers of the events will receive `data` as the parameter.
+
+        Example:
+        ```python
+        def event_handler(data):
+            print(data) # data will be "hello world!"
+
+        game.when_receive_message('print_message').add_handler(event_handler)
+        game.broadcast_message('print_message', data='hello world!')
+
+        # "hello world!" will be printed out
+        ```
+        Parameters
+        ---
+        topic: str
+            Can be any string. If the topic of an message event equals the topic of the broadcast, the event will be triggered. 
+
+        data: Any
+            Any arbitory data that will be passed to the event handler
+        
+        """
         if not topic in self._all_message_subscriptions:
             return 
         
@@ -608,7 +839,7 @@ class Game:
         for e in self._all_message_subscriptions[topic]:
             e.trigger(data)
 
-    def __new_subscription(self, topic: str, trigger: Trigger):
+    def __new_subscription(self, topic: str, trigger: Event):
         if not (topic in self._all_message_subscriptions):
             self._all_message_subscriptions[topic] = []
 
@@ -618,7 +849,18 @@ class Game:
 
     ## advance events
     def create_pygame_event_trigger(self, flags: List[int], associated_sprites : Iterable[Sprite]=[]):
+        """
+        *EXTENDED FEATURE*
 
+        DOCUMENTATION NOT COMPLETED
+
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+        
+        
         condition = self.when_condition_met(associated_sprites)
         
         def checker_hijack():
@@ -634,9 +876,18 @@ class Game:
 
 
     def create_specific_collision_trigger(self, sprite1: Sprite, sprite2: Sprite, other_associated_sprites: Iterable[Sprite]=[]):
+        """
+        *EXTENDED FEATURE*
 
+        DOCUMENTATION NOT COMPLETED
+
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
         #"""Cannot change the collision type of the object after calling this function"""
-        trigger = self.create_trigger(set(list(other_associated_sprites)+[sprite1, sprite2]))
+        trigger = self.create_event(set(list(other_associated_sprites)+[sprite1, sprite2]))
 
         self._trigger_to_collision_pairs[trigger] = sprite1, sprite2
 
@@ -644,10 +895,21 @@ class Game:
         return trigger
 
     def create_type2type_collision_trigger(self, type_a:int, type_b:int, collision_suppressed=False, associated_sprites: Iterable[Sprite]=[]):
+        """
+        *EXTENDED FEATURE*
+
+        DOCUMENTATION NOT COMPLETED
+
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """        
+        
         pair = (type_a, type_b) if type_a>type_b else (type_b, type_a)
 
         h = self._space.add_collision_handler(*pair)
-        trigger = self.create_trigger(associated_sprites)
+        trigger = self.create_event(associated_sprites)
 
 
 
@@ -673,7 +935,18 @@ class Game:
 
 
     def create_type_collision_trigger(self, collision_type:int , collision_suppressed=False, associated_sprites: Iterable[Sprite]=[]):
-        trigger = self.create_trigger(associated_sprites)
+        """
+        *EXTENDED FEATURE*
+
+        DOCUMENTATION NOT COMPLETED
+
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+        
+        trigger = self.create_event(associated_sprites)
 
         collision_allowed = not collision_suppressed
         
@@ -685,9 +958,35 @@ class Game:
         self._collision_type_to_trigger[collision_type][1].append(trigger)
 
         return trigger
-    
+
+    def suppress_type_collision(self, collision_type, collision_suppressed=True):
+        """
+        *EXTENDED FEATURE*
+
+        DOCUMENTATION NOT COMPLETED
+
+        """
+        collision_allowed = not collision_suppressed
+
+        if not collision_type in self._collision_type_to_trigger: 
+            self._collision_type_to_trigger[collision_type] = collision_allowed, []    
+        else:
+            t_list = self._collision_type_to_trigger[collision_type][1]
+            self._collision_type_to_trigger[collision_type] = collision_allowed, t_list
+
 
     def when_timer_reset(self, reset_period=np.inf, repeats=np.inf, associated_sprites: Iterable[Sprite]=[]):
+        """
+        *EXTENDED FEATURE*
+
+        DOCUMENTATION NOT COMPLETED
+
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+        
         condition = TimerCondition(reset_period,repeats)
         self._all_conditions.append(condition)
         self._all_triggers.append(condition.trigger)
@@ -699,6 +998,17 @@ class Game:
     
     
     def when_condition_met(self, checker=lambda: False, repeats=np.inf, associated_sprites: Iterable[Sprite]=[]):
+        """
+        *EXTENDED FEATURE*
+
+        DOCUMENTATION NOT COMPLETED
+        
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+        
         condition = Condition(checker, repeats)
         self._all_conditions.append(condition)
         self._all_triggers.append(condition.trigger)
@@ -709,9 +1019,20 @@ class Game:
         return condition
     
 
-    def create_trigger(self, associated_sprites: Iterable[Sprite]=[]) -> Trigger:
+    def create_event(self, associated_sprites: Iterable[Sprite]=[]) -> Event:
+        """
+        *EXTENDED FEATURE*
 
-        trigger = Trigger()
+        Create a custom event that you can trigger on your own. 
+        However, consider using the message event before you decide to create your custom event. 
+
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+
+        trigger = Event()
         self._all_triggers.append(trigger)
 
         self._sprite_event_dependency_manager.add_event(
@@ -719,18 +1040,6 @@ class Game:
         )
         return trigger
     
-
-
-    # change of behaviour
-
-    def suppress_type_collision(self, collision_type, collision_suppressed=True):
-        collision_allowed = not collision_suppressed
-
-        if not collision_type in self._collision_type_to_trigger: 
-            self._collision_type_to_trigger[collision_type] = collision_allowed, []    
-        else:
-            t_list = self._collision_type_to_trigger[collision_type][1]
-            self._collision_type_to_trigger[collision_type] = collision_allowed, t_list
 
 game = Game()
 """
