@@ -569,7 +569,7 @@ class Game:
         It is recommended to use the `Sprite.when_game_start` alias instead of this method, 
         so you don't need to specify the `associated_sprites` in every event.
 
-        Returns an event that is triggered when you call `game.start`. 
+        Returns an `Event` that is triggered when you call `game.start`. 
         The event handler does not take in any parameter.
 
         Parameters
@@ -594,7 +594,7 @@ class Game:
         It is recommended to use the `Sprite.when_any_key_pressed` alias instead of this method, 
         so you don't need to specify the `associated_sprites` in every event.  
 
-        Returns an event that is triggered when a key is pressed or released. 
+        Returns an `Event` that is triggered when a key is pressed or released. 
         
         The event handler have to take two parameters:
         - **key** (str): The key that is pressed. For example, 'w', 'd', 'left', 'right', 'space'. 
@@ -625,7 +625,7 @@ class Game:
         It is recommended to use the `Sprite.when_key_pressed` alias instead of this method, 
         so you don't need to specify the `associated_sprites` in every event.  
         
-        Returns an event that is triggered when a specific key is pressed or released. 
+        Returns an `Event` that is triggered when a specific key is pressed or released. 
 
         The event handler have to take one parameter:
         - **updown** (str): Either 'up' or 'down' that indicates whether it is a press or a release
@@ -651,12 +651,12 @@ class Game:
         self._specific_key_event_emitter.add_event(key, t)
         return t    
     
-    def when_this_sprite_clicked(self, sprite, other_associated_sprites: Iterable[Sprite]=[]):
+    def when_this_sprite_clicked(self, sprite, other_associated_sprites: Iterable[Sprite]=[]) -> Event[[]]:
         """
         It is recommended to use the `Sprite.when_this_sprite_clicked` alias instead of this method, 
         so you don't need to specify the `other_associated_sprites` in every event.  
         
-        Returns an event that is triggered when the given sprite is clicked by mouse.  
+        Returns an `Event` that is triggered when the given sprite is clicked by mouse.  
         The event handler does not take in any parameter.
 
         Parameters
@@ -681,12 +681,12 @@ class Game:
             t = _declare_callback_type(t, sample_callback)
         return t
     
-    def when_backdrop_switched(self, backdrop_index, associated_sprites : Iterable[Sprite]=[]):
+    def when_backdrop_switched(self, backdrop_index, associated_sprites : Iterable[Sprite]=[]) -> Event[[]]:
         """
         It is recommended to use the `Sprite.when_backdrop_switched` alias instead of this method, 
         so you don't need to specify the `associated_sprites` in every event.  
 
-        Returns an event that is triggered when the game is switched to a backdrop at `backdrop_index`.
+        Returns an `Event` that is triggered when the game is switched to a backdrop at `backdrop_index`.
 
         The event handler does not take in any parameter.
 
@@ -710,12 +710,12 @@ class Game:
         self._specific_backdrop_event_emitter.add_event(backdrop_index, t)
         return t
  
-    def when_any_backdrop_switched(self, associated_sprites : Iterable[Sprite]=[]):
+    def when_any_backdrop_switched(self, associated_sprites : Iterable[Sprite]=[]) -> Event[[int]]:
         """
         It is recommended to use the `Sprite.when_any_backdrop_switched` alias instead of this method, 
         so you don't need to specify the `associated_sprites` in every event.  
         
-        Returns an event that is triggered when the backdrop is switched. 
+        Returns an `Event` that is triggered when the backdrop is switched. 
 
         The event handler have to take one parameter:
         - **idx** (int): The index of the new backdrop  
@@ -736,12 +736,15 @@ class Game:
 
         return t
 
-    def when_timer_above(self, t, associated_sprites : Iterable[Sprite]=[]):
+    def when_timer_above(self, t, associated_sprites : Iterable[Sprite]=[]) -> Condition:
         """
+        **TODO: implementation not completed**
+        
         It is recommended to use the `Sprite.when_timer_above` alias instead of this method, 
         so you don't need to specify the `associated_sprites` in every event.  
         
-        Returns an event that is triggered after the game have started for `t` seconds.
+        Returns a `Condition` that is triggered after the game have started for `t` seconds.
+        A `Condition` works the same way an `Event` does. 
 
         The event handler have to take one parameter:
         - **n** (int): This value will always be zero
@@ -754,12 +757,12 @@ class Game:
         t = t*1000
         return self.when_condition_met(lambda:(self._current_time_ms>t), 1, associated_sprites)
     
-    def when_started_as_clone(self, sprite, associated_sprites : Iterable[Sprite]=[]):
+    def when_started_as_clone(self, sprite, associated_sprites : Iterable[Sprite]=[]) -> Event[[Sprite]]:
         """
         It is recommended to use the `Sprite.when_started_as_clone` alias instead of this method, 
         so you don't need to specify the `associated_sprites` in every event.  
 
-        Returns an event that is triggered after the given sprite is cloned by `Sprite.clone_myself`.
+        Returns an `Event` that is triggered after the given sprite is cloned by `Sprite.clone_myself`.
 
         The event handler have to take one parameter:
         - **clone_sprite** (Sprite): The newly created clone.
@@ -779,12 +782,12 @@ class Game:
             trigger = _declare_callback_type(trigger, sample_callback)
         return trigger
 
-    def when_receive_message(self, topic: str, associated_sprites : Iterable[Sprite]=[]):
+    def when_receive_message(self, topic: str, associated_sprites : Iterable[Sprite]=[]) -> Event[[Any]]:
         """
         It is recommended to use the `Sprite.when_receive_message` alias instead of this method, 
         so you don't need to specify the `associated_sprites` in every event.  
 
-        Returns an event that is triggered after a message of the given `topic` is broadcasted.
+        Returns an `Event` that is triggered after a message of the given `topic` is broadcasted.
 
         The event handler have to take one parameter:
         - **data** (Any): This parameter can be anything passed on by the message.

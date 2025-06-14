@@ -30,6 +30,7 @@ class Event(Generic[P]):
         self.__triggers: List = []
         self.__callbacks: List[Callable[P, Union[NoneType, Generator[float, None, None]]]] = []
         self.__stay_active = True
+        self.__to_soft_remove = False
         self.__generators: Dict[GeneratorType, float] = {}
         
 
@@ -60,6 +61,10 @@ class Event(Generic[P]):
     def remove(self):
         """Schedule this event to be removed."""
         self.__stay_active = False
+
+    def soft_remove(self):
+        """Schedule this event to be removed only when all the generators (yield functions) finish"""
+        self.__to_soft_remove = True
         
 
     def _handle_all(self, current_t_ms):
@@ -97,6 +102,9 @@ class Event(Generic[P]):
                     to_remove.append(g)
 
         self.__generators = {g:t for g, t in self.__generators.items() if not g in to_remove}
+        if not len(self.__generators) and self.__to_soft_remove:
+            self.remove()
+            
 
 
 
@@ -108,12 +116,17 @@ class _ConditionInterface:
     def remove(self):
         pass
 
+    def soft_remove(self):
+        pass
+
     @property
     def stay_active(self) -> bool:
         return True
 
 class Condition(_ConditionInterface):
-    """TODO: documentation"""
+    """
+    TODO: documentation
+    """
     def __init__(self, checker: Callable[[], bool] = lambda: False, repeats: Union[float, int]=1):
         self.trigger = Event()
         self.repeat_remains = repeats
@@ -123,6 +136,10 @@ class Condition(_ConditionInterface):
     def remove(self):
         self.__stay_active = False
         self.trigger.remove()
+
+    def soft_remove(self):
+        self.__stay_active = False
+        self.trigger.soft_remove()
 
     @property
     def stay_active(self):
@@ -135,7 +152,7 @@ class Condition(_ConditionInterface):
             self.trigger.trigger(self.repeat_remains)
 
         if not self.repeat_remains:
-            self.remove()
+            self.soft_remove()
         
     def add_handler(self, callback: Callable[[int], Any]):
         self.trigger.add_handler(callback)
@@ -159,6 +176,10 @@ class TimerCondition(_ConditionInterface):
         self.__stay_active = False
         self.trigger.remove()
 
+    def soft_remove(self):
+        self.__stay_active = False
+        self.trigger.soft_remove()
+
     @property
     def stay_active(self):
         return self.__stay_active
@@ -172,7 +193,7 @@ class TimerCondition(_ConditionInterface):
             self.trigger.trigger(self.repeat_remains)
 
         if not self.repeat_remains:
-            self.remove()
+            self.soft_remove()
         
 
     def add_handler(self, callback: Callable[[int], Any]):
