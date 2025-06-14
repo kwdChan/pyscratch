@@ -211,7 +211,7 @@ def create_enemy_type1(position):
         game.remove_sprite(enemy_sprite)
 
     def check_collision(a):
-        if enemy_sprite.shape in a.shapes:
+        if enemy_sprite._shape in a.shapes:
             destroy(None)
 
     when_hit_player.add_handler(destroy)

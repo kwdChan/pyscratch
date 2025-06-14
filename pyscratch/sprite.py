@@ -13,11 +13,6 @@ from .game_module import Game, game
 from .helper import adjust_brightness, set_transparency, create_rect, create_circle, load_frames_from_folder
 from pathlib import Path
 
-class RotationStyle(Enum):
-    ALL_AROUND = 0
-    LEFTRIGHT = 1
-    FIXED = 2
-
 
 def create_animated_sprite(folder_path,  *args, **kwargs):
     frame_dict = load_frames_from_folder(folder_path)
@@ -73,6 +68,11 @@ def create_edge_sprites(edge_colour = (255, 0, 0), thickness=4, collision_type=1
 
     return top_edge, left_edge, bottom_edge, right_edge
 
+class _RotationStyle(Enum):
+    ALL_AROUND = 0
+    LEFTRIGHT = 1
+    FIXED = 2
+
 
 _FrameDictType = Dict[str, List[pygame.Surface]]
 class _DrawingManager:
@@ -104,11 +104,11 @@ class _DrawingManager:
 
 
         # rotation and flips -> performed every update on the current frame
-        self.rotation_style: RotationStyle = RotationStyle.ALL_AROUND
+        self.rotation_style: _RotationStyle = _RotationStyle.ALL_AROUND
         self.flip_x: bool = False
         self.flip_y: bool = False
 
-    def set_rotation_style(self, flag: RotationStyle):
+    def set_rotation_style(self, flag: _RotationStyle):
         self.rotation_style = flag
 
     def flip_horizontal(self):
@@ -186,16 +186,16 @@ class _DrawingManager:
 
         img = self.frames[self.frame_idx]
 
-        if self.rotation_style == RotationStyle.ALL_AROUND: 
+        if self.rotation_style == _RotationStyle.ALL_AROUND: 
             img = pygame.transform.rotate(img, -angle)
     
-        elif self.rotation_style == RotationStyle.LEFTRIGHT:
+        elif self.rotation_style == _RotationStyle.LEFTRIGHT:
             if angle > -90 and angle < 90:
                 pass
             else:
                 img = pygame.transform.flip(img, True, False)
              
-        elif self.rotation_style == RotationStyle.FIXED:
+        elif self.rotation_style == _RotationStyle.FIXED:
             pass
 
         img = pygame.transform.flip(img, self.flip_x, self.flip_y)
@@ -219,8 +219,6 @@ class ShapeType(Enum):
 
 class _PhysicsManager:
     def __init__(self, game, body_type, shape_type, shape_size_factor, position, initial_image):
-
-
 
         # shape properties that requires shape changes
         self.shape_type: ShapeType = shape_type
@@ -324,7 +322,9 @@ class Sprite(pygame.sprite.Sprite):
         super().__init__()
 
         self.image: pygame.Surface # rotated and flipped every update during self.update
+        "@private"
         self.rect: pygame.Rect # depends on the rotated image and thus should be redefined during self.update
+        "@private"
 
         if starting_mode is None:
             starting_mode = next(iter(frame_dict))
@@ -332,24 +332,49 @@ class Sprite(pygame.sprite.Sprite):
         self._drawing_manager = _DrawingManager(frame_dict, starting_mode)
         _initial_frame = frame_dict[starting_mode][0]
         self._physcis_manager = _PhysicsManager(game, body_type, shape_type, shape_size_factor, position,_initial_frame)
-
-
-        self.mouse_selected = False
-        self.__is_dragging = False
-        self.draggable = False
-        self.elasticity: float = .99
-        self.friction: float = 0
-
+        
         self.private_data = {}
 
-        self.lock_to_sprite = None
-        self.lock_offset = 0, 0
+        self._mouse_selected = False
+        self.__is_dragging = False
+        self.draggable = False
+
+
+        self._lock_to_sprite = None
+        self._lock_offset = 0, 0
 
         game._add_sprite(self)
 
-    def is_mouse_selected(self):
+    @property
+    def _body(self):
+        return self._physcis_manager.body    
+    
+    @property
+    def _shape(self):
+        return self._physcis_manager.shape    
+
+    @override
+    def update(self, space):
+        "@private"
+
+        if self._lock_to_sprite:
+            self._body.position = self._lock_to_sprite.body.position + self._lock_offset
+            self._body.velocity = 0, 0 
+
+        x, y = self._body.position
+        self_angle = self._body.rotation_vector.angle_degrees
+        self.image, self.rect = self._drawing_manager.on_update(x, y, self_angle)
+        
+        self._physcis_manager.on_update(self.image)
+        
+        if self.__is_dragging:
+            self._body.velocity=0,0 
+            # TODO: should be done every physics loop or reset location every frame
+            # or can i change it to kinamatic temporarily
+
+    def _is_mouse_selected(self):
         # TODO: wtf 
-        return self.mouse_selected
+        return self._mouse_selected
     
     def set_draggable(self, draggable):
         self.draggable = draggable
@@ -357,24 +382,127 @@ class Sprite(pygame.sprite.Sprite):
     def _set_is_dragging(self, is_dragging):
         self.__is_dragging = is_dragging
 
+
+    # START: motions   
+    @property
+    def direction(self):
+        return self._body.rotation_vector.angle_degrees
+    
+    @direction.setter
+    def direction(self, degree):
+        self._body.angle = degree/180*np.pi
+    
+    @property
+    def x(self):
+        return self._body.position[0]
+    
+    @property
+    def y(self):
+        return self._body.position[1]
+    
+    @x.setter
+    def x(self, v):
+        self._body.position =  v, self._body.position[1]
+    
+    @y.setter
+    def y(self, v):
+        self._body.position = self._body.position[0], v
+
+    @deprecated('use Sprite.direction')
+    def get_rotation(self):
+        return self._body.rotation_vector.angle_degrees
+    
+    @deprecated('use Sprite.direction')
+    def set_rotation(self, degree):
+        self._body.angle = degree/180*np.pi
+
+    @deprecated('use Sprite.direction')
+    def add_rotation(self, degree):
+        self._body.angle += degree/180*np.pi
+
+
+
+    def move_indir(self, length):
+        self._body.position += self._body.rotation_vector*length
+        
+    def move_across_dir(self, length):
+        self._body.position += self._body.rotation_vector.perpendicular()*length
+        
+
+    def move_xy(self, xy):
+        self._body.position = self._body.position + xy
+
+
+    def set_xy(self, xy):
+        self._body.position =  xy
+
+
+    def distance_to(self, position, return_vector=False):
+        if return_vector:
+            return (position - self._body.position)
+        else:
+            return (position - self._body.position).length
+
+    def distance_to_sprite(self, sprite, return_vector=False):
+        return self.distance_to(sprite.body.position, return_vector)
+    
+
+    def point_towards(self, position, offset_degree=0):
+        rot_vec = (position - self._body.position).normalized()
+        self._body.angle = rot_vec.angle + offset_degree
+
+    def point_towards_sprite(self, sprite, offset_degree=0):
+        self.point_towards(sprite.body.position, offset_degree)
+
+    def point_towards_mouse(self, offset_degree=0):
+        self.point_towards(pygame.mouse.get_pos(), offset_degree)
+
+
+    
+    def lock_to(self, sprite, offset):
+        assert self._body.body_type == pymunk.Body.KINEMATIC, "only KINEMATIC object can be locked to another sprite"
+        
+        self._lock_to_sprite = sprite
+        self._lock_offset = offset
+
+    def release_position_lock(self):
+        self._lock_to_sprite = None
+        self._lock_offset = None
+        pass
+
+    # END: motions  
+
+
     # START: drawing related
+    def set_rotation_style_all_around(self):
+        self._drawing_manager.set_rotation_style(_RotationStyle.ALL_AROUND)
+
+    def set_rotation_style_left_right(self):
+        self._drawing_manager.set_rotation_style(_RotationStyle.LEFTRIGHT)
+
+    def set_rotation_style_no_rotation(self):
+        self._drawing_manager.set_rotation_style(_RotationStyle.FIXED)
+
+    @property
+    def frame_idx(self):
+        return self._drawing_manager.frame_idx
+    
+    @property
+    def frame_mode(self):
+        return self._drawing_manager.frame_mode
+    
     def set_frame_mode(self, new_mode):
         self._drawing_manager.set_frame_mode(new_mode)
 
-    def flip_horizontal(self):
-        self._drawing_manager.flip_horizontal()
+    def set_frame(self, idx):
+        self._drawing_manager.set_frame(idx)
+    
+    def next_frame(self):
+        self._drawing_manager.next_frame()
 
-    def flip_vertical(self):
-        self._drawing_manager.flip_vertical()
-
-    def set_rotation_style_all_around(self):
-        self._drawing_manager.set_rotation_style(RotationStyle.ALL_AROUND)
-
-    def set_rotation_style_left_right(self):
-        self._drawing_manager.set_rotation_style(RotationStyle.LEFTRIGHT)
-
-    def set_rotation_style_no_rotation(self):
-        self._drawing_manager.set_rotation_style(RotationStyle.FIXED)
+    @property
+    def scale_factor(self):
+        return self._drawing_manager.scale_factor
 
     def set_scale(self, factor):
         self._drawing_manager.set_scale(factor)
@@ -383,6 +511,12 @@ class Sprite(pygame.sprite.Sprite):
     def scale_by(self, factor):
         self._drawing_manager.scale_by(factor)
         self._physcis_manager.request_shape_update()
+
+    def flip_horizontal(self):
+        self._drawing_manager.flip_horizontal()
+
+    def flip_vertical(self):
+        self._drawing_manager.flip_vertical()
 
     def set_brightness(self, factor):
         self._drawing_manager.set_brightness(factor)
@@ -397,159 +531,10 @@ class Sprite(pygame.sprite.Sprite):
     def draw(self, image: pygame.Surface,  offset=(0,0), centre=True, reset=True):
         self._drawing_manager.blit_persist(image, offset, centre=centre, reset=reset)
 
-    def set_frame(self, idx):
-        self._drawing_manager.set_frame(idx)
-    
-    def next_frame(self):
-        self._drawing_manager.next_frame()
-
-    @property
-    def frame_idx(self):
-        return self._drawing_manager.frame_idx
-
     # END: drawing related    
-    # 
-    @property
-    def body(self):
-        return self._physcis_manager.body    
-    
-    @property
-    def shape(self):
-        return self._physcis_manager.shape    
-
-    @override
-    def update(self, space):
-
-        if self.lock_to_sprite:
-            self.body.position = self.lock_to_sprite.body.position + self.lock_offset
-            self.body.velocity = 0, 0 
-
-        x, y = self.body.position
-        self_angle = self.body.rotation_vector.angle_degrees
-        self.image, self.rect = self._drawing_manager.on_update(x, y, self_angle)
-        
-        self._physcis_manager.on_update(self.image)
-        
-        if self.__is_dragging:
-            self.body.velocity=0,0 
-            # TODO: should be done every physics loop or reset location every frame
-            # or can i change it to kinamatic temporarily
-
-    # START: TODO: physics property getters and setters
-    def set_mass(self, mass):
-        self.body.mass = mass
-
-    def set_moment(self, moment):
-        self.body.moment = moment
-
-    def set_elasticity(self, elasticity):
-        self._physcis_manager.elasticity = elasticity
-
-    def set_friction(self, friction):
-        self._physcis_manager.friction = friction
-    
-    def set_shape(self, shape_type='circle'):
-        self._physcis_manager.set_collision_type(shape_type)
-
-    def set_shape_size_factor(self, factor=0.8):
-        self._physcis_manager.set_shape_size_factor(factor)
-
-    def set_collision_type(self, value: int=0):
-        self._physcis_manager.set_collision_type(value)
-
-    # END: physics property
-
-    # START: motions   
-    @property
-    def direction(self):
-        return self.body.rotation_vector.angle_degrees
-    
-    @direction.setter
-    def direction(self, degree):
-        self.body.angle = degree/180*np.pi
-    
-    @property
-    def x(self):
-        return self.body.position[0]
-    
-    @property
-    def y(self):
-        return self.body.position[1]
-    
-    @x.setter
-    def x(self, v):
-        self.body.position =  v, self.body.position[1]
-    
-    @y.setter
-    def y(self, v):
-        self.body.position = self.body.position[0], v
-
-    @deprecated('use Sprite.direction')
-    def get_rotation(self):
-        return self.body.rotation_vector.angle_degrees
-    
-    @deprecated('use Sprite.direction')
-    def set_rotation(self, degree):
-        self.body.angle = degree/180*np.pi
-
-    @deprecated('use Sprite.direction')
-    def add_rotation(self, degree):
-        self.body.angle += degree/180*np.pi
-
-
-
-    def move_indir(self, length):
-        self.body.position += self.body.rotation_vector*length
-        
-    def move_across_dir(self, length):
-        self.body.position += self.body.rotation_vector.perpendicular()*length
-        
-
-    def move_xy(self, xy):
-        self.body.position = self.body.position + xy
-
-
-    def set_xy(self, xy):
-        self.body.position =  xy
-
-
-    def distance_to(self, position, return_vector=False):
-        if return_vector:
-            return (position - self.body.position)
-        else:
-            return (position - self.body.position).length
-
-    def distance_to_sprite(self, sprite, return_vector=False):
-        return self.distance_to(sprite.body.position, return_vector)
     
 
-    def point_towards(self, position, offset_degree=0):
-        rot_vec = (position - self.body.position).normalized()
-        self.body.angle = rot_vec.angle + offset_degree
-
-    def point_towards_sprite(self, sprite, offset_degree=0):
-        self.point_towards(sprite.body.position, offset_degree)
-
-    def point_towards_mouse(self, offset_degree=0):
-        self.point_towards(pygame.mouse.get_pos(), offset_degree)
-
-
-    
-    def lock_to(self, sprite, offset):
-        assert self.body.body_type == pymunk.Body.KINEMATIC, "only KINEMATIC object can be locked to another sprite"
-        
-        self.lock_to_sprite = sprite
-        self.lock_offset = offset
-
-    def release_position_lock(self):
-        self.lock_to_sprite = None
-        self.lock_offset = None
-        pass
-
-
-    # END: motions  
-
-    ## other  blocks
+    ## other blocks
     def is_touching(self, other_sprite):
         return pyscratch.game_module.is_touching(self, other_sprite)
     
@@ -569,13 +554,15 @@ class Sprite(pygame.sprite.Sprite):
 
     def clone_myself(self):
 
+        # TODO: other physics properties: mass, moment etc
+
         sprite = type(self)(
             frame_dict = self._drawing_manager.frame_dict_original, 
             starting_mode = self._drawing_manager.frame_mode, 
             position = (self.x, self.y),
             shape_type = self._physcis_manager.shape_type, 
             shape_size_factor = self._physcis_manager.shape_size_factor, 
-            body_type = self.body.body_type, 
+            body_type = self._body.body_type, 
         )
         if not self in game._all_sprites_to_show:
             game.hide_sprite(sprite)
@@ -583,23 +570,16 @@ class Sprite(pygame.sprite.Sprite):
         sprite.scale_by(self._drawing_manager.scale_factor)
         sprite.set_frame(self._drawing_manager.frame_idx)
         sprite.set_draggable(self.draggable)
-        sprite.set_elasticity(self.elasticity)
-        sprite.set_friction(self.friction)
+        sprite.set_elasticity(self._physcis_manager.elasticity)
+        sprite.set_friction(self._physcis_manager.friction)
         sprite._drawing_manager.set_rotation_style(self._drawing_manager.rotation_style)
 
 
         game._clone_event_manager.on_clone(self, sprite)
         return sprite
-    
 
 
     # alias of pygame method
-    def when_started_as_clone(self, associated_sprites: Iterable[Sprite]=[]):
-        
-        return game.when_started_as_clone(self, associated_sprites)    
-
-
-    ## scratch events
 
     def when_game_start(self, other_associated_sprites: Iterable[Sprite]=[]):
         associated_sprites = list(other_associated_sprites) + [self]
@@ -632,11 +612,13 @@ class Sprite(pygame.sprite.Sprite):
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_receive_message(topic, associated_sprites)
     
-
     def broadcast_message(self, topic: str, data: Any):
         """completely unnecessary"""
         return game.broadcast_message(topic, data)
     
+    def when_started_as_clone(self, associated_sprites: Iterable[Sprite]=[]):
+        return game.when_started_as_clone(self, associated_sprites)    
+
 
     ## additional events
     def when_condition_met(self, checker=lambda: False, repeats=np.inf, other_associated_sprites: Iterable[Sprite]=[]):
@@ -655,4 +637,30 @@ class Sprite(pygame.sprite.Sprite):
     
     def create_specific_collision_trigger(self, other_sprite: Sprite, other_associated_sprites: Iterable[Sprite]=[]):
         return game.create_specific_collision_trigger(self, other_sprite, other_associated_sprites)
+    
+
+    # START: TODO: physics property getters and setters
+    def set_mass(self, mass):
+        self._body.mass = mass
+
+    def set_moment(self, moment):
+        self._body.moment = moment
+
+    def set_elasticity(self, elasticity):
+        self._physcis_manager.elasticity = elasticity
+
+    def set_friction(self, friction):
+        self._physcis_manager.friction = friction
+    
+    def set_shape(self, shape_type='circle'):
+        self._physcis_manager.set_collision_type(shape_type)
+
+    def set_shape_size_factor(self, factor=0.8):
+        self._physcis_manager.set_shape_size_factor(factor)
+
+    def set_collision_type(self, value: int=0):
+        self._physcis_manager.set_collision_type(value)
+
+    # END: physics property
+
     

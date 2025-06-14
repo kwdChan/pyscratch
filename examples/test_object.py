@@ -124,26 +124,26 @@ def when_key_down(e):
         # sprite1.move_indir(1)
         # sprite1.flip_horizontal()
         # #game.hide_sprite(sprite1)
-        sprite2.body.velocity = sprite1.body.velocity[0], -1
+        sprite2._body.velocity = sprite1._body.velocity[0], -1
         # game.move_to_back(sprite1)
 
     if e.key  == pygame.key.key_code("space"):
         #sprite1.body.velocity = sprite1.body.velocity[0], -.5
         #sprite1.set_brightness(1.1)
         sprite1.set_transparency(.1)
-        sprite2.body.moment = 1
-        sprite2.body.mass = .1
+        sprite2._body.moment = 1
+        sprite2._body.mass = .1
         #game.create_timer_trigger(2000, 1).on_reset( lambda x: sprite1.scale_by(1.2))
         #game.create_timer_trigger(3000, 1).on_reset( lambda x: sprite1.scale_by(1.2))
 
     elif e.key  == pygame.key.key_code("d"):
-        sprite2.body.velocity = .5, sprite1.body.velocity[1]
+        sprite2._body.velocity = .5, sprite1._body.velocity[1]
     elif e.key  == pygame.key.key_code("s"):
         sprite2.scale_by(1.4)
         
         
     elif e.key  == pygame.key.key_code("a"):
-        sprite2.body.velocity = -.5, sprite1.body.velocity[1]
+        sprite2._body.velocity = -.5, sprite1._body.velocity[1]
         
     elif e.key  == pygame.key.key_code("1"):
         sprite1.set_frame_mode("1")
