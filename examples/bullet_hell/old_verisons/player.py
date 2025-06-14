@@ -12,7 +12,7 @@ from enemy import *
 def game_start(data):
 
     player = create_rect_sprite((0, 0, 255), 50, 30, pos=(720//2, 1200))
-    game.add_sprite(player)
+    game._add_sprite(player)
     game.create_edges()
     player.set_collision_type(PLAYER_TYPE)
 
@@ -29,7 +29,7 @@ def game_start(data):
     player.private_data['health'] = 10
 
 
-    game.add_sprite(healthbar_empty)
+    game._add_sprite(healthbar_empty)
     healthbar_empty.lock_to(player, (0,-30))
     healthbar_empty.blit(healthbar_red, (0,0))
 
