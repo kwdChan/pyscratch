@@ -12,29 +12,30 @@ nav_order: 5
 - `for i in range(N): `
 
 **forever**
+
 ```python
 while True: 
-	# whatever
-	yield 10
-````
+    # whatever
+    yield 10
+```
 **if then else**
 ```python
 if condition:
-	pass
+    pass
 else:
-	pass
+    pass
 ```
 **wait until**
 ```python
 while not condition:
-	yield 0.1
+    yield 0.1
 # whatever
 ```
 **repeat until**
 ```python
 while condition:
-	# whatever
-	yield 0.1
+    # whatever
+    yield 0.1
 
 ```
 **stop [all/this script/other scripts in sprite]**
