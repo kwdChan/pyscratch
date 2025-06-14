@@ -18,13 +18,13 @@ class RotationStyle(Enum):
 
 def create_animated_sprite(folder_path,  *args, **kwargs):
     frame_dict = load_frames_from_folder(folder_path)
-    return ScratchSprite(frame_dict, *args, **kwargs)
+    return Sprite(frame_dict, *args, **kwargs)
 
 
 def create_single_costume_sprite(image_path, *args, **kwargs):
     img = pygame.image.load(image_path).convert_alpha()
     frame_dict = {"always": [img]}
-    return ScratchSprite(frame_dict, *args, **kwargs)
+    return Sprite(frame_dict, *args, **kwargs)
 
 
 def create_shared_data_display_sprite(key, font, size = (150, 50), colour=(127, 127, 127), position: Optional[Tuple[float, float]]=None, **kwargs):
@@ -44,12 +44,12 @@ def create_shared_data_display_sprite(key, font, size = (150, 50), colour=(127, 
 
 def create_circle_sprite(colour, radius, *args, **kwargs):
     circle = create_circle(colour, radius)
-    return ScratchSprite({"always":[circle]}, "always", *args, **kwargs)
+    return Sprite({"always":[circle]}, "always", *args, **kwargs)
 
 
 def create_rect_sprite(colour, width, height, *args, **kwargs):
     rect = create_rect(colour, width, height)
-    return ScratchSprite({"always":[rect]}, "always", *args, **kwargs)
+    return Sprite({"always":[rect]}, "always", *args, **kwargs)
 
 
 def create_edge_sprites(edge_colour = (255, 0, 0), thickness=4, collision_type=1, game=game):
@@ -76,10 +76,64 @@ def create_edge_sprites(edge_colour = (255, 0, 0), thickness=4, collision_type=1
     return top_edge, left_edge, bottom_edge, right_edge
 
 
-class ScratchSprite(pygame.sprite.Sprite):
+class _ImageManager:
+    def __init__(self):
+        self.scale: float
+        self.frames: List
+        self.frame_idx: int
+        self.rotation_style: RotationStyle
+        self.flip_x: bool
+        self.flip_y: bool
+
+
+    def on_update(self, x, y, self_angle) -> pygame.Surface:
+
+
+
+        img = self.frames[self.frame_idx]
+
+        if self.rotation_style == RotationStyle.ALL_AROUND: 
+            img = pygame.transform.rotate(img, -self_angle)
+    
+        elif self.rotation_style == RotationStyle.LEFTRIGHT:
+            if self_angle > -90 and self_angle < 90:
+                pass
+            else:
+                img = pygame.transform.flip(img, True, False)
+             
+        elif self.rotation_style == RotationStyle.FIXED:
+            pass
+
+        
+        img = pygame.transform.flip(img, self.flip_x, self.flip_y)
+
+
+        self.image = img
+
+        img_w, img_h = self.image.get_width(), self.image.get_height()
+        self.rect = self.image.get_rect(
+            center=(x, y),
+              width=img_w,
+              height=img_h,
+              )
+
+
+
+class _ShapeManager:
+    def __init__(self):
+        self.scale: float
+        self.space: pymunk.Space
+        self.body: pymunk.Body
+
+    def request_update(self):
+        pass
+
+    def on_update(self):
+        pass 
+    
+class Sprite(pygame.sprite.Sprite):
     
     def __init__(self, frame_dict: Dict[str, List[pygame.Surface]], starting_mode:Optional[str]=None, pos= (100, 100), shape_type='circle', shape_factor=0.8, body_type=pymunk.Body.KINEMATIC):
-        # DYNAMIC, KINEMATIC, STATIC
 
         super().__init__()
 
@@ -440,41 +494,41 @@ class ScratchSprite(pygame.sprite.Sprite):
 
 
     # alias of pygame method
-    def when_started_as_clone(self, associated_sprites: Iterable[ScratchSprite]=[]):
+    def when_started_as_clone(self, associated_sprites: Iterable[Sprite]=[]):
         
         return game.when_started_as_clone(self, associated_sprites)    
 
 
     ## scratch events
 
-    def when_game_start(self, other_associated_sprites: Iterable[ScratchSprite]=[]):
+    def when_game_start(self, other_associated_sprites: Iterable[Sprite]=[]):
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_game_start(associated_sprites)
             
-    def when_key_pressed(self, key, other_associated_sprites: Iterable[ScratchSprite]=[]):
+    def when_key_pressed(self, key, other_associated_sprites: Iterable[Sprite]=[]):
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_key_pressed(key, associated_sprites)
     
-    def when_any_key_pressed(self, other_associated_sprites: Iterable[ScratchSprite]=[]):
+    def when_any_key_pressed(self, other_associated_sprites: Iterable[Sprite]=[]):
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_any_key_pressed(associated_sprites)
     
-    def when_this_sprite_clicked(self, other_associated_sprites: Iterable[ScratchSprite]=[]):
+    def when_this_sprite_clicked(self, other_associated_sprites: Iterable[Sprite]=[]):
         return game.when_this_sprite_clicked(self, other_associated_sprites)
        
-    def when_backdrop_switched(self, idx, other_associated_sprites : Iterable[ScratchSprite]=[]):
+    def when_backdrop_switched(self, idx, other_associated_sprites : Iterable[Sprite]=[]):
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_backdrop_switched(idx, associated_sprites)
     
-    def when_any_backdrop_switched(self, other_associated_sprites : Iterable[ScratchSprite]=[]):
+    def when_any_backdrop_switched(self, other_associated_sprites : Iterable[Sprite]=[]):
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_any_backdrop_switched(associated_sprites)
 
-    def when_timer_above(self, t, other_associated_sprites : Iterable[ScratchSprite]=[]):
+    def when_timer_above(self, t, other_associated_sprites : Iterable[Sprite]=[]):
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_timer_above(t, associated_sprites)
     
-    def when_receive_message(self, topic: str, other_associated_sprites : Iterable[ScratchSprite]=[]):
+    def when_receive_message(self, topic: str, other_associated_sprites : Iterable[Sprite]=[]):
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_receive_message(topic, associated_sprites)
     
@@ -485,21 +539,21 @@ class ScratchSprite(pygame.sprite.Sprite):
     
 
     ## additional events
-    def when_condition_met(self, checker=lambda: False, repeats=np.inf, other_associated_sprites: Iterable[ScratchSprite]=[]):
+    def when_condition_met(self, checker=lambda: False, repeats=np.inf, other_associated_sprites: Iterable[Sprite]=[]):
            
         associated_sprites = list(other_associated_sprites) + [self]
 
         return game.when_condition_met(checker, repeats, associated_sprites)
     
     
-    def when_timer_reset(self, reset_period=np.inf, repeats=np.inf, other_associated_sprites: Iterable[ScratchSprite]=[]):
+    def when_timer_reset(self, reset_period=np.inf, repeats=np.inf, other_associated_sprites: Iterable[Sprite]=[]):
         
         associated_sprites = list(other_associated_sprites) + [self]
 
         return game.when_timer_reset(reset_period, repeats, associated_sprites)
     
     
-    def create_specific_collision_trigger(self, other_sprite: ScratchSprite, other_associated_sprites: Iterable[ScratchSprite]=[]):
+    def create_specific_collision_trigger(self, other_sprite: Sprite, other_associated_sprites: Iterable[Sprite]=[]):
         return game.create_specific_collision_trigger(self, other_sprite, other_associated_sprites)
     
 

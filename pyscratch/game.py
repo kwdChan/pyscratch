@@ -10,13 +10,13 @@ from typing import Any, Callable, Generic, Iterable, Optional, List, Dict, Param
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .scratch_sprite import ScratchSprite
+    from .sprite import Sprite
 
 
 
 def _collision_begin(arbiter, space, data):
     game = cast(Game, data['game'])
-    game.contact_pairs_set.add(arbiter.shapes) 
+    game._contact_pairs_set.add(arbiter.shapes) 
 
     for e, (a,b) in game._trigger_to_collision_pairs.items():
         if (a.shape in arbiter.shapes) and (b.shape in arbiter.shapes):
@@ -25,7 +25,7 @@ def _collision_begin(arbiter, space, data):
 
     colliding_types = arbiter.shapes[0].collision_type, arbiter.shapes[1].collision_type
     collision_allowed = True
-    for collision_type, (allowed, triggers) in game.collision_type_to_trigger.items():
+    for collision_type, (allowed, triggers) in game._collision_type_to_trigger.items():
         if collision_type in colliding_types: 
             [t.trigger(arbiter) for t in triggers]
             collision_allowed = collision_allowed and allowed
@@ -40,13 +40,13 @@ def _collision_begin(arbiter, space, data):
 def _collision_separate(arbiter, space, data):
     game = cast(Game, data['game'])
 
-    if arbiter.shapes in game.contact_pairs_set:
-        game.contact_pairs_set.remove(arbiter.shapes)
+    if arbiter.shapes in game._contact_pairs_set:
+        game._contact_pairs_set.remove(arbiter.shapes)
 
 
     reverse_order = arbiter.shapes[1], arbiter.shapes[0]
-    if reverse_order in game.contact_pairs_set:
-        game.contact_pairs_set.remove(reverse_order)
+    if reverse_order in game._contact_pairs_set:
+        game._contact_pairs_set.remove(reverse_order)
 
 
 class CloneEventManager:
@@ -54,9 +54,9 @@ class CloneEventManager:
 
     def __init__(self):
         # TODO: removed sprites stay here forever
-        self.identical_sprites_and_triggers: List[Tuple[Set[ScratchSprite], List[Trigger]]] = []
+        self.identical_sprites_and_triggers: List[Tuple[Set[Sprite], List[Trigger]]] = []
 
-    def new_trigger(self, sprite:ScratchSprite, trigger:Trigger):
+    def new_trigger(self, sprite:Sprite, trigger:Trigger):
         new_lineage = True
         for identical_sprites, triggers in self.identical_sprites_and_triggers:
             if sprite in identical_sprites: 
@@ -67,7 +67,7 @@ class CloneEventManager:
             self.identical_sprites_and_triggers.append((set([sprite]), [trigger]))
                 
 
-    def on_clone(self, old_sprite:ScratchSprite, new_sprite:ScratchSprite):
+    def on_clone(self, old_sprite:Sprite, new_sprite:Sprite):
         # so that the cloning of the cloned sprite will trigger the same event
         for identical_sprites, triggers in self.identical_sprites_and_triggers:
             if not old_sprite in identical_sprites:
@@ -84,9 +84,9 @@ class SpriteEventDependencyManager:
 
     def __init__(self):
 
-        self.sprites: Dict[ScratchSprite, List[Union[Trigger, ConditionInterface]]] = {}
+        self.sprites: Dict[Sprite, List[Union[Trigger, ConditionInterface]]] = {}
 
-    def add_event(self, event: Union[ConditionInterface, Trigger], sprites: Iterable[ScratchSprite]):
+    def add_event(self, event: Union[ConditionInterface, Trigger], sprites: Iterable[Sprite]):
         """
         TODO: if the event is dependent to multiple sprites, the event will not be
         completely dereferenced until all the sprites on which it depends are removed
@@ -98,7 +98,7 @@ class SpriteEventDependencyManager:
             self.sprites[s].append(event)
 
 
-    def sprite_removal(self, sprite: ScratchSprite):
+    def sprite_removal(self, sprite: Sprite):
         
         to_remove = self.sprites.get(sprite)
         if not to_remove:
@@ -169,21 +169,21 @@ class Game:
         # collision detection
         self._trigger_to_collision_pairs = {}
 
-        self.collision_type_pair_to_trigger: Dict[Tuple[int, int], List[Trigger]] = {}
+        self._collision_type_pair_to_trigger: Dict[Tuple[int, int], List[Trigger]] = {}
 
-        self.collision_type_to_trigger: Dict[int, Tuple[bool, List[Trigger]]] = {}
+        self._collision_type_to_trigger: Dict[int, Tuple[bool, List[Trigger]]] = {}
 
-        self.contact_pairs_set: Set[Tuple[pymunk.Shape, pymunk.Shape]] = set() 
+        self._contact_pairs_set: Set[Tuple[pymunk.Shape, pymunk.Shape]] = set() 
 
 
-        self.collision_handler = self._space.add_default_collision_handler()
+        self._collision_handler = self._space.add_default_collision_handler()
 
-        self.collision_handler.data['game'] = self
-        self.collision_handler.begin = _collision_begin
-        self.collision_handler.separate = _collision_separate
+        self._collision_handler.data['game'] = self
+        self._collision_handler.begin = _collision_begin
+        self._collision_handler.separate = _collision_separate
         
         # sprites updating and drawing
-        self.all_sprites = pygame.sprite.Group()
+        self._all_sprites = pygame.sprite.Group()
 
         self._all_sprites_to_show = pygame.sprite.LayeredUpdates()
 
@@ -193,48 +193,48 @@ class Game:
         # self.scheduled_jobs = []
 
 
-        self.all_pygame_events = []
+        self._all_pygame_events = []
 
-        self.all_triggers: List[Trigger] = [] # these are to be executed every iteration
+        self._all_triggers: List[Trigger] = [] # these are to be executed every iteration
 
-        self.all_conditions: List[ConditionInterface] = [] # these are to be checked every iteration
+        self._all_conditions: List[ConditionInterface] = [] # these are to be checked every iteration
 
         #self.all_forever_jobs: List[Callable[[], None]] = []
-        self.all_message_subscriptions: Dict[str, List[Trigger]] = {}
+        self._all_message_subscriptions: Dict[str, List[Trigger]] = {}
 
         # key events 
         key_event = self.create_pygame_event_trigger([pygame.KEYDOWN, pygame.KEYUP])
         key_event.add_handler(self.__key_event_handler)
-        self.all_simple_key_triggers: List[Trigger] = [] # these are to be triggered by self.__key_event_handler only
+        self._all_simple_key_triggers: List[Trigger] = [] # these are to be triggered by self.__key_event_handler only
 
         # mouse dragging event
-        self.dragged_sprite = None
-        self.drag_offset = 0, 0
+        self._dragged_sprite = None
+        self._drag_offset = 0, 0
 
-        self.sprite_click_trigger:Dict[ScratchSprite, List[Trigger]] = {}  #TODO: need to be able to destory the trigger here when the sprite is destoryed
+        self._sprite_click_trigger:Dict[Sprite, List[Trigger]] = {}  #TODO: need to be able to destory the trigger here when the sprite is destoryed
         mouse_drag_trigger = self.create_pygame_event_trigger([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
         mouse_drag_trigger.add_handler(self.__mouse_drag_handler)
 
         ## Backdrops
-        self.backdrops = []
+        self.backdrops: List[pygame.Surface] = []
 
         self.__backdrop_index = None
-        self.backdrop_change_triggers: List[Trigger] = []
+        self._backdrop_change_triggers: List[Trigger] = []
 
 
 
         ## start event
-        self.game_start_triggers: List[Trigger] = []
+        self._game_start_triggers: List[Trigger] = []
 
         ## global timer event
-        self.global_timer_triggers: List[Trigger] = []
+        self._global_timer_triggers: List[Trigger] = []
 
     
-        self.current_time_ms: float = 0
+        self._current_time_ms: float = 0
 
-        self.specific_key_event_emitter: SpecificEventEmitter[str] = SpecificEventEmitter()
+        self._specific_key_event_emitter: SpecificEventEmitter[str] = SpecificEventEmitter()
 
-        self.specific_backdrop_event_emitter: SpecificEventEmitter[[]] = SpecificEventEmitter()
+        self._specific_backdrop_event_emitter: SpecificEventEmitter[[]] = SpecificEventEmitter()
 
 
 
@@ -242,9 +242,9 @@ class Game:
         up_or_down = 'down' if e.type == pygame.KEYDOWN else 'up'
         keyname = pygame.key.name(e.key)
 
-        self.specific_key_event_emitter.on_event(keyname, up_or_down)
+        self._specific_key_event_emitter.on_event(keyname, up_or_down)
 
-        for t in self.all_simple_key_triggers:
+        for t in self._all_simple_key_triggers:
             t.trigger(keyname, up_or_down)
 
 
@@ -255,30 +255,30 @@ class Game:
             
             for s in reversed(list(self._all_sprites_to_show)):
                 if TYPE_CHECKING:
-                    s = cast(ScratchSprite, s)
+                    s = cast(Sprite, s)
                 if s.shape.point_query(e.pos).distance <= 0:
-                    for t in self.sprite_click_trigger[s]:
+                    for t in self._sprite_click_trigger[s]:
                         t.trigger()
 
                     if not s.draggable:
                         continue
 
                     s.set_is_dragging (True)
-                    self.dragged_sprite = s
+                    self._dragged_sprite = s
                     offset_x = s.body.position[0]  - e.pos[0]
                     offset_y = s.body.position[1]  - e.pos[1]
-                    self.drag_offset = offset_x, offset_y
+                    self._drag_offset = offset_x, offset_y
                     break 
 
         elif e.type == pygame.MOUSEBUTTONUP:
-            if self.dragged_sprite: 
-                self.dragged_sprite.set_is_dragging(False)
-                self.dragged_sprite = None
+            if self._dragged_sprite: 
+                self._dragged_sprite.set_is_dragging(False)
+                self._dragged_sprite = None
 
-        elif e.type == pygame.MOUSEMOTION and self.dragged_sprite:
-            x = e.pos[0] + self.drag_offset[0]
-            y = e.pos[1] + self.drag_offset[1]
-            self.dragged_sprite.set_xy((x,y))
+        elif e.type == pygame.MOUSEMOTION and self._dragged_sprite:
+            x = e.pos[0] + self._drag_offset[0]
+            y = e.pos[1] + self._drag_offset[1]
+            self._dragged_sprite.set_xy((x,y))
 
 
 
@@ -320,22 +320,22 @@ class Game:
 
         draw_every_n_step = sim_step_min//framerate+1
 
-        self.current_time_ms = 0
+        self._current_time_ms = 0
 
 
-        for t in self.game_start_triggers:
+        for t in self._game_start_triggers:
             t.trigger()
 
         while True:
             dt = clock.tick(framerate)
-            self.current_time_ms += dt
+            self._current_time_ms += dt
             for i in range(draw_every_n_step): 
                 self._space.step(dt/draw_every_n_step)
 
 
 
-            self.all_pygame_events = pygame.event.get()
-            for event in self.all_pygame_events:
+            self._all_pygame_events = pygame.event.get()
+            for event in self._all_pygame_events:
                 if event.type == pygame.QUIT:
                     return 
 
@@ -344,25 +344,25 @@ class Game:
             #     j()
 
             # check conditions
-            for c in self.all_conditions:
+            for c in self._all_conditions:
                 c.check()
 
             # execute 
-            for t in self.all_triggers:
-                t.handle_all(self.current_time_ms)
+            for t in self._all_triggers:
+                t.handle_all(self._current_time_ms)
                 # TODO: is it possible to remove t in the self.all_triggers here?
-                t.generators_proceed(self.current_time_ms)
+                t.generators_proceed(self._current_time_ms)
 
             # clean up
-            self.all_conditions = list(filter(lambda t: t.stay_active, self.all_conditions))
-            self.all_simple_key_triggers = list(filter(lambda t: t.stay_active, self.all_simple_key_triggers))
-            self.all_triggers = list(filter(lambda t: t.stay_active, self.all_triggers))
+            self._all_conditions = list(filter(lambda t: t.stay_active, self._all_conditions))
+            self._all_simple_key_triggers = list(filter(lambda t: t.stay_active, self._all_simple_key_triggers))
+            self._all_triggers = list(filter(lambda t: t.stay_active, self._all_triggers))
 
             
             if event_count: 
-                print("all_conditions", len(self.all_conditions))
-                print("all_triggers", len(self.all_triggers))
-                print("all sprite", len(self.all_sprites))
+                print("all_conditions", len(self._all_conditions))
+                print("all_triggers", len(self._all_triggers))
+                print("all sprite", len(self._all_sprites))
                 # print("all_simple_key_triggers", len(self.all_simple_key_triggers))
 
             # Drawing
@@ -374,7 +374,7 @@ class Game:
             if debug_draw: 
                 self._space.debug_draw(self._draw_options)
             
-            self.all_sprites.update(self._space)
+            self._all_sprites.update(self._space)
             self._all_sprites_to_show.draw(self._screen)
             pygame.display.flip()
 
@@ -406,7 +406,7 @@ class Game:
     
     def read_timer(self) -> float:
         """get the time since the game started"""
-        return self.current_time_ms/1000
+        return self._current_time_ms/1000
     
 
     def set_gravity(self, xy: Tuple[float, float]):
@@ -417,25 +417,25 @@ class Game:
 
     def add_sprite(self, sprite, to_show=True):
 
-        self.all_sprites.add(sprite)
+        self._all_sprites.add(sprite)
         self._space.add(sprite.body, sprite.shape)
-        self.sprite_click_trigger[sprite] = []
+        self._sprite_click_trigger[sprite] = []
         if to_show:
             self._all_sprites_to_show.add(sprite)
 
     def cleanup_old_shape(self, old_shape):
 
         remove_list = []
-        for pair in self.contact_pairs_set:
+        for pair in self._contact_pairs_set:
             if old_shape in pair:
                 remove_list.append(pair)
 
         for r in remove_list:
-            self.contact_pairs_set.remove(r)
+            self._contact_pairs_set.remove(r)
         
-    def remove_sprite(self, sprite: ScratchSprite):
+    def remove_sprite(self, sprite: Sprite):
 
-        self.all_sprites.remove(sprite)
+        self._all_sprites.remove(sprite)
         self._all_sprites_to_show.remove(sprite) 
 
         self._trigger_to_collision_pairs = {k: v for k, v in self._trigger_to_collision_pairs.items() if not sprite in v}
@@ -487,9 +487,9 @@ class Game:
 
         if index != self.__backdrop_index:
             self.__backdrop_index = index
-            for t in self.backdrop_change_triggers:
+            for t in self._backdrop_change_triggers:
                 t.trigger(index)
-            self.specific_backdrop_event_emitter.on_event(self.__backdrop_index)
+            self._specific_backdrop_event_emitter.on_event(self.__backdrop_index)
 
     def next_backdrop(self):
         if not self.__backdrop_index is None: 
@@ -502,10 +502,10 @@ class Game:
 
     ## scratch events
 
-    def when_game_start(self, associated_sprites : Iterable[ScratchSprite]=[]):
+    def when_game_start(self, associated_sprites : Iterable[Sprite]=[]):
 
         t = self.create_trigger(associated_sprites)
-        self.game_start_triggers.append(t)
+        self._game_start_triggers.append(t)
 
         if TYPE_CHECKING:
             def sample_callback()-> Any:
@@ -514,13 +514,13 @@ class Game:
         return t
             
     
-    def when_any_key_pressed(self, associated_sprites : Iterable[ScratchSprite]=[]) -> Trigger[[str, str]]:
+    def when_any_key_pressed(self, associated_sprites : Iterable[Sprite]=[]) -> Trigger[[str, str]]:
         """
         Catch all keys and catch both press and release. 
         Returns an event (a `Trigger` object) that takes in two str argments
         """
         t = self.create_trigger(associated_sprites)
-        self.all_simple_key_triggers.append(t)
+        self._all_simple_key_triggers.append(t)
 
         if TYPE_CHECKING:
             def sample_callback(key:str, updown:str)-> Any:
@@ -531,7 +531,7 @@ class Game:
 
         return t
     
-    def when_key_pressed(self, key, associated_sprites : Iterable[ScratchSprite]=[])-> Trigger[[str]]:
+    def when_key_pressed(self, key, associated_sprites : Iterable[Sprite]=[])-> Trigger[[str]]:
         t = self.create_trigger(associated_sprites)
 
         if TYPE_CHECKING:
@@ -540,23 +540,23 @@ class Game:
             # this way the naming of the parameters is constrained too
             t = declare_callback_type(t, sample_callback)
 
-        self.specific_key_event_emitter.add_event(key, t)
+        self._specific_key_event_emitter.add_event(key, t)
         return t    
     
-    def when_this_sprite_clicked(self, sprite, other_associated_sprites: Iterable[ScratchSprite]=[]):
+    def when_this_sprite_clicked(self, sprite, other_associated_sprites: Iterable[Sprite]=[]):
         t = self.create_trigger(set(list(other_associated_sprites)+[sprite]))
 
-        if not sprite in self.sprite_click_trigger:
-            self.sprite_click_trigger[sprite] = []
+        if not sprite in self._sprite_click_trigger:
+            self._sprite_click_trigger[sprite] = []
             
-        self.sprite_click_trigger[sprite].append(t)
+        self._sprite_click_trigger[sprite].append(t)
         if TYPE_CHECKING:
             def sample_callback()-> Any:
                 return
             t = declare_callback_type(t, sample_callback)
         return t
     
-    def when_backdrop_switched(self, backdrop_index, associated_sprites : Iterable[ScratchSprite]=[]):
+    def when_backdrop_switched(self, backdrop_index, associated_sprites : Iterable[Sprite]=[]):
         t = self.create_trigger(associated_sprites)
 
         if TYPE_CHECKING:
@@ -564,13 +564,13 @@ class Game:
                 return
             t = declare_callback_type(t, sample_callback)
 
-        self.specific_backdrop_event_emitter.add_event(backdrop_index, t)
+        self._specific_backdrop_event_emitter.add_event(backdrop_index, t)
         return t
  
-    def when_any_backdrop_switched(self, associated_sprites : Iterable[ScratchSprite]=[]):
+    def when_any_backdrop_switched(self, associated_sprites : Iterable[Sprite]=[]):
         """different to scratch: catch all switches"""
         t = self.create_trigger(associated_sprites)
-        self.backdrop_change_triggers.append(t)
+        self._backdrop_change_triggers.append(t)
         if TYPE_CHECKING:
             def sample_callback(idx: int)-> Any:
                 return
@@ -578,10 +578,10 @@ class Game:
 
         return t
 
-    def when_timer_above(self, t, associated_sprites : Iterable[ScratchSprite]=[]):
-        return self.when_condition_met(lambda:(self.current_time_ms>t), 1, associated_sprites)
+    def when_timer_above(self, t, associated_sprites : Iterable[Sprite]=[]):
+        return self.when_condition_met(lambda:(self._current_time_ms>t), 1, associated_sprites)
     
-    def when_receive_message(self, topic: str, associated_sprites : Iterable[ScratchSprite]=[]):
+    def when_receive_message(self, topic: str, associated_sprites : Iterable[Sprite]=[]):
         trigger = self.create_trigger(associated_sprites)
         self.__new_subscription(topic, trigger)
         if TYPE_CHECKING:
@@ -590,39 +590,39 @@ class Game:
             trigger = declare_callback_type(trigger, sample_callback)
         return trigger
     
-    def when_started_as_clone(self, sprite, associated_sprites : Iterable[ScratchSprite]=[]):
+    def when_started_as_clone(self, sprite, associated_sprites : Iterable[Sprite]=[]):
         trigger = self.create_trigger(associated_sprites)
         self._clone_event_manager.new_trigger(sprite, trigger)
         if TYPE_CHECKING:
-            def sample_callback(clone_sprite: ScratchSprite)-> Any:
+            def sample_callback(clone_sprite: Sprite)-> Any:
                 return
             trigger = declare_callback_type(trigger, sample_callback)
         return trigger
 
     
     def broadcast_message(self, topic: str, data: Any):
-        if not topic in self.all_message_subscriptions:
+        if not topic in self._all_message_subscriptions:
             return 
         
-        self.all_message_subscriptions[topic] = list(filter(lambda t: t.stay_active, self.all_message_subscriptions[topic]))
-        for e in self.all_message_subscriptions[topic]:
+        self._all_message_subscriptions[topic] = list(filter(lambda t: t.stay_active, self._all_message_subscriptions[topic]))
+        for e in self._all_message_subscriptions[topic]:
             e.trigger(data)
 
     def __new_subscription(self, topic: str, trigger: Trigger):
-        if not (topic in self.all_message_subscriptions):
-            self.all_message_subscriptions[topic] = []
+        if not (topic in self._all_message_subscriptions):
+            self._all_message_subscriptions[topic] = []
 
-        self.all_message_subscriptions[topic].append(trigger)
+        self._all_message_subscriptions[topic].append(trigger)
 
 
 
     ## advance events
-    def create_pygame_event_trigger(self, flags: List[int], associated_sprites : Iterable[ScratchSprite]=[]):
+    def create_pygame_event_trigger(self, flags: List[int], associated_sprites : Iterable[Sprite]=[]):
 
         condition = self.when_condition_met(associated_sprites)
         
         def checker_hijack():
-            for e in self.all_pygame_events:
+            for e in self._all_pygame_events:
                 if e.type in flags:
                     condition.trigger.trigger(e)
 
@@ -633,7 +633,7 @@ class Game:
         return condition.trigger
 
 
-    def create_specific_collision_trigger(self, sprite1: ScratchSprite, sprite2: ScratchSprite, other_associated_sprites: Iterable[ScratchSprite]=[]):
+    def create_specific_collision_trigger(self, sprite1: Sprite, sprite2: Sprite, other_associated_sprites: Iterable[Sprite]=[]):
 
         #"""Cannot change the collision type of the object after calling this function"""
         trigger = self.create_trigger(set(list(other_associated_sprites)+[sprite1, sprite2]))
@@ -643,7 +643,7 @@ class Game:
      
         return trigger
 
-    def create_type2type_collision_trigger(self, type_a:int, type_b:int, collision_suppressed=False, associated_sprites: Iterable[ScratchSprite]=[]):
+    def create_type2type_collision_trigger(self, type_a:int, type_b:int, collision_suppressed=False, associated_sprites: Iterable[Sprite]=[]):
         pair = (type_a, type_b) if type_a>type_b else (type_b, type_a)
 
         h = self._space.add_collision_handler(*pair)
@@ -651,16 +651,16 @@ class Game:
 
 
 
-        if not pair in self.collision_type_pair_to_trigger: 
-            self.collision_type_pair_to_trigger[pair] = []
-        self.collision_type_pair_to_trigger[pair].append(trigger)
+        if not pair in self._collision_type_pair_to_trigger: 
+            self._collision_type_pair_to_trigger[pair] = []
+        self._collision_type_pair_to_trigger[pair].append(trigger)
 
         collision_allowed = not collision_suppressed
         def begin(arbiter, space, data):
             game = cast(Game, data['game'])
-            game.contact_pairs_set.add(arbiter.shapes) 
+            game._contact_pairs_set.add(arbiter.shapes) 
 
-            for t in game.collision_type_pair_to_trigger[pair]:
+            for t in game._collision_type_pair_to_trigger[pair]:
                 t.trigger(arbiter)
             return collision_allowed
         
@@ -672,25 +672,25 @@ class Game:
         return trigger
 
 
-    def create_type_collision_trigger(self, collision_type:int , collision_suppressed=False, associated_sprites: Iterable[ScratchSprite]=[]):
+    def create_type_collision_trigger(self, collision_type:int , collision_suppressed=False, associated_sprites: Iterable[Sprite]=[]):
         trigger = self.create_trigger(associated_sprites)
 
         collision_allowed = not collision_suppressed
         
 
-        if not collision_type in self.collision_type_to_trigger: 
-            self.collision_type_to_trigger[collision_type] = collision_allowed, []
+        if not collision_type in self._collision_type_to_trigger: 
+            self._collision_type_to_trigger[collision_type] = collision_allowed, []
 
 
-        self.collision_type_to_trigger[collision_type][1].append(trigger)
+        self._collision_type_to_trigger[collision_type][1].append(trigger)
 
         return trigger
     
 
-    def when_timer_reset(self, reset_period=np.inf, repeats=np.inf, associated_sprites: Iterable[ScratchSprite]=[]):
+    def when_timer_reset(self, reset_period=np.inf, repeats=np.inf, associated_sprites: Iterable[Sprite]=[]):
         condition = TimerCondition(reset_period,repeats)
-        self.all_conditions.append(condition)
-        self.all_triggers.append(condition.trigger)
+        self._all_conditions.append(condition)
+        self._all_triggers.append(condition.trigger)
 
         self._sprite_event_dependency_manager.add_event(
             condition, associated_sprites
@@ -698,10 +698,10 @@ class Game:
         return condition
     
     
-    def when_condition_met(self, checker=lambda: False, repeats=np.inf, associated_sprites: Iterable[ScratchSprite]=[]):
+    def when_condition_met(self, checker=lambda: False, repeats=np.inf, associated_sprites: Iterable[Sprite]=[]):
         condition = Condition(checker, repeats)
-        self.all_conditions.append(condition)
-        self.all_triggers.append(condition.trigger)
+        self._all_conditions.append(condition)
+        self._all_triggers.append(condition.trigger)
 
         self._sprite_event_dependency_manager.add_event(
             condition, associated_sprites
@@ -709,10 +709,10 @@ class Game:
         return condition
     
 
-    def create_trigger(self, associated_sprites: Iterable[ScratchSprite]=[]) -> Trigger:
+    def create_trigger(self, associated_sprites: Iterable[Sprite]=[]) -> Trigger:
 
         trigger = Trigger()
-        self.all_triggers.append(trigger)
+        self._all_triggers.append(trigger)
 
         self._sprite_event_dependency_manager.add_event(
             trigger, associated_sprites
@@ -726,11 +726,11 @@ class Game:
     def suppress_type_collision(self, collision_type, collision_suppressed=True):
         collision_allowed = not collision_suppressed
 
-        if not collision_type in self.collision_type_to_trigger: 
-            self.collision_type_to_trigger[collision_type] = collision_allowed, []    
+        if not collision_type in self._collision_type_to_trigger: 
+            self._collision_type_to_trigger[collision_type] = collision_allowed, []    
         else:
-            t_list = self.collision_type_to_trigger[collision_type][1]
-            self.collision_type_to_trigger[collision_type] = collision_allowed, t_list
+            t_list = self._collision_type_to_trigger[collision_type][1]
+            self._collision_type_to_trigger[collision_type] = collision_allowed, t_list
 
 game = Game()
 """

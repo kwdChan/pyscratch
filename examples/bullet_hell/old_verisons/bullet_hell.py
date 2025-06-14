@@ -3,7 +3,7 @@ import re, sys
 import numpy as np
 import pymunk
 from pyscratch import sensing
-from pyscratch.scratch_sprite import ScratchSprite, create_rect, create_rect_sprite, create_edge_sprites
+from pyscratch.sprite import Sprite, create_rect, create_rect_sprite, create_edge_sprites
 from pyscratch.helper import get_frame_dict
 from pyscratch.game import Game
 import pygame
@@ -68,7 +68,7 @@ on_click()
 
 def shoot_player_bullet(origin, inaccuracy):
 
-    bullet = ScratchSprite(frames, "circle_bullets", origin)
+    bullet = Sprite(frames, "circle_bullets", origin)
 
     #game.add_sprite(bullet)
     bullet.set_collision_type(PLAYER_BULLET_TYPE)
@@ -94,7 +94,7 @@ def shoot_player_bullet(origin, inaccuracy):
 
 
 def create_bullet_attracted(position):
-    bullet = ScratchSprite(frames, "spin", position)
+    bullet = Sprite(frames, "spin", position)
     
     bullet.set_scale(2.3)
     #game.add_sprite(bullet)
@@ -130,7 +130,7 @@ def create_bullet_attracted(position):
 
 def create_bullet_start_pointing(position, _):
 
-    bullet = ScratchSprite(frames, "spin", position)
+    bullet = Sprite(frames, "spin", position)
 
     
 
@@ -171,7 +171,7 @@ def create_bullet_start_pointing(position, _):
 
 
 def create_bullet_move_sine(position, rotation):
-    bullet = ScratchSprite(frames, "square_bullets", position)
+    bullet = Sprite(frames, "square_bullets", position)
     bullet.set_scale(2.3)
     #game.add_sprite(bullet)
     bullet.set_rotation(rotation+90)
@@ -219,7 +219,7 @@ def create_bullet_move_sine(position, rotation):
 
 
 def create_bullet_type1(position, rotation):
-    bullet = ScratchSprite(frames, "spin", position)
+    bullet = Sprite(frames, "spin", position)
     bullet.add_rotation(rotation)
     bullet.set_scale(2.3)
     #game.add_sprite(bullet)
