@@ -3,7 +3,7 @@ import re, sys
 import numpy as np
 import pymunk
 from pyscratch import sensing
-from pyscratch.scratch_sprite import ScratchSprite, create_rect, create_rect_sprite
+from pyscratch.sprite import Sprite, create_rect, create_rect_sprite
 from pyscratch.helper import get_frame_dict
 from pyscratch.game import Game
 from main import *

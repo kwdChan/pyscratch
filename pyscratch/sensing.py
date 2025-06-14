@@ -16,7 +16,7 @@ def get_mouse_presses():
 
 def is_touching(sprite_a, sprite_b):
     """pymunk"""
-    for pair in game.contact_pairs_set:
+    for pair in game._contact_pairs_set:
 
         if (sprite_a.shape in pair) and (sprite_b.shape in pair):
             return True

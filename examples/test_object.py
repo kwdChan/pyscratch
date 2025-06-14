@@ -1,4 +1,4 @@
-from pyscratch.scratch_sprite import ScratchSprite, create_circle_sprite, create_rect_sprite
+from pyscratch.sprite import Sprite, create_circle_sprite, create_rect_sprite
 import pygame
 import pymunk
 from pyscratch.game import game # neccessary for image loading
@@ -50,7 +50,7 @@ sprite_cir.set_shape('circle', 1, collision_allowed=True)
 game.add_sprite(sprite_cir)
 
 
-sprite1 = ScratchSprite(frame_dict,  "1", (100,100), body_type=pymunk.Body.KINEMATIC)
+sprite1 = Sprite(frame_dict,  "1", (100,100), body_type=pymunk.Body.KINEMATIC)
 sprite1.set_shape('box', shape_factor=.4)
 
 sprite1.set_draggable(True)
@@ -60,7 +60,7 @@ sprite1.scale_by(2)
 
 
 
-sprite2 = ScratchSprite(frame_dict,  "1", (100,100), body_type=pymunk.Body.DYNAMIC)
+sprite2 = Sprite(frame_dict,  "1", (100,100), body_type=pymunk.Body.DYNAMIC)
 sprite2.set_shape('box', shape_factor=.4, collision_allowed=True)
 sprite1.scale_by(3)
 
@@ -104,7 +104,7 @@ simple_key_event = game.when_any_key_pressed()
 
 def on_key_press(key, updown):
     game.broadcast_message('hello_world', dict(x=key))
-    print(game.all_message_subscriptions)
+    print(game._all_message_subscriptions)
 
 
     

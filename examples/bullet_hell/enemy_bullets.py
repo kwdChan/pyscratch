@@ -6,7 +6,7 @@ import numpy as np
 
 
 def create_bullet_attracted(position):
-    bullet = pysc.ScratchSprite(frames, "spin", position)
+    bullet = pysc.Sprite(frames, "spin", position)
     
     bullet.set_scale(2.3)
     #pysc.game.add_sprite(bullet)
@@ -44,7 +44,7 @@ def create_bullet_attracted(position):
 
 def create_bullet_start_pointing(position, _):
 
-    bullet = pysc.ScratchSprite(frames, "spin", position)
+    bullet = pysc.Sprite(frames, "spin", position)
 
     
 
@@ -85,7 +85,7 @@ def create_bullet_start_pointing(position, _):
 
 
 def create_bullet_move_sine(position, rotation):
-    bullet = pysc.ScratchSprite(frames, "square_bullets", position)
+    bullet = pysc.Sprite(frames, "square_bullets", position)
     bullet.set_scale(2.3)
     #pysc.game.add_sprite(bullet)
     bullet.set_rotation(rotation+90)
@@ -138,7 +138,7 @@ def create_straight_bullet(position, rotation):
     a bullet that moves a straight line
     """
     
-    bullet = pysc.ScratchSprite(frames, "spin", position)
+    bullet = pysc.Sprite(frames, "spin", position)
     bullet.add_rotation(rotation)
     bullet.set_scale(2.3)
     #pysc.game.add_sprite(bullet)
@@ -177,7 +177,7 @@ def create_exploding_bullet(position, rotation):
     a bullet that explode after 1.2 second
     """
 
-    bullet = pysc.ScratchSprite(frames, "spin", position)
+    bullet = pysc.Sprite(frames, "spin", position)
     bullet.add_rotation(rotation)
     bullet.set_scale(2.3)
     #pysc.game.add_sprite(bullet)

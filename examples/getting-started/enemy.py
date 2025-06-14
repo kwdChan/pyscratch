@@ -23,7 +23,7 @@ enemy.when_game_start().add_handler(create_enemy)
 
 
 # clone movement
-def clone_movement(clone_sprite: pysc.ScratchSprite):
+def clone_movement(clone_sprite: pysc.Sprite):
     clone_sprite.show()
 
     # random height
@@ -67,7 +67,7 @@ def clone_movement(clone_sprite: pysc.ScratchSprite):
 enemy.when_started_as_clone().add_handler(clone_movement)
 
 # clone touch the player 
-def clone_touch_the_player(clone_sprite: pysc.ScratchSprite):
+def clone_touch_the_player(clone_sprite: pysc.Sprite):
     while True:
         if clone_sprite.is_touching(player):
             clone_sprite.remove()
