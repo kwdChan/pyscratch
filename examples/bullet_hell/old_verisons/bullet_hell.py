@@ -2,10 +2,10 @@ import random
 import re, sys
 import numpy as np
 import pymunk
-from pyscratch import sensing
+import pyscratch.game_module
 from pyscratch.sprite import Sprite, create_rect, create_rect_sprite, create_edge_sprites
 from pyscratch.helper import get_frame_dict
-from pyscratch.game import Game
+from pyscratch.game_module import Game
 import pygame
 WIDTH = 720
 HEIGHT = 1280
@@ -53,7 +53,7 @@ def on_click():
     start_buttom.scale_by(0.9)
 
     on_condition = game.when_condition_met(
-        lambda: (not sensing.get_mouse_presses()[0]), repeats=1)
+        lambda: (not pyscratch.game.get_mouse_presses()[0]), repeats=1)
     
     def start_game(x):
         start_buttom.scale_by(1/0.9)
@@ -275,7 +275,7 @@ def create_enemy_type1(position):
     bullet_event = game.when_timer_reset(150).add_handler(lambda x: create_bullet_type1((enemy_sprite.x, enemy_sprite.y), enemy_sprite.get_rotation()))
     #bullet_event = game.create_timer_trigger(1500).on_reset(lambda x: create_bullet_attracted((enemy_sprite.x, enemy_sprite.y)))
 
-    when_hit_player = game.when_condition_met(lambda: sensing.is_touching(game, enemy_sprite, game.shared_data['player']), repeats=1)
+    when_hit_player = game.when_condition_met(lambda: pyscratch.game.is_touching(game, enemy_sprite, game.shared_data['player']), repeats=1)
     when_leaving_screen = game.when_condition_met(lambda: (enemy_sprite.y > HEIGHT), repeats=1)
     when_hit_by_player_bullet = game.create_type2type_collision_trigger(PLAYER_BULLET_TYPE, ENEMY_TYPE)
 
@@ -346,16 +346,16 @@ def game_start(data):
 
 
     def run_forever(_):
-        if sensing.is_key_pressed('w'):
+        if pyscratch.game.is_key_pressed('w'):
             player.move_xy((0, -5))
 
-        if sensing.is_key_pressed('s'):
+        if pyscratch.game.is_key_pressed('s'):
             player.move_xy((0, 5))
 
-        if sensing.is_key_pressed('a'):
+        if pyscratch.game.is_key_pressed('a'):
             player.move_xy((-5, 0))
 
-        if sensing.is_key_pressed('d'):
+        if pyscratch.game.is_key_pressed('d'):
             player.move_xy((5, 0))
 
         player.set_xy((cap(player.x, 50, WIDTH-50), cap(player.y, HEIGHT-500, HEIGHT)))

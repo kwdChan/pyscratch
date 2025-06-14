@@ -38,20 +38,20 @@ def movement():
         max_speed = 4#/player.private_data['size']
 
 
-        if pysc.sensing.is_key_pressed('w'):
+        if pysc.is_key_pressed('w'):
             speed_y = -max_speed
 
-        elif pysc.sensing.is_key_pressed('s'):
+        elif pysc.is_key_pressed('s'):
             speed_y = max_speed
 
         else:
             speed_y *= speed_decay
 
-        if pysc.sensing.is_key_pressed('a'):
+        if pysc.is_key_pressed('a'):
             player.direction = 180
             speed_x = -max_speed
             
-        elif pysc.sensing.is_key_pressed('d'):
+        elif pysc.is_key_pressed('d'):
             player.direction = 0
             speed_x = max_speed
         else:

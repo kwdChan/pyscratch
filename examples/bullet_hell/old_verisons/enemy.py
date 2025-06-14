@@ -2,10 +2,10 @@ import random
 import re, sys
 import numpy as np
 import pymunk
-from pyscratch import sensing
+from pyscratch import game
 from pyscratch.sprite import Sprite, create_rect, create_rect_sprite
 from pyscratch.helper import get_frame_dict
-from pyscratch.game import Game
+from pyscratch.game_module import Game
 
 from main import game, frames, WIDTH, HEIGHT, ENEMY_TYPE, PLAYER_BULLET_TYPE
 
@@ -194,7 +194,7 @@ def create_enemy_type1(position):
     bullet_event = game.when_timer_reset(150).add_handler(lambda x: create_bullet_type1((enemy_sprite.x, enemy_sprite.y), enemy_sprite.get_rotation()))
     #bullet_event = game.create_timer_trigger(1500).on_reset(lambda x: create_bullet_attracted((enemy_sprite.x, enemy_sprite.y)))
 
-    when_hit_player = game.when_condition_met(lambda: sensing.is_touching(game, enemy_sprite, game.shared_data['player']), repeats=1)
+    when_hit_player = game.when_condition_met(lambda: game.is_touching(game, enemy_sprite, game.shared_data['player']), repeats=1)
     when_leaving_screen = game.when_condition_met(lambda: (enemy_sprite.y > HEIGHT), repeats=1)
     when_hit_by_player_bullet = game.create_type2type_collision_trigger(PLAYER_BULLET_TYPE, ENEMY_TYPE)
 

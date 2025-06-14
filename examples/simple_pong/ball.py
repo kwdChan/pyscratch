@@ -20,25 +20,25 @@ def movement():
         yield 1/60
         if pysc.game.shared_data['running']:
             pysc.game.show_sprite(ball_sprite)
-            if pysc.sensing.is_touching(ball_sprite, top_edge):
+            if pysc.is_touching(ball_sprite, top_edge):
                 speed_y = abs(speed_y)
 
-            if pysc.sensing.is_touching( ball_sprite, bottom_edge):
+            if pysc.is_touching( ball_sprite, bottom_edge):
                 speed_y = -abs(speed_y)
 
-            if pysc.sensing.is_touching(ball_sprite, left_edge):
+            if pysc.is_touching(ball_sprite, left_edge):
                 speed_x = abs(speed_x)
                 ball_sprite.broadcast_message('right_score', None)
 
-            if pysc.sensing.is_touching( ball_sprite, right_edge):
+            if pysc.is_touching( ball_sprite, right_edge):
                 speed_x = -abs(speed_x)
                 ball_sprite.broadcast_message('left_score', None)
 
-            if pysc.sensing.is_touching( ball_sprite, pysc.game.shared_data['right_paddle']):
+            if pysc.is_touching( ball_sprite, pysc.game.shared_data['right_paddle']):
                 speed_x = -abs(speed_x)
                 pysc.game.play_sound('bong')
 
-            if pysc.sensing.is_touching( ball_sprite, pysc.game.shared_data['left_paddle']):
+            if pysc.is_touching( ball_sprite, pysc.game.shared_data['left_paddle']):
                 speed_x = abs(speed_x)
                 pysc.game.play_sound('bong')
                 

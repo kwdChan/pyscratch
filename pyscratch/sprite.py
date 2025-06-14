@@ -8,8 +8,8 @@ import numpy as np
 import pygame 
 import pymunk
 
-from pyscratch import sensing
-from .game import Game, game
+import pyscratch.game_module
+from .game_module import Game, game
 from .helper import adjust_brightness, set_transparency, create_rect, create_circle, load_frames_from_folder
 from pathlib import Path
 
@@ -551,10 +551,10 @@ class Sprite(pygame.sprite.Sprite):
 
     ## other  blocks
     def is_touching(self, other_sprite):
-        return sensing.is_touching(self, other_sprite)
+        return pyscratch.game_module.is_touching(self, other_sprite)
     
     def is_touching_mouse(self):
-        return sensing.is_touching_mouse(self)
+        return pyscratch.game_module.is_touching_mouse(self)
     
     def hide(self):
         game.hide_sprite(self)

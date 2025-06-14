@@ -2,10 +2,9 @@ import random
 import re, sys
 import numpy as np
 import pymunk
-from pyscratch import sensing
 from pyscratch.sprite import Sprite, create_rect, create_rect_sprite
 from pyscratch.helper import get_frame_dict
-from pyscratch.game import Game
+from pyscratch.game_module import Game
 
 
 import pygame

@@ -11,9 +11,9 @@ def movement():
     while True: 
         speed = 0
         
-        if pysc.sensing.is_key_pressed('up'):
+        if pysc.is_key_pressed('up'):
             speed -= 8
-        if pysc.sensing.is_key_pressed('down'):
+        if pysc.is_key_pressed('down'):
             speed += 8
 
         sprite.y += speed

@@ -2,8 +2,7 @@ import pyscratch as pysc
 import random
 from setting import *
 from enemy_bullets import *
-
-def spawn_line(_):
+...pyscratchdef spawgame_):
     n = 10
     margin = 20
     itv = (SCREEN_WIDTH-margin*2)//(n-1)
@@ -94,7 +93,7 @@ def create_standard_enemy(position, rotation, start_point, pointing_to_player, s
 
 
     ## 3. hitting a player
-    when_hit_player = pysc.game.when_condition_met(lambda: pysc.sensing.is_touching(pysc.game, enemy_sprite, pysc.game.shared_data['player']), repeats=1, associated_sprites=[enemy_sprite])
+    when_hit_player = pysc.game.when_condition_met(lambda: game.is_touching(pysc.game, enemy_sprite, pysc.game.shared_data['player']), repeats=1, associated_sprites=[enemy_sprite])
     when_hit_player.add_handler(lambda x: pysc.game.broadcast_message('player_health', -1))
 
     ## 4. hit by player buller
