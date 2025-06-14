@@ -1,6 +1,9 @@
 from __future__ import annotations
 from enum import Enum
 from typing import Any, Dict, Hashable, Iterable, List, Optional, ParamSpec, Tuple, Union, cast, override
+from typing_extensions import deprecated
+
+
 import numpy as np
 import pygame 
 import pymunk
@@ -329,7 +332,6 @@ class Sprite(pygame.sprite.Sprite):
         self._physcis_manager = _PhysicsManager(game, body_type, shape_type, shape_size_factor, position,_initial_frame)
 
 
-
         self.mouse_selected = False
         self.__is_dragging = False
         self.draggable = False
@@ -436,10 +438,10 @@ class Sprite(pygame.sprite.Sprite):
         self.body.moment = moment
 
     def set_elasticity(self, elasticity):
-        self.elasticity = elasticity
+        self._physcis_manager.elasticity = elasticity
 
     def set_friction(self, friction):
-        self.friction = friction
+        self._physcis_manager.friction = friction
     
     def set_shape(self, shape_type='circle'):
         self._physcis_manager.set_collision_type(shape_type)
@@ -447,18 +449,19 @@ class Sprite(pygame.sprite.Sprite):
     def set_shape_size_factor(self, factor=0.8):
         self._physcis_manager.set_shape_size_factor(factor)
 
-
     def set_collision_type(self, value: int=0):
         self._physcis_manager.set_collision_type(value)
 
+    # END: physics property
 
+    # START: motions   
     @property
     def direction(self):
         return self.body.rotation_vector.angle_degrees
     
     @direction.setter
     def direction(self, degree):
-        self.set_rotation(degree)
+        self.body.angle = degree/180*np.pi
     
     @property
     def x(self):
@@ -476,15 +479,17 @@ class Sprite(pygame.sprite.Sprite):
     def y(self, v):
         self.body.position = self.body.position[0], v
 
+    @deprecated('use Sprite.direction')
     def get_rotation(self):
         return self.body.rotation_vector.angle_degrees
     
+    @deprecated('use Sprite.direction')
     def set_rotation(self, degree):
         self.body.angle = degree/180*np.pi
 
+    @deprecated('use Sprite.direction')
     def add_rotation(self, degree):
         self.body.angle += degree/180*np.pi
-
 
 
 
@@ -524,7 +529,7 @@ class Sprite(pygame.sprite.Sprite):
         self.point_towards(pygame.mouse.get_pos(), offset_degree)
 
 
-
+    
     def lock_to(self, sprite, offset):
         assert self.body.body_type == pymunk.Body.KINEMATIC, "only KINEMATIC object can be locked to another sprite"
         
@@ -535,6 +540,26 @@ class Sprite(pygame.sprite.Sprite):
         self.lock_to_sprite = None
         self.lock_offset = None
         pass
+
+
+    # END: motions  
+
+    ## other  blocks
+    def is_touching(self, other_sprite):
+        return sensing.is_touching(self, other_sprite)
+    
+    def is_touching_mouse(self):
+        return sensing.is_touching_mouse(self)
+    
+    def hide(self):
+        game.hide_sprite(self)
+
+    def show(self):
+        game.show_sprite(self)
+
+    @override
+    def remove(self, *_):
+        game.remove_sprite(self)
 
 
     def clone_myself(self):
@@ -549,7 +574,7 @@ class Sprite(pygame.sprite.Sprite):
         )
         if not self in game._all_sprites_to_show:
             game.hide_sprite(sprite)
-        sprite.set_rotation(self.get_rotation())
+        sprite.direction = self.direction
         sprite.scale_by(self._drawing_manager.scale_factor)
         sprite.set_frame(self._drawing_manager.frame_idx)
         sprite.set_draggable(self.draggable)
@@ -626,19 +651,3 @@ class Sprite(pygame.sprite.Sprite):
     def create_specific_collision_trigger(self, other_sprite: Sprite, other_associated_sprites: Iterable[Sprite]=[]):
         return game.create_specific_collision_trigger(self, other_sprite, other_associated_sprites)
     
-
-    def is_touching(self, other_sprite):
-        return sensing.is_touching(self, other_sprite)
-    
-    def is_touching_mouse(self):
-        return sensing.is_touching_mouse(self)
-    
-    def hide(self):
-        game.hide_sprite(self)
-
-    def show(self):
-        game.show_sprite(self)
-
-    @override
-    def remove(self, *_):
-        game.remove_sprite(self)
