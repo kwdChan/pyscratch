@@ -1,7 +1,7 @@
 from pyscratch.sprite import Sprite, create_circle_sprite, create_rect_sprite
 import pygame
 import pymunk
-from pyscratch.game import game # neccessary for image loading
+from pyscratch.game_module import game # neccessary for image loading
 from pyscratch.helper import scale_to_fit_aspect, scale_and_tile, scale_to_fill_screen, adjust_brightness, set_transparency
 
 from pyscratch.helper import get_frame, get_frame_sequence, get_frame_dict

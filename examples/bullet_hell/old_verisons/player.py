@@ -2,10 +2,10 @@ import random
 import re, sys
 import numpy as np
 import pymunk
-from pyscratch import sensing
+from pyscratch import game
 from pyscratch.sprite import Sprite, create_rect, create_rect_sprite
 from pyscratch.helper import get_frame_dict
-from pyscratch.game import Game
+from pyscratch.game_module import Game
 from main import *
 from enemy import *
 
@@ -45,16 +45,16 @@ def game_start(data):
 
 
     def run_forever(_):
-        if sensing.is_key_pressed(['w']):
+        if game.is_key_pressed(['w']):
             player.move_xy((0, -5))
 
-        if sensing.is_key_pressed(['s']):
+        if game.is_key_pressed(['s']):
             player.move_xy((0, 5))
 
-        if sensing.is_key_pressed(['a']):
+        if game.is_key_pressed(['a']):
             player.move_xy((-5, 0))
 
-        if sensing.is_key_pressed(['d']):
+        if game.is_key_pressed(['d']):
             player.move_xy((5, 0))
 
         player.set_xy((cap(player.x, 50, WIDTH-50), cap(player.y, HEIGHT-500, HEIGHT)))

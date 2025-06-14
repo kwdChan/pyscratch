@@ -4,8 +4,7 @@ from setting import *
 
 def spawn_player(event_test=False):
 
-    # main sprite
-    player = pysc.create_rect_sprite((0, 0, 255), 50, 30, pos=(720//2, 1200))
+   ...pyscratch# main sgame   player = pysc.create_rect_sprite((0, 0, 255), 50, 30, pos=(720//2, 1200))
     #pysc.game.add_sprite(player)
     player.set_collision_type(PLAYER_TYPE)
 
@@ -23,16 +22,16 @@ def spawn_player(event_test=False):
     ## 1. movement    
     movement_event = pysc.game.when_timer_reset(1000/120)
     def movement(_):
-        if pysc.sensing.is_key_pressed('w'):
+        if game.is_key_pressed('w'):
             player.move_xy((0, -5))
 
-        if pysc.sensing.is_key_pressed('s'):
+        if game.is_key_pressed('s'):
             player.move_xy((0, 5))
 
-        if pysc.sensing.is_key_pressed('a'):
+        if game.is_key_pressed('a'):
             player.move_xy((-5, 0))
 
-        if pysc.sensing.is_key_pressed('d'):
+        if game.is_key_pressed('d'):
             player.move_xy((5, 0))
 
         player.set_xy((cap(player.x, 50, SCREEN_WIDTH-50), cap(player.y, SCREEN_HEIGHT-900, SCREEN_HEIGHT)))

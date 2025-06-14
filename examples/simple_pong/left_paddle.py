@@ -7,9 +7,9 @@ sprite = pysc.create_rect_sprite(paddle_colour, paddle_width, paddle_height,  po
 def movement():
     speed = 0
     while True: 
-        if pysc.sensing.is_key_pressed('w'):
+        if pysc.is_key_pressed('w'):
             speed = -8
-        if pysc.sensing.is_key_pressed('s'):
+        if pysc.is_key_pressed('s'):
             speed = 8
         
         speed *= 0.9
