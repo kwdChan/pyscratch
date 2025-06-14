@@ -34,12 +34,12 @@ def create_shared_data_display_sprite(key, font, size = (150, 50), colour=(127, 
         position = w/2+25, h/2+25
     sprite = create_rect_sprite(colour, w, h, pos=position, **kwargs)
 
-    def keep_score():
+    def update_value():
         while True: 
             sprite.write_text(f"{key}: {game.shared_data[key]}", font=font, offset=(w/2, h/2))
             yield 100
 
-    sprite.when_game_start().add_handler(keep_score)
+    sprite.when_game_start().add_handler(update_value)
     return sprite
 
 def create_circle_sprite(colour, radius, *args, **kwargs):
@@ -67,11 +67,6 @@ def create_edge_sprites(edge_colour = (255, 0, 0), thickness=4, collision_type=1
     bottom_edge.set_collision_type(collision_type)
     left_edge.set_collision_type(collision_type)
     right_edge.set_collision_type(collision_type)
-
-    #game.add_sprite(top_edge)
-    #game.add_sprite(bottom_edge)
-    #game.add_sprite(left_edge)
-    #game.add_sprite(right_edge)
 
     return top_edge, left_edge, bottom_edge, right_edge
 
@@ -210,45 +205,130 @@ class _DrawingManager:
               )
         return img, rect
 
-class _ShapeManager:
-    def __init__(self):
-        self.scale: float
-        self.space: pymunk.Space
-        self.body: pymunk.Body
+class ShapeType(Enum):
+    BOX = 'box'
+    CIRCLE = 'circle'
+    CIRCLE_WIDTH = 'circle_width'
+    CIRCLE_HEIGHT = 'circle_height'
+    
 
-    def request_update(self):
-        pass
+class _PhysicsManager:
+    def __init__(self, game, body_type, shape_type, shape_size_factor, position, initial_image):
 
-    def on_update(self):
-        pass 
+
+
+        # shape properties that requires shape changes
+        self.shape_type: ShapeType = shape_type
+        self.collision_type: int = 1
+        self.shape_size_factor: float = shape_size_factor
+
+        # shape properties that does not require shape changes
+        self.elasticity: float = .99
+        self.friction: float = 0
+
+        # update
+        self.__request_shape_update = False
+
+        # core variables
+        self.game = game
+        self.space = game._space
+
+        self.body =  pymunk.Body(1, 100, body_type=body_type)
+        self.body.position = position
+        self.shape = self.create_new_shape(initial_image)
+
+        self.space.add(self.body, self.shape)        
+
+
+    def request_shape_update(self):
+        self.__request_shape_update = True
+
+    def set_shape_type(self, shape_type: ShapeType):
+        if shape_type == self.shape_type:
+            return 
+        self.shape_type = shape_type 
+        self.__request_shape_update = True     
+
+    def set_shape_size_factor(self, shape_size_factor: float):
+        if shape_size_factor == self.shape_size_factor:
+            return 
+        self.shape_size_factor = shape_size_factor 
+        self.__request_shape_update = True     
+
+
+    def set_collision_type(self, collision_type):
+        if collision_type == self.collision_type:
+            return 
+        self.collision_type = collision_type 
+        self.__request_shape_update = True
+    
+    def create_new_shape(self, image: pygame.Surface):
+        rect = image.get_rect()
+        width = rect.width*self.shape_size_factor
+        height = rect.height*self.shape_size_factor
+        
+        if self.shape_type == ShapeType.BOX: 
+            new_shape = pymunk.Poly.create_box(self.body, (width, height))
+
+        elif self.shape_type == ShapeType.CIRCLE:
+            radius = (width+height)//4
+            new_shape = pymunk.Circle(self.body,radius)
+
+        elif self.shape_type == ShapeType.CIRCLE_WIDTH:
+            new_shape = pymunk.Circle(self.body, rect.width//2)
+
+        elif self.shape_type == ShapeType.CIRCLE_HEIGHT:
+            new_shape = pymunk.Circle(self.body, height//2)
+        else:
+            raise ValueError('invalid shape_type')
+        
+        new_shape.collision_type = self.collision_type
+        new_shape.elasticity = self.elasticity 
+        new_shape.friction = self.friction 
+
+
+        return new_shape
+
+
+    def on_update(self, image: pygame.Surface):
+        
+        if self.__request_shape_update: 
+            self.__request_shape_update = False
+
+            new_shape = self.create_new_shape(image)
+
+            game.cleanup_old_shape(self.shape)
+            self.space.remove(self.shape)
+
+            self.shape = new_shape
+            self.space.add(self.shape)         
 
 
 
 class Sprite(pygame.sprite.Sprite):
     
-    def __init__(self, frame_dict: Dict[str, List[pygame.Surface]], starting_mode:Optional[str]=None, pos= (100, 100), shape_type='circle', shape_factor=0.8, body_type=pymunk.Body.KINEMATIC):
-
+    def __init__(
+            self, 
+            frame_dict: Dict[str, List[pygame.Surface]], 
+            starting_mode:Optional[str]=None, 
+            position= (100, 100), 
+            shape_type = ShapeType.CIRCLE, 
+            shape_size_factor=0.8, 
+            body_type=pymunk.Body.KINEMATIC
+        ):
         super().__init__()
-        if starting_mode is None:
-            starting_mode = next(iter(frame_dict))
-
-        self._drawing_manager = _DrawingManager(frame_dict, starting_mode)
-
-        self.body = pymunk.Body(1, 100, body_type=body_type)
-
-        self.body.position = pos # change are updated anytime 
-
-        self.shape: pymunk.Shape # swapped only during self.update
-        self.new_shape: Optional[pymunk.Shape] # swapped only during self.update
 
         self.image: pygame.Surface # rotated and flipped every update during self.update
         self.rect: pygame.Rect # depends on the rotated image and thus should be redefined during self.update
 
+        if starting_mode is None:
+            starting_mode = next(iter(frame_dict))
 
-        self.scale_factor = 1
+        self._drawing_manager = _DrawingManager(frame_dict, starting_mode)
+        _initial_frame = frame_dict[starting_mode][0]
+        self._physcis_manager = _PhysicsManager(game, body_type, shape_type, shape_size_factor, position,_initial_frame)
 
-        self.set_shape(shape_type, shape_factor)
-        self.shape, self.new_shape = cast(pymunk.Shape, self.new_shape), None
+
 
         self.mouse_selected = False
         self.__is_dragging = False
@@ -258,11 +338,8 @@ class Sprite(pygame.sprite.Sprite):
 
         self.private_data = {}
 
-
         self.lock_to_sprite = None
         self.lock_offset = 0, 0
-
-        self.collision_type:int = 1
 
         game.add_sprite(self)
 
@@ -295,16 +372,14 @@ class Sprite(pygame.sprite.Sprite):
     def set_rotation_style_no_rotation(self):
         self._drawing_manager.set_rotation_style(RotationStyle.FIXED)
 
-
-
     def set_scale(self, factor):
-        self.scale_factor = factor
         self._drawing_manager.set_scale(factor)
-        self.__request_update_shape()
+        self._physcis_manager.request_shape_update()
 
     def scale_by(self, factor):
-        self.set_scale(self.scale_factor*factor)
-    
+        self._drawing_manager.scale_by(factor)
+        self._physcis_manager.request_shape_update()
+
     def set_brightness(self, factor):
         self._drawing_manager.set_brightness(factor)
 
@@ -325,7 +400,15 @@ class Sprite(pygame.sprite.Sprite):
     def frame_idx(self):
         return self._drawing_manager.frame_idx
 
-    # END: drawing related        
+    # END: drawing related    
+    # 
+    @property
+    def body(self):
+        return self._physcis_manager.body    
+    
+    @property
+    def shape(self):
+        return self._physcis_manager.shape    
 
     @override
     def update(self, space):
@@ -338,22 +421,14 @@ class Sprite(pygame.sprite.Sprite):
         self_angle = self.body.rotation_vector.angle_degrees
         self.image, self.rect = self._drawing_manager.on_update(x, y, self_angle)
         
-        if self.new_shape: 
-            game.cleanup_old_shape(self.shape)
-
-            space.remove(self.shape)
-            self.shape, self.new_shape = self.new_shape, None
-            self.shape.elasticity = self.elasticity
-            self.shape.friction = self.friction
-
-            space.add(self.shape)
-
+        self._physcis_manager.on_update(self.image)
+        
         if self.__is_dragging:
             self.body.velocity=0,0 
             # TODO: should be done every physics loop or reset location every frame
             # or can i change it to kinamatic temporarily
 
-
+    # START: TODO: physics property getters and setters
     def set_mass(self, mass):
         self.body.mass = mass
 
@@ -366,52 +441,15 @@ class Sprite(pygame.sprite.Sprite):
     def set_friction(self, friction):
         self.friction = friction
     
-    def set_shape(self, shape_type='circle', shape_factor=0.8, collision_allowed=False):
-        # could be a function or a string
-        # TODO: raise error when invalid mode is selected
-        self.shape_type = shape_type
-        self.shape_factor = shape_factor
-        if not collision_allowed:
-            self.set_collision_type(0)
-        else: 
-            self.set_collision_type(self.collision_type)
+    def set_shape(self, shape_type='circle'):
+        self._physcis_manager.set_collision_type(shape_type)
+
+    def set_shape_size_factor(self, factor=0.8):
+        self._physcis_manager.set_shape_size_factor(factor)
 
 
     def set_collision_type(self, value: int=0):
-        self.collision_type = value
-        self.__request_update_shape()
-
-
-    def __request_update_shape(self):
-        """create the shape based on the self.frames and put it in self.new_shape"""
-
-        # the rect of the un
-        rect = self._drawing_manager.frames[self._drawing_manager.frame_idx].get_rect()
-        width = int(rect.width*self.shape_factor)
-        height = int(rect.height*self.shape_factor)
-        
-
-        if self.shape_type == 'box': 
-            self.new_shape = pymunk.Poly.create_box(self.body, (width, height))
-
-        elif self.shape_type == 'circle':
-            radius = (width+height)//4
-            self.new_shape = pymunk.Circle(self.body,radius)
-
-        elif self.shape_type == 'circle_width':
-            self.new_shape = pymunk.Circle(self.body, rect.width//2)
-
-        elif self.shape_type == 'circle_height':
-            self.new_shape = pymunk.Circle(self.body, height//2)
-        
-
-        if self.new_shape:
-            self.new_shape.collision_type = self.collision_type
-
-        else:
-            raise ValueError('invalid shape_type')
-
-
+        self._physcis_manager.set_collision_type(value)
 
 
     @property
@@ -504,15 +542,15 @@ class Sprite(pygame.sprite.Sprite):
         sprite = type(self)(
             frame_dict = self._drawing_manager.frame_dict_original, 
             starting_mode = self._drawing_manager.frame_mode, 
-            pos = (self.x, self.y),
-            shape_type = self.shape_type, 
-            shape_factor = self.shape_factor, 
+            position = (self.x, self.y),
+            shape_type = self._physcis_manager.shape_type, 
+            shape_size_factor = self._physcis_manager.shape_size_factor, 
             body_type = self.body.body_type, 
         )
         if not self in game._all_sprites_to_show:
             game.hide_sprite(sprite)
         sprite.set_rotation(self.get_rotation())
-        sprite.scale_by(self.scale_factor)
+        sprite.scale_by(self._drawing_manager.scale_factor)
         sprite.set_frame(self._drawing_manager.frame_idx)
         sprite.set_draggable(self.draggable)
         sprite.set_elasticity(self.elasticity)

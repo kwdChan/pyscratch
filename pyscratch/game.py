@@ -418,7 +418,7 @@ class Game:
     def add_sprite(self, sprite, to_show=True):
 
         self._all_sprites.add(sprite)
-        self._space.add(sprite.body, sprite.shape)
+        #self._space.add(sprite.body, sprite.shape)
         self._sprite_click_trigger[sprite] = []
         if to_show:
             self._all_sprites_to_show.add(sprite)
