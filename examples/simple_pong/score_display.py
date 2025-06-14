@@ -1,7 +1,7 @@
 import pyscratch as pysc
 from settings import * 
 
-score_board = pysc.create_rect_sprite((200, 200, 200), 150, 70, pos=(SCREEN_WIDTH//2,SCREEN_HEIGHT//2))
+score_board = pysc.create_rect_sprite((200, 200, 200), 150, 70, position=(SCREEN_WIDTH//2,SCREEN_HEIGHT//2))
 game_start_event = score_board.when_game_start()
 pysc.game.shared_data['left_score'] = 0
 pysc.game.shared_data['right_score'] = 0

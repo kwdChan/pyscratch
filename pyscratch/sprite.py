@@ -30,17 +30,17 @@ def create_single_costume_sprite(image_path, *args, **kwargs):
     return Sprite(frame_dict, *args, **kwargs)
 
 
-def create_shared_data_display_sprite(key, font, size = (150, 50), colour=(127, 127, 127), position: Optional[Tuple[float, float]]=None, **kwargs):
+def create_shared_data_display_sprite(key, font, size = (150, 50), colour=(127, 127, 127), position: Optional[Tuple[float, float]]=None, update_period=0.5, **kwargs):
 
     w, h = size
     if position is None:
         position = w/2+25, h/2+25
-    sprite = create_rect_sprite(colour, w, h, pos=position, **kwargs)
+    sprite = create_rect_sprite(colour, w, h, position=position, **kwargs)
 
     def update_value():
         while True: 
             sprite.write_text(f"{key}: {game.shared_data[key]}", font=font, offset=(w/2, h/2))
-            yield 100
+            yield update_period
 
     sprite.when_game_start().add_handler(update_value)
     return sprite
@@ -144,21 +144,23 @@ class _DrawingManager:
         self.transparency_factor = factor
         self.request_transform = True
 
-    def blit_persist(self, surface: pygame.Surface, offset=(0,0), centre=True):
+    def blit_persist(self, surface: pygame.Surface, offset=(0,0), centre=True, reset=True):
         w, h = surface.get_width(), surface.get_height()
         if centre:
             offset = (offset[0]-w/2, offset[1]-h/2)
-        
-        self.blit_surfaces[(self.frame_mode, self.frame_idx)].append((surface, offset))
+        if reset: 
+            self.blit_surfaces[(self.frame_mode, self.frame_idx)] = [(surface, offset)]
+        else: 
+            self.blit_surfaces[(self.frame_mode, self.frame_idx)].append((surface, offset))
         self.request_transform = True
         
     # transform related helper
     def scale_by(self, factor):
         self.set_scale(self.scale_factor*factor)
 
-    def write_text(self, text: str, font: pygame.font.Font, colour=(255,255,255), offset=(0,0), centre=True):
+    def write_text(self, text: str, font: pygame.font.Font, colour=(255,255,255), offset=(0,0), centre=True, reset=True):
         text_surface = font.render(text, True, colour) 
-        self.blit_persist(text_surface, offset, centre=centre)
+        self.blit_persist(text_surface, offset, centre, reset)
 
     # transform
     def transform_frames(self):
@@ -166,7 +168,7 @@ class _DrawingManager:
         for k, frames in self.frame_dict_original.items():
             new_frames = []
             for idx, f in enumerate(frames):
-                f_new = f
+                f_new = f.copy()
                 for s, o in self.blit_surfaces[(k, idx)]:
                     f_new.blit(s, o)
                 f_new = set_transparency(f_new, self.transparency_factor)
@@ -315,7 +317,7 @@ class Sprite(pygame.sprite.Sprite):
             frame_dict: Dict[str, List[pygame.Surface]], 
             starting_mode:Optional[str]=None, 
             position= (100, 100), 
-            shape_type = ShapeType.CIRCLE, 
+            shape_type = ShapeType.BOX, 
             shape_size_factor=0.8, 
             body_type=pymunk.Body.KINEMATIC
         ):
@@ -388,9 +390,12 @@ class Sprite(pygame.sprite.Sprite):
     def set_transparency(self, factor):
         self._drawing_manager.set_transparency(factor)
 
-    def write_text(self, text: str, font: pygame.font.Font, colour=(255,255,255), offset=(0,0), centre=True):
+    def write_text(self, text: str, font: pygame.font.Font, colour=(255,255,255), offset=(0,0), centre=True, reset=True):
         text_surface = font.render(text, True, colour) 
-        self._drawing_manager.blit_persist(text_surface, offset, centre=centre)
+        self._drawing_manager.blit_persist(text_surface, offset, centre=centre, reset=reset)
+    
+    def draw(self, image: pygame.Surface,  offset=(0,0), centre=True, reset=True):
+        self._drawing_manager.blit_persist(image, offset, centre=centre, reset=reset)
 
     def set_frame(self, idx):
         self._drawing_manager.set_frame(idx)
