@@ -738,7 +738,6 @@ class Game:
 
     def when_timer_above(self, t, associated_sprites : Iterable[Sprite]=[]) -> Condition:
         """
-        **TODO: implementation not completed**
         
         It is recommended to use the `Sprite.when_timer_above` alias instead of this method, 
         so you don't need to specify the `associated_sprites` in every event.  
