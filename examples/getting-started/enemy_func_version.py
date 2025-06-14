@@ -8,7 +8,9 @@ player = pysc.game.shared_data['player']
 #player = cast(ScratchSprite, player)
 
 def create_enemy(_):
-    enemy = pysc.create_single_costume_sprite("assets/fishes/18.png")
+    enemy = pysc.create_animated_sprite("assets/kenney/other_fishes")
+    enemy.set_rotation_style_left_right()
+
     enemy.set_scale(.5)
     enemy.x = pysc.helper.random_number(0, SCREEN_WIDTH)
 
@@ -23,7 +25,6 @@ def create_enemy(_):
             enemy.point_towards_sprite(player)
             enemy.move_indir(1)
             yield 1/FRAMERATE
-    # TODO: soft remove the event so the generator still get run 
     enemy.when_timer_above(0).add_handler(movement)
 
 

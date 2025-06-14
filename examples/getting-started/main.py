@@ -1,5 +1,5 @@
 import pyscratch as pysc
-import player, enemy, hearts
+import player, hearts, enemy
 from settings import *
 
 background_image = pysc.helper.load_image('assets/vecteezy/my_background.jpg')
