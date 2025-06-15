@@ -46,11 +46,35 @@ def create_circle_sprite(colour, radius, *args, **kwargs):
 
 
 def create_rect_sprite(colour, width, height, *args, **kwargs):
+    """
+    Create a rectanglar sprite given the colour, width and height
+    Also optionally takes in any parameters that the `Sprite` constructor takes.
+    
+    ```python
+    
+    ```
+    """
     rect = create_rect(colour, width, height)
     return Sprite({"always":[rect]}, "always", *args, **kwargs)
 
 
 def create_edge_sprites(edge_colour = (255, 0, 0), thickness=4, collision_type=1, game=game):
+    """
+    Create the top, left, bottom and right edges 
+
+    ```
+    ```
+    
+
+    Returns
+    ---
+    top_edge: Sprite
+    left_edge: Sprite
+    bottom_edge: Sprite
+    right_edge: Sprite
+
+    """
+    
     # TODO: make the edge way thicker to avoid escape due to physics inaccuracy 
     # edges
     edge_body = pymunk.Body.STATIC
@@ -226,7 +250,7 @@ class _PhysicsManager:
         self.shape_size_factor: float = shape_size_factor
 
         # shape properties that does not require shape changes
-        self.elasticity: float = .99
+        self.elasticity: float = 1.0
         self.friction: float = 0
 
         # update
@@ -309,7 +333,9 @@ class _PhysicsManager:
 
 
 class Sprite(pygame.sprite.Sprite):
-    
+    """
+    Objects of the Sprite class represents a sprite.
+    """
     def __init__(
             self, 
             frame_dict: Dict[str, List[pygame.Surface]], 
@@ -319,6 +345,49 @@ class Sprite(pygame.sprite.Sprite):
             shape_size_factor=0.8, 
             body_type=pymunk.Body.KINEMATIC
         ):
+        """
+        You might not need to create the sprite from this constructor function. 
+        Consider functions like `create_single_costume_sprite` or `create_animated_sprite`
+        as they would be easier to work with. 
+
+        Example:
+        ```python
+        image1 = helper.load_image("assets/image1.png")
+        image2 = helper.load_image("assets/image2.png")
+        image3 = helper.load_image("assets/image3.png")
+        image4 = helper.load_image("assets/image4.png")
+
+        frame_dict = {"walking": [image1, image2], "idling": [image3, image4]}
+        my_sprite = Sprite(frame_dict, "walking", shape_type="circle", body_type=pymunk.Body.DYNAMIC)
+        
+        # alternative (exactly the same)
+        my_sprite = Sprite(frame_dict, "walking", shape_type=ShapeType.CIRCLE, body_type=pymunk.Body.DYNAMIC)
+        ```
+
+        Parameters
+        ---
+        frame_dict: Dict[str, List[pygame.Surface]]
+            A dictionary with different frame modes (str) as the keys 
+            and lists of images as the values 
+
+        starting_mode:Optional[str]
+            The starting frame mode. If not provided, 
+            any one of the frame mode might be picked 
+            as the starting frame mode.
+
+        position: Tuple[float, float]
+
+        shape_type: ShapeType 
+            The collision shape. See `set_shape` for more details.
+        shape_size_factor: float 
+
+        body_type: int 
+            The pymunk body type. Leave out the parameter if unsure. 
+            Can be `pymunk.Body.KINEMATIC`, `pymunk.Body.DYNAMIC` or `pymunk.Body.STATIC` 
+            - Use kinematic if you want the sprite to move when when you tell it to. 
+            - Use dynamic if you want the sprite to be freely moving by physcis. Also refer to `set_collision_type` to enable collision.  
+            - Use static if you do not want it to move at all. 
+        """
         super().__init__()
 
         self.image: pygame.Surface # rotated and flipped every update during self.update
@@ -334,10 +403,33 @@ class Sprite(pygame.sprite.Sprite):
         self._physcis_manager = _PhysicsManager(game, body_type, shape_type, shape_size_factor, position,_initial_frame)
         
         self.private_data = {}
+        """
+        A dictionary similar to `game.shared_data`. 
+        You can put any data or variable that should belong to the individuals sprite. 
+        A good example would be the health point of a charactor. 
+
+        Let say if you have a uncertain number of enemy in game created by cloning or otherwise, 
+        it would be messy to put the health point of each enemy to `game.shared_data`. In this 
+        case, putting the health point in the private data is a better choice.
+
+        Example:
+        ```python
+        my_sprite.private_data['hp'] = 10
+
+        def on_hit(damage):
+            my_sprite.private_data['hp'] -= damage
+            print("how much hp I have left: ", my_sprite.private_data['hp'])
+
+        my_sprite.when_received_message('hit').add_handler(on_hit)
+        
+        game.broadcast_message('hit', 2)
+        ```
+        """
 
         self._mouse_selected = False
         self.__is_dragging = False
         self.draggable = False
+        """Whether or not this sprite is draggable."""
 
 
         self._lock_to_sprite = None
@@ -358,7 +450,7 @@ class Sprite(pygame.sprite.Sprite):
         "@private"
 
         if self._lock_to_sprite:
-            self._body.position = self._lock_to_sprite.body.position + self._lock_offset
+            self._body.position = self._lock_to_sprite._body.position + self._lock_offset
             self._body.velocity = 0, 0 
 
         x, y = self._body.position
@@ -377,6 +469,15 @@ class Sprite(pygame.sprite.Sprite):
         return self._mouse_selected
     
     def set_draggable(self, draggable):
+        """
+        Set whether or not this sprite is draggable.
+
+        Example: 
+        ```python
+        # Make the sprite draggable
+        my_sprite.set_draggable(True)
+        ```
+        """
         self.draggable = draggable
 
     def _set_is_dragging(self, is_dragging):
@@ -385,21 +486,68 @@ class Sprite(pygame.sprite.Sprite):
 
     # START: motions   
     @property
-    def direction(self):
-        return self._body.rotation_vector.angle_degrees
-    
-    @direction.setter
-    def direction(self, degree):
-        self._body.angle = degree/180*np.pi
-    
-    @property
     def x(self):
+        """
+        The x position of the sprite.
+        You can change this property to change the x position of the sprite. 
+
+        Remember that the top-left corner is (x=0, y=0), 
+        and x increases as the sprite goes right. 
+
+        so setting x to 0 sends the sprite to the left edge. 
+
+        Example: 
+        ```python
+        # moves the sprite 10 pixels to the right
+        my_sprite.x += 10 
+        ```
+        """
         return self._body.position[0]
     
     @property
     def y(self):
+        """
+        The y position of the sprite.
+        You can change this property to change the y position of the sprite. 
+        
+        Remember that the top-left corner is (x=0, y=0), 
+        and y increases as the sprite goes ***down***. 
+
+        so setting y to 0 sends the sprite to the top edge.         
+
+        Example: 
+        ```python
+        # moves the sprite 10 pixels down
+        my_sprite.y += 10 
+        ```
+        """
         return self._body.position[1]
     
+    @property
+    def direction(self):
+        """
+        The direction of movement of the sprite. 
+        Also rotates the sprite image depending on the rotation style.
+        You can change this property to change the direction of movement of the sprite. 
+
+        - 0 degree is pointing to the left 
+        - 90 degree is pointing ***down***
+        - 180 degree is pointing to the right
+        - -90 degree or 270 degree is pointing up 
+
+        Therefore, increasing this value turns the sprite clockwise
+    
+        (If you find it strange that 90 degree is pointing down, 
+        it is because y is positive when going down)
+
+        Example: 
+        ```python
+        # moves the sprite 10 degrees clockwise
+        my_sprite.direction += 10 
+        ```        
+        """
+        return self._body.rotation_vector.angle_degrees
+   
     @x.setter
     def x(self, v):
         self._body.position =  v, self._body.position[1]
@@ -407,6 +555,11 @@ class Sprite(pygame.sprite.Sprite):
     @y.setter
     def y(self, v):
         self._body.position = self._body.position[0], v
+
+    @direction.setter
+    def direction(self, degree):
+        self._body.angle = degree/180*np.pi
+    
 
     @deprecated('use Sprite.direction')
     def get_rotation(self):
@@ -420,52 +573,170 @@ class Sprite(pygame.sprite.Sprite):
     def add_rotation(self, degree):
         self._body.angle += degree/180*np.pi
 
-
-
-    def move_indir(self, length):
-        self._body.position += self._body.rotation_vector*length
+    def move_indir(self, steps: float):
+        """
+        Moves the sprite forward along `direction`.   
+        """
+        self._body.position += self._body.rotation_vector*steps
         
-    def move_across_dir(self, length):
-        self._body.position += self._body.rotation_vector.perpendicular()*length
+    def move_across_dir(self, steps: float):
+        """
+        Moves the sprite forward along `direction` + 90 degrees  
+        """
+        self._body.position += self._body.rotation_vector.perpendicular()*steps
         
 
-    def move_xy(self, xy):
+    def move_xy(self, xy: Tuple[float, float]):
+        """
+        Increments both x and y. 
+
+        Example: 
+        ```python
+        # increase x by 10 and decrease y by 5
+        my_sprite.move_xy((10, -5))
+        ```
+        """
         self._body.position = self._body.position + xy
 
+    def set_xy(self, xy: Tuple[float, float]):
+        """
+        Sets the x and y coordinate. 
 
-    def set_xy(self, xy):
+        Example: 
+        ```python
+        # put the sprite to the top-left corner
+        my_sprite.set_xy((0, 0))
+        ```
+        """        
         self._body.position =  xy
 
 
-    def distance_to(self, position, return_vector=False):
-        if return_vector:
+    def distance_to(self, position: Tuple[float, float], return_xy=False) -> Union[float, Tuple[float, float]]:
+        """
+        Gets the distance from the centre of this sprite to a location. 
+        Returns one float or a tuple of two floats. 
+
+        Example: 
+        ```python   
+        # returns the distance to the centre of the screen
+        distance_to_centre = my_sprite.distance_to((SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+        
+        # OR
+        
+        # returns the x and y distance separately
+        dist_x, dist_y = my_sprite.distance_to((SCREEN_WIDTH/2, SCREEN_HEIGHT/2), return_xy=True)
+        
+        ```
+        """   
+        if return_xy:
             return (position - self._body.position)
         else:
             return (position - self._body.position).length
 
-    def distance_to_sprite(self, sprite, return_vector=False):
-        return self.distance_to(sprite.body.position, return_vector)
+    def distance_to_sprite(self, sprite: Sprite, return_xy=False)-> Union[float, Tuple[float, float]]:
+        """
+        Gets the distance between the centres of two sprites. 
+        Returns one float or a tuple of two floats. 
+
+        Example: 
+        ```python   
+        # returns the distance to another sprite
+        distance_to_centre = my_sprite.distance_to_sprite(my_sprite2)
+        
+        # OR
+        
+        # returns the x and y distance separately
+        dist_x, dist_y = my_sprite.distance_to_sprite(my_sprite2, return_xy=True)
+        
+        ```
+        """  
+
+        return self.distance_to(sprite._body.position, return_xy)
     
 
-    def point_towards(self, position, offset_degree=0):
+    def point_towards(self, position: Tuple[float, float], offset_degree=0):
+        """
+        Changes the direction to point to a location. 
+
+        Example: 
+        ```python   
+        # point to the centre of the screen
+        my_sprite.point_towards((SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+        ```
+        """          
         rot_vec = (position - self._body.position).normalized()
         self._body.angle = rot_vec.angle + offset_degree
 
-    def point_towards_sprite(self, sprite, offset_degree=0):
-        self.point_towards(sprite.body.position, offset_degree)
+
+    def point_towards_sprite(self, sprite: Sprite, offset_degree=0):
+        """
+        Changes the direction to point to a sprite. 
+
+        Example: 
+        ```python   
+        # point to another sprite
+        my_sprite.point_towards_sprite(another_sprite2)
+        ```
+        """  
+
+
+        self.point_towards(sprite._body.position, offset_degree)
 
     def point_towards_mouse(self, offset_degree=0):
+        """
+        Changes the direction to point to the mouse. 
+
+        Example: 
+        ```python   
+        # point to the mouse
+        my_sprite.point_towards_mouse()
+        ```
+        """  
         self.point_towards(pygame.mouse.get_pos(), offset_degree)
 
 
     
-    def lock_to(self, sprite, offset):
+    def lock_to(self, sprite: Sprite, offset: Tuple[float, float]):
+        """
+        *EXTENDED FEATURE*
+
+        Locks in the position of this sprite relative to the position of another sprite, 
+        so the sprite will always be in the same location relative to the other sprite.  
+        This method only need to run once (instead of continuously in a loop)
+
+        Example: 
+        ```python
+        # a very rudimentary text bubble
+        text_bubble_sprite = create_rect_sprite(...)
+
+        # lock the position of the text_bubble_sprite relative to the player_sprite. 
+        text_bubble_sprite.lock_to(player_sprite, offset=(-100, -100))
+
+        # a very rudimentary implementation that assumes 
+        # that you won't have more than one text message within 3 seconds
+        def on_message(data):
+        
+            text_bubble_sprite.write_text(data)
+            text_bubble_sprite.show()
+
+            yield 3 # wait for three seconds
+            text_bubble_sprite.hide()
+
+        text_bubble_sprite.when_received_message('dialogue').add_handler(on_message)
+
+        ```
+        """
         assert self._body.body_type == pymunk.Body.KINEMATIC, "only KINEMATIC object can be locked to another sprite"
         
         self._lock_to_sprite = sprite
         self._lock_offset = offset
 
     def release_position_lock(self):
+        """
+        *EXTENDED FEATURE*
+
+        Release the position lock set by `lock_to`
+        """        
         self._lock_to_sprite = None
         self._lock_offset = None
         pass
@@ -475,86 +746,255 @@ class Sprite(pygame.sprite.Sprite):
 
     # START: drawing related
     def set_rotation_style_all_around(self):
+        """
+        Same as the block "set rotation style [all around]" in Scratch. 
+        Allow the image to rotate all around with `direction`
+        """
         self._drawing_manager.set_rotation_style(_RotationStyle.ALL_AROUND)
 
     def set_rotation_style_left_right(self):
+        """
+        Same as the block "set rotation style [left-right]" in Scratch. 
+        Only allows the image to flip left or right depending on the `direction`. 
+
+        Does not constrain the direction of movement to only left and right. 
+        """        
         self._drawing_manager.set_rotation_style(_RotationStyle.LEFTRIGHT)
 
     def set_rotation_style_no_rotation(self):
+        """
+        Same as the block "set rotation style [don't rotate]" in Scratch. 
+        Does not allow the image flip or rotate with `direction`. 
+
+        Does not constrain the direction of movement.
+
+        """
         self._drawing_manager.set_rotation_style(_RotationStyle.FIXED)
 
+    def set_frame(self, idx:int):
+        """
+        Same as the block "switch costume to [costume]" in Scratch, 
+        except that you are specifying the frame (i.e. the costume) by the index. 
+        
+        TODO: link to sprite creation 
+        """
+        self._drawing_manager.set_frame(idx)
+    
+    def next_frame(self):
+        """
+        Same as the block "next costume" in Scratch, 
+        """
+        self._drawing_manager.next_frame()
+
+    def set_frame_mode(self, new_mode:str):
+        """
+        *EXTENDED FEATURE*
+
+        Changes the set of frames that is used by `set_frame` and `next_frame`.
+        This is mainly for sprites that have different animations for different actions. 
+
+        See the [guide](https://kwdchan.github.io/pyscratch/guides/2-adding-animated-sprites.html) for more details.
+        """   
+        self._drawing_manager.set_frame_mode(new_mode)
+        
     @property
     def frame_idx(self):
+        """
+        In Scratch, this is the costume number. 
+        
+        To change costume, you will need to call `set_frame`. 
+        """
         return self._drawing_manager.frame_idx
     
     @property
     def frame_mode(self):
+        """
+        *EXTENDED FEATURE*
+
+        The name of the set of frames that is currently used. 
+
+        Set by `set_frame_mode`
+        """        
         return self._drawing_manager.frame_mode
-    
-    def set_frame_mode(self, new_mode):
-        self._drawing_manager.set_frame_mode(new_mode)
 
-    def set_frame(self, idx):
-        self._drawing_manager.set_frame(idx)
-    
-    def next_frame(self):
-        self._drawing_manager.next_frame()
+    def set_scale(self, factor: float):
+        """
+        Sets the size factor of the sprite.
 
-    @property
-    def scale_factor(self):
-        return self._drawing_manager.scale_factor
-
-    def set_scale(self, factor):
+        For example:
+        - A factor of 1.0 means 100% of the *original* image size
+        - A factor of 1.2 means 120%
+        - A factor of 0.8 means 80%
+        """
         self._drawing_manager.set_scale(factor)
         self._physcis_manager.request_shape_update()
 
-    def scale_by(self, factor):
+    def scale_by(self, factor: float):
+        """
+        Changes the size of the sprite by a factor
+
+        For example:
+        - A factor of 1.2 is a 20% increase of the *current* size (not original size)
+        - A factor of 0.8 makes the sprite 80% of the *current* size
+        """
         self._drawing_manager.scale_by(factor)
         self._physcis_manager.request_shape_update()
 
+    @property
+    def scale_factor(self):
+        """
+        The scale factor of the sprite size
+        """
+        return self._drawing_manager.scale_factor
+
     def flip_horizontal(self):
+        """
+        Flips the image horizontally. 
+        Does not affect the direction of movement.
+        """        
         self._drawing_manager.flip_horizontal()
 
     def flip_vertical(self):
+        """
+        Flips the image vertically. 
+        Does not affect the direction of movement.
+        """ 
         self._drawing_manager.flip_vertical()
 
     def set_brightness(self, factor):
+        """
+        Changes the brightness of the sprite. 
+        """ 
         self._drawing_manager.set_brightness(factor)
 
     def set_transparency(self, factor):
+        """
+        Changes the transparency of the sprite. 
+
+        ***IMCOMPLETE IMPLEMENTATION***: 
+        The transparency of the transparent background of the image is also changed
+        """ 
         self._drawing_manager.set_transparency(factor)
 
     def write_text(self, text: str, font: pygame.font.Font, colour=(255,255,255), offset=(0,0), centre=True, reset=True):
+        """
+        *EXTENDED FEATURE*
+
+        Writes text on the sprite given a font. 
+        ```python
+        # if the font is shared by multiple sprites, consider putting it in `settings.py`
+        font = pygame.font.SysFont(None, 48)  # None = default font, 48 = font size
+
+        my_sprite.write_text("hello_world", font)
+
+        ```
+        Parameters
+        ---
+        text: str
+            The text to display.
+
+        font: pygame.font.Font
+            The pygame font object. Refer to the website of pygame for more details. 
+        
+        colour: Tuple[int, int, int] or Tuple[int, int, int, int]
+            The colour the of text. Takes RGB or RGBA, where A is the transparency. Value range: [0-255]
+
+        offset: Tuple[float, float]
+            The location of the text image relative to the sprite
+
+        centre: bool
+            If False, the top-left corner of the text, instead of the center, would be considered as its location.
+        
+        reset: bool
+            Whether or not to clear all the existing drawing (including previous text)  
+
+        """ 
         text_surface = font.render(text, True, colour) 
         self._drawing_manager.blit_persist(text_surface, offset, centre=centre, reset=reset)
     
     def draw(self, image: pygame.Surface,  offset=(0,0), centre=True, reset=True):
+        """
+        *EXTENDED FEATURE*
+
+        Draws an image on the sprite.
+        ```python
+        an_image = pysc.helper.load_image("assets/an_image.png")
+        my_sprite.draw(an_image)
+        ```
+        Parameters
+        ---
+        image: pygame.Surface
+            An image (pygame surface). You can use `helper.load_image` to load the image for you.
+
+        offset: Tuple[float, float]
+            The location of the image relative to the sprite
+
+        centre: bool
+            If False, the top-left corner of the image, instead of the center, would be considered as its location.
+        
+        reset: bool
+            Whether or not to clear all the existing drawing (including the text)  
+
+        """ 
+
         self._drawing_manager.blit_persist(image, offset, centre=centre, reset=reset)
 
     # END: drawing related    
     
 
     ## other blocks
-    def is_touching(self, other_sprite):
+    def is_touching(self, other_sprite) -> bool:
+        """
+        Returns whether or not this sprite is touching another sprite.
+        """
         return pyscratch.game_module.is_touching(self, other_sprite)
     
     def is_touching_mouse(self):
+        """
+        Returns whether or not this sprite is touching the mouse
+        """
         return pyscratch.game_module.is_touching_mouse(self)
     
     def hide(self):
+        """
+        Hides the sprite. 
+        The hidden sprite is still in the space and can still interact with other sprites.
+        
+        Just hidden. 
+        """
         game.hide_sprite(self)
 
     def show(self):
+        """
+        Shows the sprite.
+        """        
         game.show_sprite(self)
 
     @override
     def remove(self, *_):
+        """
+        Removes the sprite and all the events and conditions associated to it. 
+        Takes no parameter.
+
+        Usage:
+        ```python
+        # remove the sprite.
+        my_sprite.remove()
+        ```
+        """
         game.remove_sprite(self)
 
 
     def clone_myself(self):
+        """
+        Create a clone of this sprite. 
+        Even though is method is provided to align with Scratch, 
+        The prefered way to create identitical or similar sprites 
+        is to create the sprite within a function or an event. 
 
-        # TODO: other physics properties: mass, moment etc
+        ***INCOMPLETE IMPLEMENTATION***: 
+        - Transparency and brightness aren't transferred to the clone
+        """
 
         sprite = type(self)(
             frame_dict = self._drawing_manager.frame_dict_original, 
@@ -570,8 +1010,11 @@ class Sprite(pygame.sprite.Sprite):
         sprite.scale_by(self._drawing_manager.scale_factor)
         sprite.set_frame(self._drawing_manager.frame_idx)
         sprite.set_draggable(self.draggable)
-        sprite.set_elasticity(self._physcis_manager.elasticity)
-        sprite.set_friction(self._physcis_manager.friction)
+        sprite.elasticity = self.elasticity
+        sprite.friction = self.friction
+        sprite.mass = self.mass
+        sprite.moment = self.moment
+
         sprite._drawing_manager.set_rotation_style(self._drawing_manager.rotation_style)
 
 
@@ -582,85 +1025,360 @@ class Sprite(pygame.sprite.Sprite):
     # alias of pygame method
 
     def when_game_start(self, other_associated_sprites: Iterable[Sprite]=[]):
+        """
+        Returns an `Event` that is triggered when you call `game.start`. 
+        The event handler does not take in any parameter.
+
+        Also associates the event to the sprite so the event is removed when the sprite is removed. 
+
+        Parameters
+        ---
+        other_associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. 
+            Removal of any of these sprites leads to the removal of the event. 
+        """
+        
+
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_game_start(associated_sprites)
-            
+
+    def when_any_key_pressed(self, other_associated_sprites: Iterable[Sprite]=[]):
+        """
+        Returns an `Event` that is triggered when a key is pressed or released. 
+        Also associates the event to the sprite so the event is removed when the sprite is removed. 
+        
+        The event handler have to take two parameters:
+        - **key** (str): The key that is pressed. For example, 'w', 'd', 'left', 'right', 'space'. 
+            Uses [pygame.key.key_code](https://www.pygame.org/docs/ref/key.html#pygame.key.key_code) under the hood. 
+        
+        - **updown** (str): Either 'up' or 'down' that indicates whether it is a press or a release
+
+        Parameters
+        ---
+        other_associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+    
+        """    
+        associated_sprites = list(other_associated_sprites) + [self]
+        return game.when_any_key_pressed(associated_sprites)
+
     def when_key_pressed(self, key, other_associated_sprites: Iterable[Sprite]=[]):
+        """   
+        Returns an `Event` that is triggered when a specific key is pressed or released. 
+        Also associates the event to the sprite so the event is removed when the sprite is removed. 
+
+        The event handler have to take one parameter:
+        - **updown** (str): Either 'up' or 'down' that indicates whether it is a press or a release
+        
+        Parameters
+        ---
+        key: str
+            The key that triggers the event. For example, 'w', 'd', 'left', 'right', 'space'. 
+            Uses [pygame.key.key_code](https://www.pygame.org/docs/ref/key.html#pygame.key.key_code) under the hood. 
+
+        other_associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+             
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_key_pressed(key, associated_sprites)
     
-    def when_any_key_pressed(self, other_associated_sprites: Iterable[Sprite]=[]):
-        associated_sprites = list(other_associated_sprites) + [self]
-        return game.when_any_key_pressed(associated_sprites)
+
     
     def when_this_sprite_clicked(self, other_associated_sprites: Iterable[Sprite]=[]):
+        """
+        Returns an `Event` that is triggered when the given sprite is clicked by mouse. 
+        Also associates the event to the sprite so the event is removed when the sprite is removed. 
+
+        The event handler does not take in any parameter.
+                
+        Parameters
+        ---
+        sprite: Sprite
+            The sprite on which you want the click to be detected. The removal of this sprite will lead to the removal of this event so
+            it does not need to be included in `other_assoicated_sprite`
+        
+        other_associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """        
         return game.when_this_sprite_clicked(self, other_associated_sprites)
        
     def when_backdrop_switched(self, idx, other_associated_sprites : Iterable[Sprite]=[]):
+        """
+        Returns an `Event` that is triggered when the game is switched to a backdrop at `backdrop_index`.
+        Also associates the event to the sprite so the event is removed when the sprite is removed. 
+        
+        The event handler does not take in any parameter.
+
+        Parameters
+        ---
+        backdrop_index: int
+            The index of the backdrop  
+
+        other_associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+        
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_backdrop_switched(idx, associated_sprites)
     
     def when_any_backdrop_switched(self, other_associated_sprites : Iterable[Sprite]=[]):
+        """
+        Returns an `Event` that is triggered when the backdrop is switched. 
+        Also associates the event to the sprite so the event is removed when the sprite is removed. 
+        
+        The event handler have to take one parameter:
+        - **idx** (int): The index of the new backdrop  
+        
+        Parameters
+        ---
+        other_associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """        
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_any_backdrop_switched(associated_sprites)
 
     def when_timer_above(self, t, other_associated_sprites : Iterable[Sprite]=[]):
+        """      
+        Returns a `Condition` that is triggered after the game have started for `t` seconds.
+        A `Condition` works the same way an `Event` does. 
+
+        Also associates the condition to the sprite so the condition is removed when the sprite is removed. 
+
+
+        The event handler have to take one parameter:
+        - **n** (int): This value will always be zero
+
+        Parameters
+        ---
+        other_associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """        
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_timer_above(t, associated_sprites)
     
+    def when_started_as_clone(self, associated_sprites: Iterable[Sprite]=[]):
+        """
+        Returns an `Event` that is triggered after the given sprite is cloned by `Sprite.clone_myself`.
+        Cloning of the clone will also trigger the event. Thus the removal of original sprite does not remove the event. 
+
+        The event handler have to take one parameter:
+        - **clone_sprite** (Sprite): The newly created clone.
+                
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+                
+        return game.when_started_as_clone(self, associated_sprites)    
+
     def when_receive_message(self, topic: str, other_associated_sprites : Iterable[Sprite]=[]):
+        """
+        Returns an `Event` that is triggered after a message of the given `topic` is broadcasted.
+        Also associates the event to the sprite so the event is removed when the sprite is removed. 
+        
+        The event handler have to take one parameter:
+        - **data** (Any): This parameter can be anything passed on by the message.
+
+        Parameters
+        ---
+        topic: str
+            Can be any string. If the topic equals the topic of a broadcast, the event will be triggered. 
+        other_associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+        
+        
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_receive_message(topic, associated_sprites)
     
     def broadcast_message(self, topic: str, data: Any):
-        """completely unnecessary"""
+        """
+        Completely the same as `game.broadcast_message`. 
+        Just an alias. 
+
+        Sends a message of a given `topic` and `data`.
+        Triggers any event that subscribes to the topic. 
+        The handlers of the events will receive `data` as the parameter.
+
+        Example:
+        ```python
+        def event_handler(data):
+            print(data) # data will be "hello world!"
+
+        my_sprite.when_receive_message('print_message').add_handler(event_handler)
+        my_sprite2.broadcast_message('print_message', data='hello world!')
+
+        # "hello world!" will be printed out
+        ```
+        Parameters
+        ---
+        topic: str
+            Can be any string. If the topic of an message event equals the topic of the broadcast, the event will be triggered. 
+
+        data: Any
+            Any arbitory data that will be passed to the event handler
+        
+        """
         return game.broadcast_message(topic, data)
-    
-    def when_started_as_clone(self, associated_sprites: Iterable[Sprite]=[]):
-        return game.when_started_as_clone(self, associated_sprites)    
 
 
     ## additional events
     def when_condition_met(self, checker=lambda: False, repeats=np.inf, other_associated_sprites: Iterable[Sprite]=[]):
-           
+        """
+        *EXTENDED FEATURE*
+
+        DOCUMENTATION NOT COMPLETED
+
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
         associated_sprites = list(other_associated_sprites) + [self]
 
         return game.when_condition_met(checker, repeats, associated_sprites)
     
     
     def when_timer_reset(self, reset_period=np.inf, repeats=np.inf, other_associated_sprites: Iterable[Sprite]=[]):
-        
+        """
+        *EXTENDED FEATURE*
+
+        DOCUMENTATION NOT COMPLETED
+
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
         associated_sprites = list(other_associated_sprites) + [self]
 
         return game.when_timer_reset(reset_period, repeats, associated_sprites)
     
     
     def create_specific_collision_trigger(self, other_sprite: Sprite, other_associated_sprites: Iterable[Sprite]=[]):
+        """
+        *EXTENDED FEATURE*
+
+        DOCUMENTATION NOT COMPLETED
+
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
         return game.create_specific_collision_trigger(self, other_sprite, other_associated_sprites)
     
 
     # START: TODO: physics property getters and setters
-    def set_mass(self, mass):
-        self._body.mass = mass
 
-    def set_moment(self, moment):
-        self._body.moment = moment
+    def set_shape(self, shape_type='box'):
+        """
+        Sets the collision shape of the sprite. The shape type can be one of the followings
+        - box
+        - circle
+        - circle_height
+        - circle_width
 
-    def set_elasticity(self, elasticity):
-        self._physcis_manager.elasticity = elasticity
+        You can think of the collision shape as the actual shape of the sprite, 
+        while the sprite image (the costume) is just like a phantom projection 
+        that cannot be touched.
 
-    def set_friction(self, friction):
-        self._physcis_manager.friction = friction
-    
-    def set_shape(self, shape_type='circle'):
+        To see what it means, set `debug_draw` to True when you start the game. 
+        ```python
+        game.start(60, debug_draw=True)
+        ```
+        """
         self._physcis_manager.set_collision_type(shape_type)
 
     def set_shape_size_factor(self, factor=0.8):
+        """
+        Changes the size of the collision shape relative to the size of the image of the sprite. 
+        For example: 
+        - factor = 1.0 -> same size
+        - factor = 0.8 -> the collision shape is 80% of the sprite image 
+        - factor = 1.2 -> the collision shape is 120% of the sprite image
+        
+        """
         self._physcis_manager.set_shape_size_factor(factor)
 
     def set_collision_type(self, value: int=0):
+        """
+        *EXTENDED FEATURE*
+
+        Set the collision type of the sprite for detection purposes.
+        The collision type can be any integer except that 
+        **a sprite with a collision type of 0 (which is the default) will not collide with anything.**
+
+        Note that touching can still be detected.
+        """
         self._physcis_manager.set_collision_type(value)
 
+    @property
+    def mass(self):
+        """
+        *EXTENDED FEATURE*
+
+        The mass of the collision shape. 
+        Only work for dynamic objects.
+
+        You can make changes to this property. 
+        """
+        return self._body.mass
+    
+    @property
+    def moment(self):
+        """
+        *EXTENDED FEATURE*
+
+        The moment of the collision shape. 
+        The lower it is, the more easy it spins. 
+        Only work for dynamic objects.
+
+        You can make changes to this property. 
+        """
+        return self._body.moment
+    
+    @property
+    def elasticity(self):
+        """
+        *EXTENDED FEATURE*
+
+        The elasticity of the collision shape. 
+        Elasticity of 1 means no energy loss after each collision. 
+
+        You can make changes to this property. 
+        """
+        return self._body.elasticity
+    
+    @property
+    def friction(self):
+        """
+        *EXTENDED FEATURE*
+
+        The friction of the collision shape. 
+
+        You can make changes to this property. 
+        """
+        return self._body.friction
+    
+    @mass.setter
+    def mass(self, value):
+        self._body.mass = value
+
+    @moment.setter
+    def moment(self, value):
+        self._body.moment = value
+    
+    @elasticity.setter
+    def elasticity(self, value):
+        self._physcis_manager.elasticity = value
+    
+    @friction.setter
+    def friction(self, value):
+        self._physcis_manager.friction = value
+    
     # END: physics property
 
     
