@@ -6,15 +6,15 @@ TODO: link to reference manual
 
 ## Adding a sprite to the scene 
 **Basic shapes**
-- `pysc.create_rect_sprite`
-- `pysc.create_circle_sprite`
+- [`pysc.create_rect_sprite`](../pdoc/pyscratch/sprite.html#create_rect_sprite)
+- [`pysc.create_circle_sprite`](../pdoc/pyscratch/sprite.html#create_circle_sprite)
 
 **Single costume sprite** 
-- `pysc.create_single_costume_sprite`
+- [`pysc.create_single_costume_sprite`](../pdoc/pyscratch/sprite.html#create_single_costume_sprite)
 
 **Animated sprite** (multiple costumes with different mode)
-- `pysc.create_animated_sprite`
-- `pysc.helper.save_frame_from_sprite_sheet`
+- [`pysc.create_animated_sprite`](../pdoc/pyscratch/sprite.html#create_animated_sprite)
+- [`pysc.helper.cut_sprite_sheet`](../pdoc/pyscratch/helper.html#cut_sprite_sheet)
 
 
 
