@@ -1146,8 +1146,10 @@ class Sprite(pygame.sprite.Sprite):
         sprite.set_draggable(self.draggable)
         sprite.elasticity = self.elasticity
         sprite.friction = self.friction
-        sprite.mass = self.mass
-        sprite.moment = self.moment
+
+        if self._body.body_type == pymunk.Body.DYNAMIC: 
+            sprite.mass = self.mass
+            sprite.moment = self.moment
 
         sprite._drawing_manager.set_rotation_style(self._drawing_manager.rotation_style)
 
@@ -1484,7 +1486,7 @@ class Sprite(pygame.sprite.Sprite):
 
         You can make changes to this property. 
         """
-        return self._body.elasticity
+        return self._shape.elasticity
     
     @property
     def friction(self):
@@ -1495,7 +1497,7 @@ class Sprite(pygame.sprite.Sprite):
 
         You can make changes to this property. 
         """
-        return self._body.friction
+        return self._shape.friction
     
     @mass.setter
     def mass(self, value):
