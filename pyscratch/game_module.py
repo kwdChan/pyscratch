@@ -24,7 +24,7 @@ def _collision_begin(arbiter, space, data):
     game._contact_pairs_set.add(arbiter.shapes) 
 
     for e, (a,b) in game._trigger_to_collision_pairs.items():
-        if (a.shape in arbiter.shapes) and (b.shape in arbiter.shapes):
+        if (a._shape in arbiter.shapes) and (b._shape in arbiter.shapes):
             e.trigger(arbiter)
 
 
@@ -170,7 +170,7 @@ class Game:
         """@private"""
 
         # collision detection
-        self._trigger_to_collision_pairs = {}
+        self._trigger_to_collision_pairs: Dict[Event, Tuple[Sprite, Sprite]] = {}
 
         self._collision_type_pair_to_trigger: Dict[Tuple[int, int], List[Event]] = {}
 
@@ -1083,17 +1083,17 @@ def get_mouse_presses() -> Tuple[bool, bool, bool]:
     return pygame.mouse.get_pressed(num_buttons=3)
 
 
-def _is_touching(sprite_a, sprite_b):
+def _is_touching(sprite_a:Sprite, sprite_b:Sprite):
     """
     pymunk
     """
     for pair in game._contact_pairs_set:
 
-        if (sprite_a.shape in pair) and (sprite_b.shape in pair):
+        if (sprite_a._shape in pair) and (sprite_b._shape in pair):
             return True
     return False
 
 
-def _is_touching_mouse(sprite):
-    return sprite.shape.point_query(pygame.mouse.get_pos()).distance <= 0
+def _is_touching_mouse(sprite: Sprite):
+    return sprite._shape.point_query(pygame.mouse.get_pos()).distance <= 0
         
