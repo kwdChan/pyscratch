@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Tuple, Union
 import random
 
 import pygame
@@ -108,13 +108,13 @@ def load_frames_from_folder(folder_path: Union[Path, str]):
 
 
 
-def create_circle(colour, radius):
+def create_circle(colour, radius: float):
     surface = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
     pygame.draw.circle(surface, colour, (radius, radius), radius)
     return surface
 
 
-def create_rect(colour, width, height):
+def create_rect(colour, width: float, height: float):
     surface = pygame.Surface((width, height), pygame.SRCALPHA)
     pygame.draw.rect(surface, colour, surface.get_rect())
     return surface

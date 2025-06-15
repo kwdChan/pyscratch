@@ -1047,21 +1047,46 @@ The singleton Game object. This is the object that represent the game.
 
 
 def is_key_pressed(key: str) -> bool:
+    """
+    Returns a bool(True/False) that indicates if the given key is pressed.
+
+    Usage
+    ```python
+    if is_key_pressed('space'):
+        print('space pressed')
+    ```
+    """
     keycode = pygame.key.key_code(key)
     result = pygame.key.get_pressed()
     return result[keycode]
 
 
-def get_mouse_pos():
+def get_mouse_pos() -> Tuple[int, int]:
+    """
+    Returns the mouse coordinate. 
+    
+    Usage
+    ```python
+    mouse_x, mouse_y = get_mouse_pos()
+    ```
+    """
     return pygame.mouse.get_pos()
 
 
-def get_mouse_presses():
+def get_mouse_presses() -> Tuple[bool, bool, bool]:
+    """
+    Returns the mouse presses. 
+    ```python
+    is_left_click, is_middle_click, is_right_click = get_mouse_presses()
+    ```
+    """
     return pygame.mouse.get_pressed(num_buttons=3)
 
 
-def is_touching(sprite_a, sprite_b):
-    """pymunk"""
+def _is_touching(sprite_a, sprite_b):
+    """
+    pymunk
+    """
     for pair in game._contact_pairs_set:
 
         if (sprite_a.shape in pair) and (sprite_b.shape in pair):
@@ -1069,6 +1094,6 @@ def is_touching(sprite_a, sprite_b):
     return False
 
 
-def is_touching_mouse(sprite):
+def _is_touching_mouse(sprite):
     return sprite.shape.point_query(pygame.mouse.get_pos()).distance <= 0
         
