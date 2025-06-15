@@ -15,32 +15,160 @@ from pathlib import Path
 
 
 def create_animated_sprite(folder_path,  *args, **kwargs):
+    """
+    Create a sprite using the images inside a folder. 
+
+    The folder should be organised in one of these two ways: 
+
+    **Option 1**: Only one frame mode. *Note that the images must be numbered.*
+    ```
+    ├─ player/
+        ├─ 0.png
+        ├─ 1.png
+        ├─ 2.png
+        ...
+    ```
+
+    **Option 2**: Multiple frame modes. *Note that the images must be numbered.*
+    ```
+    ├─ player/  
+        ├─ walking/  
+            ├─ 0.png  
+            ├─ 1.png  
+            ...
+        ├─ idling/
+            ├─ 0.png
+            ├─ 1.png
+            ... 
+        ...
+    ``` 
+
+
+    Example
+    ```python
+    # takes the path of the folder 
+    my_sprite1 = create_animated_sprite("assets/player") 
+    
+    # optionally take in whatever parameters that the `Sprite` constructor take. 
+    my_sprite2 = create_animated_sprite("assets/player", position=(200, 200)) 
+    
+    # For option 2 only: optionally set the `starting_frame_mode` parameter in the `Sprite` constructor, but it'd still be fine without it.
+    my_sprite3 = create_animated_sprite("assets/player", "idling")
+    
+    ```
+    Parameters
+    ---
+    folder_path: str
+        The path of the folder that contains the images
+
+    \*args & \*\*kwargs: Optional
+        Whatever the `Sprite` constructor takes, except the `frame_dict` parameter.
+    """
     frame_dict = load_frames_from_folder(folder_path)
     return Sprite(frame_dict, *args, **kwargs)
 
 
 def create_single_costume_sprite(image_path, *args, **kwargs):
+    """
+    Create a sprite with only one costume, given the path to the image
+    
+    Example
+    ```python
+    my_sprite1 = create_single_costume_sprite("assets/player.png")
+
+    # Optionally pass some parameters to the `Sprite` constructor
+    my_sprite2 = create_single_costume_sprite("assets/player.png", position=(200, 200)) 
+    
+    ```
+    Parameters
+    ---
+    image_path: str
+        The path of the images
+
+    \*args & \*\*kwargs: Optional
+        Whatever the `Sprite` constructor takes, except `frame_dict` & `starting_frame_mode`.
+    """
     img = pygame.image.load(image_path).convert_alpha()
     frame_dict = {"always": [img]}
-    return Sprite(frame_dict, *args, **kwargs)
+    return Sprite(frame_dict, "always", *args, **kwargs)
 
 
-def create_shared_data_display_sprite(key, font, size = (150, 50), colour=(127, 127, 127), position: Optional[Tuple[float, float]]=None, update_period=0.5, **kwargs):
+def create_shared_data_display_sprite(key, font, size = (150, 50), bg_colour=(127, 127, 127), text_colour=(255,255,255), position: Optional[Tuple[float, float]]=None, update_period=0.1, **kwargs):
+    """
+    Create a display for a variable inside shared_data given the dictionary key (i.e. the name of the variable). 
+    The variable display will update every `update_period` seconds.
+    The variable display is created as a sprite. 
+
+    This function is created using only basic pyscratch functions and events. 
+    If you want a more customised display, you may want to have a look at the source code as an example how it's done.
+
+    Example
+    ```python
+    
+    # if the font is shared by multiple sprites, consider putting it in `settings.py`
+    font = pygame.font.SysFont(None, 48)  # None = default font, 48 = font size
+
+    # the shared data
+    game.shared_data['hp'] = 10
+    
+    # the variable display is created as a sprite 
+    health_display = create_shared_data_display_sprite('hp', font, position=(100, 100), update_period=0.5)
+    
+    ```
+    Parameters
+    ---
+    key: str
+        The dictionary key of the variable in `game.shared_data` that you want to display.
+    font: pygame.font.Font
+        The pygame font object. Refer to the website of pygame for more details.
+    size: Tuple[float, float]
+        The size of the display panel
+    bg_colour: Tuple[int, int, int] or Tuple[int, int, int, int] 
+        The colour of the display panel in RGB or RGBA. Value range: [0-255]
+    text_colour: Tuple[int, int, int] or Tuple[int, int, int, int] 
+        The colour of the text in RGB or RGBA. Value range: [0-255]
+    position: Tuple[int, int] 
+        The position of the display
+    update_period: float
+        The variable display will update every `update_period` seconds.
+    \*\*kwargs: Optional
+        Whatever the `Sprite` constructor takes, except `frame_dict`,`starting_frame_mode` & `position`
+    """
 
     w, h = size
     if position is None:
         position = w/2+25, h/2+25
-    sprite = create_rect_sprite(colour, w, h, position=position, **kwargs)
+    sprite = create_rect_sprite(bg_colour, w, h, position=position, **kwargs)
 
     def update_value():
         while True: 
-            sprite.write_text(f"{key}: {game.shared_data[key]}", font=font, offset=(w/2, h/2))
+            sprite.write_text(f"{key}: {game.shared_data[key]}", font=font, colour=text_colour, offset=(w/2, h/2))
             yield update_period
 
     sprite.when_game_start().add_handler(update_value)
     return sprite
 
-def create_circle_sprite(colour, radius, *args, **kwargs):
+def create_circle_sprite(colour, radius:float, *args, **kwargs):
+    """
+    Create a circle sprite given the colour and radius
+    Also optionally takes in any parameters that the `Sprite` constructor takes, except `frame_dict` and `starting_frame_mode`
+
+    Example
+    ```python
+    green_transparent = (0, 255, 0, 127)
+    my_rect_sprite = create_rect_sprite(green_transparent, radius=10)
+    ```
+
+    Parameters
+    ---
+    colour: Tuple[int, int, int] or Tuple[int, int, int, int]
+        The colour of the rectangle in RGB or RGBA. Value range: [0-255].
+    radius: float
+        the radius of the cirlce.
+    \*args & \*\*kwargs: Optional
+        Whatever the `Sprite` constructor takes, except `frame_dict` & `starting_frame_mode`.
+    """
+
     circle = create_circle(colour, radius)
     return Sprite({"always":[circle]}, "always", *args, **kwargs)
 
@@ -48,42 +176,48 @@ def create_circle_sprite(colour, radius, *args, **kwargs):
 def create_rect_sprite(colour, width, height, *args, **kwargs):
     """
     Create a rectanglar sprite given the colour, width and height
-    Also optionally takes in any parameters that the `Sprite` constructor takes.
-    
+    Also optionally takes in any parameters that the `Sprite` constructor takes, except `frame_dict` and `starting_frame_mode`
+
+    Example
     ```python
-    
+    green_transparent = (0, 255, 0, 127)
+    my_rect_sprite = create_rect_sprite(green_transparent, width=10, height=20)
     ```
+
+    Parameters
+    ---
+    colour: Tuple[int, int, int] or Tuple[int, int, int, int]
+        The colour of the rectangle in RGB or RGBA. Value range: [0-255].
+    width: float
+        the width (x length) of the rectangle.
+    height: float
+        the height (y length) of the rectangle.
+    \*args & \*\*kwargs: Optional
+        Whatever the `Sprite` constructor take, except `frame_dict` & `starting_frame_mode`.
     """
     rect = create_rect(colour, width, height)
     return Sprite({"always":[rect]}, "always", *args, **kwargs)
 
 
-def create_edge_sprites(edge_colour = (255, 0, 0), thickness=4, collision_type=1, game=game):
+def create_edge_sprites(edge_colour = (255, 0, 0), thickness=4, collision_type=1):
     """
-    Create the top, left, bottom and right edges 
+    A convenience function to create the top, left, bottom and right edges as sprites
 
+    Usage
+    ```python
+    # consider putting the edges in settings.py
+    top_edge, left_edge, bottom_edge, right_edge = create_edge_sprites()
     ```
-    ```
-    
-
-    Returns
-    ---
-    top_edge: Sprite
-    left_edge: Sprite
-    bottom_edge: Sprite
-    right_edge: Sprite
-
     """
     
     # TODO: make the edge way thicker to avoid escape due to physics inaccuracy 
     # edges
-    edge_body = pymunk.Body.STATIC
     screen_w, screen_h = game._screen.get_width(), game._screen.get_height()
 
-    top_edge = create_rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, 0),body_type= edge_body)
-    bottom_edge = create_rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, screen_h),body_type= edge_body)
-    left_edge = create_rect_sprite(edge_colour, thickness, screen_h, (0, screen_h//2),body_type= edge_body)
-    right_edge = create_rect_sprite(edge_colour, thickness, screen_h, (screen_w,  screen_h//2),body_type= edge_body)
+    top_edge = create_rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, 0),body_type= pymunk.Body.STATIC)
+    bottom_edge = create_rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, screen_h),body_type= pymunk.Body.STATIC)
+    left_edge = create_rect_sprite(edge_colour, thickness, screen_h, (0, screen_h//2),body_type= pymunk.Body.STATIC)
+    right_edge = create_rect_sprite(edge_colour, thickness, screen_h, (screen_w,  screen_h//2),body_type= pymunk.Body.STATIC)
 
     top_edge.set_collision_type(collision_type)
     bottom_edge.set_collision_type(collision_type)
@@ -947,13 +1081,13 @@ class Sprite(pygame.sprite.Sprite):
         """
         Returns whether or not this sprite is touching another sprite.
         """
-        return pyscratch.game_module.is_touching(self, other_sprite)
+        return pyscratch.game_module._is_touching(self, other_sprite)
     
     def is_touching_mouse(self):
         """
         Returns whether or not this sprite is touching the mouse
         """
-        return pyscratch.game_module.is_touching_mouse(self)
+        return pyscratch.game_module._is_touching_mouse(self)
     
     def hide(self):
         """

@@ -4,7 +4,7 @@ parent: Guides
 nav_order: 2
 ---
 # Adding an Animated Sprite
-## Find the suitable frames for the sprites
+## Find suitable frames for the sprites
 
 First, put the frames in the asset folder using the following structure. You have use any name for the folder, but the images need to be numbered (will be ignored otherwise). 
 
@@ -25,7 +25,7 @@ First, put the frames in the asset folder using the following structure. You hav
 ├─ my_first_game/
     ├─ assets/
         ├─ player/
-            ├─ walking
+            ├─ walking/
                 ├─ 0.png
                 ├─ 1.png
                 ...
@@ -54,7 +54,7 @@ def animating():
 player.when_game_start().add_handler(animating)
 
 
-# if doing optional 2: use `set_frame_mode` to select the frame
+# if doing option 2: use `set_frame_mode` to select the frame
 # there's no equivalent scratch block
 def movement():
     while True: 
