@@ -584,7 +584,7 @@ class Game:
         """
         
 
-        t = self.create_event(associated_sprites)
+        t = self._create_event(associated_sprites)
         self._game_start_triggers.append(t)
 
         if TYPE_CHECKING:
@@ -613,7 +613,7 @@ class Game:
             A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
     
         """
-        t = self.create_event(associated_sprites)
+        t = self._create_event(associated_sprites)
         self._all_simple_key_triggers.append(t)
 
         if TYPE_CHECKING:
@@ -645,7 +645,7 @@ class Game:
             A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
         """
         
-        t = self.create_event(associated_sprites)
+        t = self._create_event(associated_sprites)
 
         if TYPE_CHECKING:
             def sample_callback(updown:str)-> Any:
@@ -674,7 +674,7 @@ class Game:
             A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
         """
         
-        t = self.create_event(set(list(other_associated_sprites)+[sprite]))
+        t = self._create_event(set(list(other_associated_sprites)+[sprite]))
 
         if not sprite in self._sprite_click_trigger:
             self._sprite_click_trigger[sprite] = []
@@ -705,7 +705,7 @@ class Game:
         """
         
                 
-        t = self.create_event(associated_sprites)
+        t = self._create_event(associated_sprites)
 
         if TYPE_CHECKING:
             def sample_callback()-> Any:
@@ -731,8 +731,7 @@ class Game:
             A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
         """
         
-        """different to scratch: catch all switches"""
-        t = self.create_event(associated_sprites)
+        t = self._create_event(associated_sprites)
         self._backdrop_change_triggers.append(t)
         if TYPE_CHECKING:
             def sample_callback(idx: int)-> Any:
@@ -743,7 +742,6 @@ class Game:
 
     def when_timer_above(self, t, associated_sprites : Iterable[Sprite]=[]) -> Condition:
         """
-        
         It is recommended to use the `Sprite.when_timer_above` alias instead of this method, 
         so you don't need to specify the `associated_sprites` in every event.  
         
@@ -763,10 +761,8 @@ class Game:
     
     def when_started_as_clone(self, sprite, associated_sprites : Iterable[Sprite]=[]) -> Event[[Sprite]]:
         """
-        It is recommended to use the `Sprite.when_started_as_clone` alias instead of this method, 
-        so you don't need to specify the `associated_sprites` in every event.  
-
         Returns an `Event` that is triggered after the given sprite is cloned by `Sprite.clone_myself`.
+        Cloning of the clone will also trigger the event. 
 
         The event handler have to take one parameter:
         - **clone_sprite** (Sprite): The newly created clone.
@@ -778,7 +774,7 @@ class Game:
         """
         
         
-        trigger = self.create_event(associated_sprites)
+        trigger = self._create_event(associated_sprites)
         self._clone_event_manager.new_trigger(sprite, trigger)
         if TYPE_CHECKING:
             def sample_callback(clone_sprite: Sprite)-> Any:
@@ -805,7 +801,7 @@ class Game:
         """
         
         
-        trigger = self.create_event(associated_sprites)
+        trigger = self._create_event(associated_sprites)
         self.__new_subscription(topic, trigger)
         if TYPE_CHECKING:
             def sample_callback(data: Any)-> Any:
@@ -894,7 +890,7 @@ class Game:
             A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
         """
         #"""Cannot change the collision type of the object after calling this function"""
-        trigger = self.create_event(set(list(other_associated_sprites)+[sprite1, sprite2]))
+        trigger = self._create_event(set(list(other_associated_sprites)+[sprite1, sprite2]))
 
         self._trigger_to_collision_pairs[trigger] = sprite1, sprite2
 
@@ -916,7 +912,7 @@ class Game:
         pair = (type_a, type_b) if type_a>type_b else (type_b, type_a)
 
         h = self._space.add_collision_handler(*pair)
-        trigger = self.create_event(associated_sprites)
+        trigger = self._create_event(associated_sprites)
 
 
 
@@ -953,7 +949,7 @@ class Game:
             A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
         """
         
-        trigger = self.create_event(associated_sprites)
+        trigger = self._create_event(associated_sprites)
 
         collision_allowed = not collision_suppressed
         
@@ -1026,13 +1022,9 @@ class Game:
         return condition
     
 
-    def create_event(self, associated_sprites: Iterable[Sprite]=[]) -> Event:
+    def _create_event(self, associated_sprites: Iterable[Sprite]=[]) -> Event:
         """
-        *EXTENDED FEATURE*
-
-        Create a custom event that you can trigger on your own. 
-        However, consider using the message event before you decide to create your custom event. 
-
+        
         Parameters
         ---
         associated_sprites: List[Sprite]

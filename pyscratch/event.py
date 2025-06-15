@@ -22,8 +22,7 @@ class Event(Generic[P]):
     You do not need to create the Event object yourself. 
     They are instead returned by functions like `sprite.when_game_started()`
 
-    If you do want to create your custom event, you need to create it from `pysc.game.create_event`.
-    But before you do decide to create your custom event, consider using the message event. 
+    In no circumstances will you need to create your custom event. Always use the message event instead. 
     """
 
     def __init__(self):
