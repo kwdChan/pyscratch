@@ -159,12 +159,6 @@
             <li>
                     <a class="function" href="#get_mouse_presses">get_mouse_presses</a>
             </li>
-            <li>
-                    <a class="function" href="#is_touching">is_touching</a>
-            </li>
-            <li>
-                    <a class="function" href="#is_touching_mouse">is_touching_mouse</a>
-            </li>
     </ul>
 
 
@@ -1238,31 +1232,56 @@ For example, instead of <code>pysc.game_module.is_key_pressed</code>, you can al
 </span><span id="L-1047"><a href="#L-1047"><span class="linenos">1047</span></a>
 </span><span id="L-1048"><a href="#L-1048"><span class="linenos">1048</span></a>
 </span><span id="L-1049"><a href="#L-1049"><span class="linenos">1049</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_key_pressed</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-1050"><a href="#L-1050"><span class="linenos">1050</span></a>    <span class="n">keycode</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">key_code</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-</span><span id="L-1051"><a href="#L-1051"><span class="linenos">1051</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">get_pressed</span><span class="p">()</span>
-</span><span id="L-1052"><a href="#L-1052"><span class="linenos">1052</span></a>    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="n">keycode</span><span class="p">]</span>
-</span><span id="L-1053"><a href="#L-1053"><span class="linenos">1053</span></a>
-</span><span id="L-1054"><a href="#L-1054"><span class="linenos">1054</span></a>
-</span><span id="L-1055"><a href="#L-1055"><span class="linenos">1055</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_mouse_pos</span><span class="p">():</span>
-</span><span id="L-1056"><a href="#L-1056"><span class="linenos">1056</span></a>    <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mouse</span><span class="o">.</span><span class="n">get_pos</span><span class="p">()</span>
-</span><span id="L-1057"><a href="#L-1057"><span class="linenos">1057</span></a>
-</span><span id="L-1058"><a href="#L-1058"><span class="linenos">1058</span></a>
-</span><span id="L-1059"><a href="#L-1059"><span class="linenos">1059</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_mouse_presses</span><span class="p">():</span>
-</span><span id="L-1060"><a href="#L-1060"><span class="linenos">1060</span></a>    <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mouse</span><span class="o">.</span><span class="n">get_pressed</span><span class="p">(</span><span class="n">num_buttons</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-</span><span id="L-1061"><a href="#L-1061"><span class="linenos">1061</span></a>
+</span><span id="L-1050"><a href="#L-1050"><span class="linenos">1050</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-1051"><a href="#L-1051"><span class="linenos">1051</span></a><span class="sd">    Returns a bool(True/False) that indicates if the given key is pressed.</span>
+</span><span id="L-1052"><a href="#L-1052"><span class="linenos">1052</span></a>
+</span><span id="L-1053"><a href="#L-1053"><span class="linenos">1053</span></a><span class="sd">    Usage</span>
+</span><span id="L-1054"><a href="#L-1054"><span class="linenos">1054</span></a><span class="sd">    ```python</span>
+</span><span id="L-1055"><a href="#L-1055"><span class="linenos">1055</span></a><span class="sd">    if is_key_pressed(&#39;space&#39;):</span>
+</span><span id="L-1056"><a href="#L-1056"><span class="linenos">1056</span></a><span class="sd">        print(&#39;space pressed&#39;)</span>
+</span><span id="L-1057"><a href="#L-1057"><span class="linenos">1057</span></a><span class="sd">    ```</span>
+</span><span id="L-1058"><a href="#L-1058"><span class="linenos">1058</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-1059"><a href="#L-1059"><span class="linenos">1059</span></a>    <span class="n">keycode</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">key_code</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span><span id="L-1060"><a href="#L-1060"><span class="linenos">1060</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">get_pressed</span><span class="p">()</span>
+</span><span id="L-1061"><a href="#L-1061"><span class="linenos">1061</span></a>    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="n">keycode</span><span class="p">]</span>
 </span><span id="L-1062"><a href="#L-1062"><span class="linenos">1062</span></a>
-</span><span id="L-1063"><a href="#L-1063"><span class="linenos">1063</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_touching</span><span class="p">(</span><span class="n">sprite_a</span><span class="p">,</span> <span class="n">sprite_b</span><span class="p">):</span>
-</span><span id="L-1064"><a href="#L-1064"><span class="linenos">1064</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;pymunk&quot;&quot;&quot;</span>
-</span><span id="L-1065"><a href="#L-1065"><span class="linenos">1065</span></a>    <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">game</span><span class="o">.</span><span class="n">_contact_pairs_set</span><span class="p">:</span>
-</span><span id="L-1066"><a href="#L-1066"><span class="linenos">1066</span></a>
-</span><span id="L-1067"><a href="#L-1067"><span class="linenos">1067</span></a>        <span class="k">if</span> <span class="p">(</span><span class="n">sprite_a</span><span class="o">.</span><span class="n">shape</span> <span class="ow">in</span> <span class="n">pair</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">sprite_b</span><span class="o">.</span><span class="n">shape</span> <span class="ow">in</span> <span class="n">pair</span><span class="p">):</span>
-</span><span id="L-1068"><a href="#L-1068"><span class="linenos">1068</span></a>            <span class="k">return</span> <span class="kc">True</span>
-</span><span id="L-1069"><a href="#L-1069"><span class="linenos">1069</span></a>    <span class="k">return</span> <span class="kc">False</span>
-</span><span id="L-1070"><a href="#L-1070"><span class="linenos">1070</span></a>
-</span><span id="L-1071"><a href="#L-1071"><span class="linenos">1071</span></a>
-</span><span id="L-1072"><a href="#L-1072"><span class="linenos">1072</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_touching_mouse</span><span class="p">(</span><span class="n">sprite</span><span class="p">):</span>
-</span><span id="L-1073"><a href="#L-1073"><span class="linenos">1073</span></a>    <span class="k">return</span> <span class="n">sprite</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">point_query</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">mouse</span><span class="o">.</span><span class="n">get_pos</span><span class="p">())</span><span class="o">.</span><span class="n">distance</span> <span class="o">&lt;=</span> <span class="mi">0</span>
-</span><span id="L-1074"><a href="#L-1074"><span class="linenos">1074</span></a>        
+</span><span id="L-1063"><a href="#L-1063"><span class="linenos">1063</span></a>
+</span><span id="L-1064"><a href="#L-1064"><span class="linenos">1064</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_mouse_pos</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+</span><span id="L-1065"><a href="#L-1065"><span class="linenos">1065</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-1066"><a href="#L-1066"><span class="linenos">1066</span></a><span class="sd">    Returns the mouse coordinate. </span>
+</span><span id="L-1067"><a href="#L-1067"><span class="linenos">1067</span></a><span class="sd">    </span>
+</span><span id="L-1068"><a href="#L-1068"><span class="linenos">1068</span></a><span class="sd">    Usage</span>
+</span><span id="L-1069"><a href="#L-1069"><span class="linenos">1069</span></a><span class="sd">    ```python</span>
+</span><span id="L-1070"><a href="#L-1070"><span class="linenos">1070</span></a><span class="sd">    mouse_x, mouse_y = get_mouse_pos()</span>
+</span><span id="L-1071"><a href="#L-1071"><span class="linenos">1071</span></a><span class="sd">    ```</span>
+</span><span id="L-1072"><a href="#L-1072"><span class="linenos">1072</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-1073"><a href="#L-1073"><span class="linenos">1073</span></a>    <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mouse</span><span class="o">.</span><span class="n">get_pos</span><span class="p">()</span>
+</span><span id="L-1074"><a href="#L-1074"><span class="linenos">1074</span></a>
+</span><span id="L-1075"><a href="#L-1075"><span class="linenos">1075</span></a>
+</span><span id="L-1076"><a href="#L-1076"><span class="linenos">1076</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_mouse_presses</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="L-1077"><a href="#L-1077"><span class="linenos">1077</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-1078"><a href="#L-1078"><span class="linenos">1078</span></a><span class="sd">    Returns the mouse presses. </span>
+</span><span id="L-1079"><a href="#L-1079"><span class="linenos">1079</span></a><span class="sd">    ```python</span>
+</span><span id="L-1080"><a href="#L-1080"><span class="linenos">1080</span></a><span class="sd">    is_left_click, is_middle_click, is_right_click = get_mouse_presses()</span>
+</span><span id="L-1081"><a href="#L-1081"><span class="linenos">1081</span></a><span class="sd">    ```</span>
+</span><span id="L-1082"><a href="#L-1082"><span class="linenos">1082</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-1083"><a href="#L-1083"><span class="linenos">1083</span></a>    <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mouse</span><span class="o">.</span><span class="n">get_pressed</span><span class="p">(</span><span class="n">num_buttons</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="L-1084"><a href="#L-1084"><span class="linenos">1084</span></a>
+</span><span id="L-1085"><a href="#L-1085"><span class="linenos">1085</span></a>
+</span><span id="L-1086"><a href="#L-1086"><span class="linenos">1086</span></a><span class="k">def</span><span class="w"> </span><span class="nf">_is_touching</span><span class="p">(</span><span class="n">sprite_a</span><span class="p">,</span> <span class="n">sprite_b</span><span class="p">):</span>
+</span><span id="L-1087"><a href="#L-1087"><span class="linenos">1087</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-1088"><a href="#L-1088"><span class="linenos">1088</span></a><span class="sd">    pymunk</span>
+</span><span id="L-1089"><a href="#L-1089"><span class="linenos">1089</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-1090"><a href="#L-1090"><span class="linenos">1090</span></a>    <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">game</span><span class="o">.</span><span class="n">_contact_pairs_set</span><span class="p">:</span>
+</span><span id="L-1091"><a href="#L-1091"><span class="linenos">1091</span></a>
+</span><span id="L-1092"><a href="#L-1092"><span class="linenos">1092</span></a>        <span class="k">if</span> <span class="p">(</span><span class="n">sprite_a</span><span class="o">.</span><span class="n">shape</span> <span class="ow">in</span> <span class="n">pair</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">sprite_b</span><span class="o">.</span><span class="n">shape</span> <span class="ow">in</span> <span class="n">pair</span><span class="p">):</span>
+</span><span id="L-1093"><a href="#L-1093"><span class="linenos">1093</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-1094"><a href="#L-1094"><span class="linenos">1094</span></a>    <span class="k">return</span> <span class="kc">False</span>
+</span><span id="L-1095"><a href="#L-1095"><span class="linenos">1095</span></a>
+</span><span id="L-1096"><a href="#L-1096"><span class="linenos">1096</span></a>
+</span><span id="L-1097"><a href="#L-1097"><span class="linenos">1097</span></a><span class="k">def</span><span class="w"> </span><span class="nf">_is_touching_mouse</span><span class="p">(</span><span class="n">sprite</span><span class="p">):</span>
+</span><span id="L-1098"><a href="#L-1098"><span class="linenos">1098</span></a>    <span class="k">return</span> <span class="n">sprite</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">point_query</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">mouse</span><span class="o">.</span><span class="n">get_pos</span><span class="p">())</span><span class="o">.</span><span class="n">distance</span> <span class="o">&lt;=</span> <span class="mi">0</span>
+</span><span id="L-1099"><a href="#L-1099"><span class="linenos">1099</span></a>        
 </span></pre></div>
 
 
@@ -3847,13 +3866,32 @@ A list of sprites that this event depends on. Removal of any of these sprites le
     </div>
     <a class="headerlink" href="#is_key_pressed"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="is_key_pressed-1050"><a href="#is_key_pressed-1050"><span class="linenos">1050</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_key_pressed</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="is_key_pressed-1051"><a href="#is_key_pressed-1051"><span class="linenos">1051</span></a>    <span class="n">keycode</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">key_code</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-</span><span id="is_key_pressed-1052"><a href="#is_key_pressed-1052"><span class="linenos">1052</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">get_pressed</span><span class="p">()</span>
-</span><span id="is_key_pressed-1053"><a href="#is_key_pressed-1053"><span class="linenos">1053</span></a>    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="n">keycode</span><span class="p">]</span>
+</span><span id="is_key_pressed-1051"><a href="#is_key_pressed-1051"><span class="linenos">1051</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="is_key_pressed-1052"><a href="#is_key_pressed-1052"><span class="linenos">1052</span></a><span class="sd">    Returns a bool(True/False) that indicates if the given key is pressed.</span>
+</span><span id="is_key_pressed-1053"><a href="#is_key_pressed-1053"><span class="linenos">1053</span></a>
+</span><span id="is_key_pressed-1054"><a href="#is_key_pressed-1054"><span class="linenos">1054</span></a><span class="sd">    Usage</span>
+</span><span id="is_key_pressed-1055"><a href="#is_key_pressed-1055"><span class="linenos">1055</span></a><span class="sd">    ```python</span>
+</span><span id="is_key_pressed-1056"><a href="#is_key_pressed-1056"><span class="linenos">1056</span></a><span class="sd">    if is_key_pressed(&#39;space&#39;):</span>
+</span><span id="is_key_pressed-1057"><a href="#is_key_pressed-1057"><span class="linenos">1057</span></a><span class="sd">        print(&#39;space pressed&#39;)</span>
+</span><span id="is_key_pressed-1058"><a href="#is_key_pressed-1058"><span class="linenos">1058</span></a><span class="sd">    ```</span>
+</span><span id="is_key_pressed-1059"><a href="#is_key_pressed-1059"><span class="linenos">1059</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="is_key_pressed-1060"><a href="#is_key_pressed-1060"><span class="linenos">1060</span></a>    <span class="n">keycode</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">key_code</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span><span id="is_key_pressed-1061"><a href="#is_key_pressed-1061"><span class="linenos">1061</span></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">get_pressed</span><span class="p">()</span>
+</span><span id="is_key_pressed-1062"><a href="#is_key_pressed-1062"><span class="linenos">1062</span></a>    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="n">keycode</span><span class="p">]</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>Returns a bool(True/False) that indicates if the given key is pressed.</p>
+
+<p>Usage</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="k">if</span> <span class="n">is_key_pressed</span><span class="p">(</span><span class="s1">&#39;space&#39;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;space pressed&#39;</span><span class="p">)</span>
+</code></pre>
+</div>
+</div>
+
 
                 </section>
                 <section id="get_mouse_pos">
@@ -3861,18 +3899,35 @@ A list of sprites that this event depends on. Removal of any of these sprites le
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_mouse_pos</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
+        <span class="name">get_mouse_pos</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>:</span></span>
 
                 <label class="view-source-button" for="get_mouse_pos-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#get_mouse_pos"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_mouse_pos-1056"><a href="#get_mouse_pos-1056"><span class="linenos">1056</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_mouse_pos</span><span class="p">():</span>
-</span><span id="get_mouse_pos-1057"><a href="#get_mouse_pos-1057"><span class="linenos">1057</span></a>    <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mouse</span><span class="o">.</span><span class="n">get_pos</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_mouse_pos-1065"><a href="#get_mouse_pos-1065"><span class="linenos">1065</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_mouse_pos</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+</span><span id="get_mouse_pos-1066"><a href="#get_mouse_pos-1066"><span class="linenos">1066</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get_mouse_pos-1067"><a href="#get_mouse_pos-1067"><span class="linenos">1067</span></a><span class="sd">    Returns the mouse coordinate. </span>
+</span><span id="get_mouse_pos-1068"><a href="#get_mouse_pos-1068"><span class="linenos">1068</span></a><span class="sd">    </span>
+</span><span id="get_mouse_pos-1069"><a href="#get_mouse_pos-1069"><span class="linenos">1069</span></a><span class="sd">    Usage</span>
+</span><span id="get_mouse_pos-1070"><a href="#get_mouse_pos-1070"><span class="linenos">1070</span></a><span class="sd">    ```python</span>
+</span><span id="get_mouse_pos-1071"><a href="#get_mouse_pos-1071"><span class="linenos">1071</span></a><span class="sd">    mouse_x, mouse_y = get_mouse_pos()</span>
+</span><span id="get_mouse_pos-1072"><a href="#get_mouse_pos-1072"><span class="linenos">1072</span></a><span class="sd">    ```</span>
+</span><span id="get_mouse_pos-1073"><a href="#get_mouse_pos-1073"><span class="linenos">1073</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="get_mouse_pos-1074"><a href="#get_mouse_pos-1074"><span class="linenos">1074</span></a>    <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mouse</span><span class="o">.</span><span class="n">get_pos</span><span class="p">()</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>Returns the mouse coordinate. </p>
+
+<p>Usage</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="n">mouse_x</span><span class="p">,</span> <span class="n">mouse_y</span> <span class="o">=</span> <span class="n">get_mouse_pos</span><span class="p">()</span>
+</code></pre>
+</div>
+</div>
+
 
                 </section>
                 <section id="get_mouse_presses">
@@ -3880,63 +3935,31 @@ A list of sprites that this event depends on. Removal of any of these sprites le
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_mouse_presses</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
+        <span class="name">get_mouse_presses</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span>:</span></span>
 
                 <label class="view-source-button" for="get_mouse_presses-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#get_mouse_presses"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_mouse_presses-1060"><a href="#get_mouse_presses-1060"><span class="linenos">1060</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_mouse_presses</span><span class="p">():</span>
-</span><span id="get_mouse_presses-1061"><a href="#get_mouse_presses-1061"><span class="linenos">1061</span></a>    <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mouse</span><span class="o">.</span><span class="n">get_pressed</span><span class="p">(</span><span class="n">num_buttons</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_mouse_presses-1077"><a href="#get_mouse_presses-1077"><span class="linenos">1077</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_mouse_presses</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="get_mouse_presses-1078"><a href="#get_mouse_presses-1078"><span class="linenos">1078</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get_mouse_presses-1079"><a href="#get_mouse_presses-1079"><span class="linenos">1079</span></a><span class="sd">    Returns the mouse presses. </span>
+</span><span id="get_mouse_presses-1080"><a href="#get_mouse_presses-1080"><span class="linenos">1080</span></a><span class="sd">    ```python</span>
+</span><span id="get_mouse_presses-1081"><a href="#get_mouse_presses-1081"><span class="linenos">1081</span></a><span class="sd">    is_left_click, is_middle_click, is_right_click = get_mouse_presses()</span>
+</span><span id="get_mouse_presses-1082"><a href="#get_mouse_presses-1082"><span class="linenos">1082</span></a><span class="sd">    ```</span>
+</span><span id="get_mouse_presses-1083"><a href="#get_mouse_presses-1083"><span class="linenos">1083</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="get_mouse_presses-1084"><a href="#get_mouse_presses-1084"><span class="linenos">1084</span></a>    <span class="k">return</span> <span class="n">pygame</span><span class="o">.</span><span class="n">mouse</span><span class="o">.</span><span class="n">get_pressed</span><span class="p">(</span><span class="n">num_buttons</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>Returns the mouse presses. </p>
 
-                </section>
-                <section id="is_touching">
-                            <input id="is_touching-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">is_touching</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">sprite_a</span>, </span><span class="param"><span class="n">sprite_b</span></span><span class="return-annotation">):</span></span>
-
-                <label class="view-source-button" for="is_touching-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#is_touching"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="is_touching-1064"><a href="#is_touching-1064"><span class="linenos">1064</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_touching</span><span class="p">(</span><span class="n">sprite_a</span><span class="p">,</span> <span class="n">sprite_b</span><span class="p">):</span>
-</span><span id="is_touching-1065"><a href="#is_touching-1065"><span class="linenos">1065</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;pymunk&quot;&quot;&quot;</span>
-</span><span id="is_touching-1066"><a href="#is_touching-1066"><span class="linenos">1066</span></a>    <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">game</span><span class="o">.</span><span class="n">_contact_pairs_set</span><span class="p">:</span>
-</span><span id="is_touching-1067"><a href="#is_touching-1067"><span class="linenos">1067</span></a>
-</span><span id="is_touching-1068"><a href="#is_touching-1068"><span class="linenos">1068</span></a>        <span class="k">if</span> <span class="p">(</span><span class="n">sprite_a</span><span class="o">.</span><span class="n">shape</span> <span class="ow">in</span> <span class="n">pair</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">sprite_b</span><span class="o">.</span><span class="n">shape</span> <span class="ow">in</span> <span class="n">pair</span><span class="p">):</span>
-</span><span id="is_touching-1069"><a href="#is_touching-1069"><span class="linenos">1069</span></a>            <span class="k">return</span> <span class="kc">True</span>
-</span><span id="is_touching-1070"><a href="#is_touching-1070"><span class="linenos">1070</span></a>    <span class="k">return</span> <span class="kc">False</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>pymunk</p>
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="n">is_left_click</span><span class="p">,</span> <span class="n">is_middle_click</span><span class="p">,</span> <span class="n">is_right_click</span> <span class="o">=</span> <span class="n">get_mouse_presses</span><span class="p">()</span>
+</code></pre>
+</div>
 </div>
 
-
-                </section>
-                <section id="is_touching_mouse">
-                            <input id="is_touching_mouse-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">is_touching_mouse</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">sprite</span></span><span class="return-annotation">):</span></span>
-
-                <label class="view-source-button" for="is_touching_mouse-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#is_touching_mouse"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="is_touching_mouse-1073"><a href="#is_touching_mouse-1073"><span class="linenos">1073</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_touching_mouse</span><span class="p">(</span><span class="n">sprite</span><span class="p">):</span>
-</span><span id="is_touching_mouse-1074"><a href="#is_touching_mouse-1074"><span class="linenos">1074</span></a>    <span class="k">return</span> <span class="n">sprite</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">point_query</span><span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">mouse</span><span class="o">.</span><span class="n">get_pos</span><span class="p">())</span><span class="o">.</span><span class="n">distance</span> <span class="o">&lt;=</span> <span class="mi">0</span>
-</span></pre></div>
-
-
-    
 
                 </section>
     </main>
