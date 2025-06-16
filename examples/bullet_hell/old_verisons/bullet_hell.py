@@ -4,7 +4,7 @@ import numpy as np
 import pymunk
 import pyscratch.game_module
 from pyscratch.sprite import Sprite, create_rect, create_rect_sprite, create_edge_sprites
-from pyscratch.helper import get_frame_dict
+from pyscratch.helper import _get_frame_dict
 from pyscratch.game_module import Game
 import pygame
 WIDTH = 720
@@ -28,7 +28,7 @@ font = pygame.font.SysFont(None, 24)  # None = default font, 48 = font size
 game.suppress_type_collision(PLAYER_TYPE, True)
 
 
-frames = get_frame_dict(sprite_sheet, 36, 13, {
+frames = _get_frame_dict(sprite_sheet, 36, 13, {
     "spin": [i+4*36 for i in range(14, 17+1)], 
     "star_explosion": [i+4*36 for i in range(19, 22+1)], 
     "heal": [i+1*36 for i in range(24, 28+1)], 

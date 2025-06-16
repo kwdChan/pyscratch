@@ -1,4 +1,4 @@
 from .event import *
 from .game_module import *
-from . import helper
+from .helper import *
 from .sprite import *

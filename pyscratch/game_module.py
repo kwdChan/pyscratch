@@ -1,6 +1,7 @@
 """
 Everything in this module is directly under the pyscratch namespace. 
-For example, instead of `pysc.game_module.is_key_pressed`, you can also directly do `pysc.is_key_pressed`
+For example, instead of doing `pysc.game_module.is_key_pressed`,
+you can also directly do `pysc.is_key_pressed`.
 """
 
 from __future__ import annotations
@@ -527,9 +528,9 @@ class Game:
         Example: 
         ```python
         # load the image into python 
-        background_image = pysc.helper.load_image('assets/my_background.jpg')
-        background_image2 = pysc.helper.load_image('assets/my_background2.jpg')
-        background_image3 = pysc.helper.load_image('assets/my_background3.jpg')
+        background_image = pysc.load_image('assets/my_background.jpg')
+        background_image2 = pysc.load_image('assets/my_background2.jpg')
+        background_image3 = pysc.load_image('assets/my_background3.jpg')
 
         # pass in a list of all the available backdrops. 
         pysc.game.set_backdrops([background_image, background_image2, background_image3])

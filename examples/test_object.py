@@ -4,7 +4,7 @@ import pymunk
 from pyscratch.game_module import game # neccessary for image loading
 from pyscratch.helper import scale_to_fit_aspect, scale_and_tile, scale_to_fill_screen, adjust_brightness, set_transparency
 
-from pyscratch.helper import get_frame, get_frame_sequence, get_frame_dict
+from pyscratch.helper import get_frame_from_sprite_sheet, _get_frame_sequence, _get_frame_dict
 
 game.update_screen_mode((2300, 700))
 sprite_sheet = pygame.image.load("assets/Sprout Lands - Sprites - Basic pack/Characters/Basic Charakter Actions.png").convert_alpha()
@@ -26,7 +26,7 @@ game.load_sound('bong', 'assets/sound_effects/Metal Clang-SoundBible.com-1957260
 
 
 
-frame_dict = get_frame_dict(sprite_sheet, 2, 12, {
+frame_dict = _get_frame_dict(sprite_sheet, 2, 12, {
     "1": [0, 1], 
     "2": [2, 3],
     "3": [4, 5],

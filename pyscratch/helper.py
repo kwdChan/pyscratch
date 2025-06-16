@@ -1,26 +1,69 @@
+"""
+Everything in this module is directly under the pyscratch namespace. 
+For example, instead of doing `pysc.helper.random_number`,
+you can also directly do `pysc.random_number`.
+"""
+
+
 from pathlib import Path
-from typing import Dict, Tuple, Union
+from typing import Dict, List, Tuple, Union
 import random
 
 import pygame
 import numpy as np
 
 
-def cap(v, min_v, max_v):
+def cap(v:float, min_v:float, max_v:float)->float:
+    """
+    Cap a value to a range between `min_v` and `max_v`.
+
+    Example
+    ```python
+    cap(5, 1, 10) # returns 5 
+    cap(15, 1, 10) # returns 10
+    cap(-10, 1, 10) # returns 1
+    
+    # a more realistic example usage: keep the sprite within the screen. 
+    my_sprite.x = cap(my_sprite.x, 0, SCREEN_WIDTH)
+    my_sprite.y = cap(my_sprite.y, 0, SCREEN_HEIGHT)
+    ```
+    """
     return max(min(max_v, v), min_v)
 
-def random_number(min_v, max_v):
-
+def random_number(min_v:float, max_v:float) -> float:
+    """
+    Returns a random number between `min_v` and `max_v`
+    """
     return random.random()*(max_v-min_v)+min_v
 
 
-def load_image(path):
+def load_image(path: str) -> pygame.Surface:
+    """
+    Return the `pygame.Surface` given the path to an image. 
+    """
     return pygame.image.load(path).convert_alpha()
 
 
-def get_frame(sheet, columns, rows, index, spacing=0, margin=0, inset=0):
+def get_frame_from_sprite_sheet(
+        sheet: pygame.Surface, 
+        columns:int, rows:int, index:int, 
+        spacing:int=0, margin:int=0, inset:int=0):
     """
-    WRITTEN BY CHATGPT
+    Extract a specific frame from a sprite sheet. 
+    
+    **You will not need to use this function directly.**
+
+    THIS FUNCTION IS WRITTEN BY AN AI. 
+
+
+    The index starts from the top-left as 0,
+    and increments left-to-right before up-to-down.
+    For example, for a 3x3 sheet, the index would be
+    ```
+    0 1 2
+    3 4 5
+    6 7 8
+    ```
     """
     sheet_rect = sheet.get_rect()
 
@@ -49,28 +92,99 @@ def get_frame(sheet, columns, rows, index, spacing=0, margin=0, inset=0):
 
     return sheet.subsurface(cropped_rect)
 
-def cut_sprite_sheet(sheet: pygame.Surface, columns, rows, spacing=0, margin=0, inset=0, folder_path='.', suffix='png'):
+def cut_sprite_sheet(
+        sheet: pygame.Surface, 
+        columns, rows, 
+        spacing=0, margin=0, inset=0, 
+        folder_path='.', 
+        suffix='png'):
+    """
+    Split a sprite sheet so each frame is its own image file. 
+
+    Parameters
+    ---
+    sheet: pygame.Surface
+        The sprite sheet image
+    columns: int
+        The total number of columns of the sheet
+    rows: int
+        The total number of rows of the sheet
+    spacing: int
+        Keep it as zero.
+    margin: int
+        Keep it as zero.
+    inset: int
+        Keep it as zero.
+    folder_path: str
+        The path of the destination folder to put the splitted images. 
+    suffix: str
+        The file extension 
+    """
+    
     folder_path = Path(folder_path)
     if not folder_path.exists():
         folder_path.mkdir()
     for i in range(columns*rows):
-        f = get_frame(sheet, columns, rows, i, spacing, margin, inset)
+        f = get_frame_from_sprite_sheet(sheet, columns, rows, i, spacing, margin, inset)
         pygame.image.save(f, folder_path/f"{i}.{suffix}")
 
-def get_frame_sequence(sheet, columns, rows, indices, spacing, margin, inset):
-    return [get_frame(sheet, columns, rows, i, spacing, margin, inset) for i in indices]
+def _get_frame_sequence(sheet:pygame.Surface, columns:int, rows:int, indices:List[int], spacing:int, margin:int, inset:int):
+    """
+    **You will not need to use this function directly.**
+    """
+    return [get_frame_from_sprite_sheet(sheet, columns, rows, i, spacing, margin, inset) for i in indices]
 
-def get_frame_dict(sheet, columns, rows, indices_dict, spacing=0, margin=0, inset=0):
+def _get_frame_dict(
+        sheet:pygame.Surface, columns:int, rows:int, 
+        indices_dict: Dict[str, List[int]], 
+        spacing:int=0, margin:int=0, inset:int=0):
+    """
+    **You will not need to use this function directly.**
+    """
     frame_dict = {}
     for k, v in indices_dict.items():
         assert isinstance(v, list) or isinstance(v, tuple)
 
-        frame_dict[k] = get_frame_sequence(sheet, columns, rows, v, spacing, margin, inset)
+        frame_dict[k] = _get_frame_sequence(sheet, columns, rows, v, spacing, margin, inset)
 
     return frame_dict
 
 def load_frames_from_folder(folder_path: Union[Path, str]):
+    """
+    Creates a `frame_dict` that the Sprite constructor takes using 
+    the images inside a folder. 
+    You can use `sprite.create_animated_sprite` instead for convenience.
 
+    The folder should be organised in one of these two ways: 
+
+    **Option 1**: Only one frame mode. *Note that the images must be numbered.*
+    ```
+    ├─ player/
+        ├─ 0.png
+        ├─ 1.png
+        ├─ 2.png
+        ...
+    ```
+
+    **Option 2**: Multiple frame modes. *Note that the images must be numbered.*
+    ```
+    ├─ player/  
+        ├─ walking/  
+            ├─ 0.png  
+            ├─ 1.png  
+            ...
+        ├─ idling/
+            ├─ 0.png
+            ├─ 1.png
+            ... 
+        ...
+    ``` 
+    Example
+    ```python
+    frame_dict = load_frames_from_folder("assets/player")
+    my_sprite1 = Sprite(frame_dict)
+    ```
+    """
     def extract_images(path: Path):
         index2image: Dict[int, pygame.Surface] = {}
 
@@ -107,20 +221,59 @@ def load_frames_from_folder(folder_path: Union[Path, str]):
     return frame_dict
 
 
+#RGBType = Tuple[int, int, int]
+#RGBAType = Tuple[int, int, int, int]
+#ColourType = Union[RGBAType, RGBType]
 
-def create_circle(colour, radius: float):
+def create_circle(colour, radius: float) -> pygame.Surface:
+    """
+    Create a circle image (pygame.Surface) given the colour and radius. 
+
+    Parameters
+    ---
+    colour: Tuple[int, int, int] or Tuple[int, int, int, int]
+        The colour of the rectangle in RGB or RGBA. Value range: [0-255].
+    radius: float
+        the radius of the cirlce.
+    """
     surface = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
     pygame.draw.circle(surface, colour, (radius, radius), radius)
     return surface
 
 
-def create_rect(colour, width: float, height: float):
+def create_rect(colour, width: float, height: float) -> pygame.Surface:
+    """
+    Create a rectangle image (pygame.Surface) given the colour, width and height
+
+    Parameters
+    ---
+    colour: Tuple[int, int, int] or Tuple[int, int, int, int]
+        The colour of the rectangle in RGB or RGBA. Value range: [0-255].
+    width: float
+        the width (x length) of the rectangle.
+    height: float
+        the height (y length) of the rectangle.
+    """
+
     surface = pygame.Surface((width, height), pygame.SRCALPHA)
     pygame.draw.rect(surface, colour, surface.get_rect())
     return surface
 
 def scale_and_tile(image, screen_size, scale_factor):
-    """WRITTEN BY AI"""
+    """
+    Scale an image by a factor and tile it to fill the screen.
+    
+    THIS FUNCTION IS WRITTEN BY AN AI. 
+
+    Parameters
+    ----------
+    image : pygame.Surface
+        The image to scale and tile.
+    screen_size : tuple of int
+        The width and height of the target surface.
+    scale_factor : float
+        Factor by which to scale the image.
+    """
 
     img_w, img_h = image.get_size()
     new_img = pygame.transform.smoothscale(image, (int(img_w * scale_factor), int(img_h * scale_factor)))
@@ -136,12 +289,34 @@ def scale_and_tile(image, screen_size, scale_factor):
 
 
 def scale_to_fill_screen(image, screen_size):
-    """WRITTEN BY AI (lol)"""
+    """
+    Scale an image to fill the screen without preserving aspect ratio.
+
+    Parameters
+    ----------
+    image : pygame.Surface
+        The image to scale.
+    screen_size : tuple of int
+        Target width and height of the screen.
+    """
     return pygame.transform.smoothscale(image, screen_size)
 
 
 def scale_to_fit_aspect(image, screen_size, fit='horizontal'):
-    """WRITTEN BY AI"""
+    """
+    Scale an image to fit the screen while preserving aspect ratio.
+    
+    THIS FUNCTION IS WRITTEN BY AN AI. 
+
+    Parameters
+    ----------
+    image : pygame.Surface
+        The image to scale.
+    screen_size : tuple of int
+        The width and height of the target screen.
+    fit : {'horizontal', 'vertical'}, optional
+        Axis to fit the image against. Default is 'horizontal'.
+    """
     img_rect = image.get_rect()
     screen_w, screen_h = screen_size
     img_w, img_h = img_rect.size
@@ -160,9 +335,20 @@ def scale_to_fit_aspect(image, screen_size, fit='horizontal'):
 
 def set_transparency(image, factor):
     """
-    Return a copy of the image with the given factor 
-    
-    WRITTEN BY AI
+    Set the transparency of an image.
+
+    THIS FUNCTION IS WRITTEN BY AN AI. 
+
+    ***IMCOMPLETE IMPLEMENTATION***: 
+    The transparency of the transparent background of the image is also changed
+
+
+    Parameters
+    ----------
+    image : pygame.Surface
+        The image to adjust.
+    factor : float
+        Transparency level from 0.0 (fully transparent) to 1.0 (fully opaque).
     """
     new_image = image.copy()
     new_image.set_alpha(int(factor*255))
@@ -172,11 +358,17 @@ def set_transparency(image, factor):
 
 def adjust_brightness(image, factor):
     """
-    Return a copy of the image with brightness adjusted by the given factor.
-
-    Does not work very well for the transparent background of sprite frames 
+    Adjust the brightness of an image.
     
-    WRITTEN BY AI
+    THIS FUNCTION IS WRITTEN BY AN AI. 
+
+    Parameters
+    ----------
+    image : pygame.Surface
+        The image to adjust.
+    factor : float
+        Brightness multiplier. Values < 1.0 darken, values > 1.0 brighten.
+       
     """
     new_image = image.copy()
     brightness_surface = pygame.Surface(image.get_size()).convert_alpha()

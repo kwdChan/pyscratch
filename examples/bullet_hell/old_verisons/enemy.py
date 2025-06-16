@@ -4,7 +4,7 @@ import numpy as np
 import pymunk
 from pyscratch import game
 from pyscratch.sprite import Sprite, create_rect, create_rect_sprite
-from pyscratch.helper import get_frame_dict
+from pyscratch.helper import _get_frame_dict
 from pyscratch.game_module import Game
 
 from main import game, frames, WIDTH, HEIGHT, ENEMY_TYPE, PLAYER_BULLET_TYPE

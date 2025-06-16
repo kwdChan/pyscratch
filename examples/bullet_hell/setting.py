@@ -17,7 +17,7 @@ sprite_sheet = pygame.image.load("assets/09493140a07b68502ef63ff423a6da3954d36fd
 
 font = pygame.font.SysFont(None, 24)  # None = default font, 48 = font size
 
-frames = pysc.helper.get_frame_dict(sprite_sheet, 36, 13, {
+frames = pysc.helper._get_frame_dict(sprite_sheet, 36, 13, {
     "spin": [i+4*36 for i in range(14, 17+1)], 
     "star_explosion": [i+4*36 for i in range(19, 22+1)], 
     "heal": [i+1*36 for i in range(24, 28+1)], 
