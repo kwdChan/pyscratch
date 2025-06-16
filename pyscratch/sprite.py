@@ -1,3 +1,11 @@
+"""
+Everything in this module is directly under the pyscratch namespace. 
+For example, instead of doing `pysc.sprite.create_animated_sprite`,
+you can also directly do `pysc.create_animated_sprite`.
+"""
+
+
+
 from __future__ import annotations
 from enum import Enum
 from typing import Any, Dict, Hashable, Iterable, List, Optional, ParamSpec, Tuple, Union, cast, override

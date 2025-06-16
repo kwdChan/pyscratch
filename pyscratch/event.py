@@ -1,3 +1,9 @@
+"""
+Everything in this module is directly under the pyscratch namespace. 
+For example, instead of doing `pysc.event.Timer`,
+you can also directly do `pysc.Timer`.
+"""
+
 from __future__ import annotations
 from typing import Any, Callable, Dict, Generator, Generic, List, ParamSpec, Set, Tuple, TypeVar, Union, override
 from types import GeneratorType, NoneType
@@ -19,13 +25,15 @@ def _declare_callback_type(obj: Event, func: Callable[P, Union[NoneType, Generat
 class Event(Generic[P]):
     """
     A low level Event class. 
-    You do not need to create the Event object yourself. 
+    You **do not** need to create the Event object yourself. 
     They are instead returned by functions like `sprite.when_game_started()`
 
     In no circumstances will you need to create your custom event. Always use the message event instead. 
     """
 
     def __init__(self):
+        """@private"""
+        
         self.__triggers: List = []
         self.__callbacks: List[Callable[P, Union[NoneType, Generator[float, None, None]]]] = []
         self.__stay_active = True
@@ -43,29 +51,31 @@ class Event(Generic[P]):
         self.__callbacks.append(func)
         return self
 
-    def trigger(self, *args: P.args, **kwargs: P.kwargs):
-        """
-        Trigger the event. The parameters will be passed on to the event handlers.
 
-        You will not need to run this method unless you are creating a custom event from `pysc.game.create_event`. 
-        """
-        self.__triggers.append((args, kwargs))
-    
+    def remove(self):
+        """Schedule this event to be removed."""
+        self.__stay_active = False
+
+    def soft_remove(self):
+        """Schedule this event to be removed when all the generators (yield functions) finish"""
+        self.__to_soft_remove = True
 
     @property
     def stay_active(self) -> bool:
         """Shows whether this event is removed or scheduled to be removed."""
         return self.__stay_active
     
-    def remove(self):
-        """Schedule this event to be removed."""
-        self.__stay_active = False
 
-    def soft_remove(self):
-        """Schedule this event to be removed only when all the generators (yield functions) finish"""
-        self.__to_soft_remove = True
-        
 
+    def trigger(self, *args: P.args, **kwargs: P.kwargs):
+        """
+        @private
+        Trigger the event. The parameters will be passed on to the event handlers.
+
+        You will not need to run this method ever.
+        """
+        self.__triggers.append((args, kwargs))
+    
     def _handle_all(self, current_t_ms):
         while self._handle_one(current_t_ms):
             pass
@@ -108,30 +118,45 @@ class Event(Generic[P]):
 
 
 class _ConditionInterface:
-
+    """
+    A low level Condition class. 
+    You **do not** need to create the Condition object yourself. 
+    """
     def _check(self):
         pass
-    
+
+    def add_handler(self, callback: Callable[[int], Any]):
+        """
+        Add a handler function to this event. 
+        When the event is triggered, the handler functions are called, taking in the parameters passed on by the triggers.
+        """        
+        return self
+        
     def remove(self):
+        """Schedule this event to be removed."""
         pass
 
     def soft_remove(self):
+        """Schedule this event to be removed when all the generators (yield functions) finish"""
         pass
 
     @property
     def stay_active(self) -> bool:
+        """Shows whether this event is removed or scheduled to be removed."""
         return True
 
 class Condition(_ConditionInterface):
-    """
-    TODO: documentation
-    """
     def __init__(self, checker: Callable[[], bool] = lambda: False, repeats: Union[float, int]=1):
+        """@private"""
         self.trigger = Event()
         self.repeat_remains = repeats
         self.checker = checker
         self.__stay_active = True
 
+    def add_handler(self, callback: Callable[[int], Any]):       
+        self.trigger.add_handler(callback)
+        return self
+    
     def remove(self):
         self.__stay_active = False
         self.trigger.remove()
@@ -144,7 +169,6 @@ class Condition(_ConditionInterface):
     def stay_active(self):
         return self.__stay_active
 
-    @override
     def _check(self):
         if self.checker() and self.repeat_remains:
             self.repeat_remains -= 1
@@ -152,24 +176,27 @@ class Condition(_ConditionInterface):
 
         if not self.repeat_remains:
             self.soft_remove()
-        
-    def add_handler(self, callback: Callable[[int], Any]):
-        self.trigger.add_handler(callback)
-        return self
 
     def change_checker(self, checker= lambda: False):
+        """@private"""
         self.checker = checker
 
     
 
 class TimerCondition(_ConditionInterface):
-    """TODO: documentation"""
     def __init__(self, reset_period=np.inf, repeats=np.inf):
+        """
+        @private
+        """
         self.trigger = Event()
         self.repeat_remains = repeats
         self.timer = Timer(reset_period=reset_period)
         self.period = 0
         self.__stay_active = True
+
+    def add_handler(self, callback: Callable[[int], Any]):
+        self.trigger.add_handler(callback)
+        return self
 
     def remove(self):
         self.__stay_active = False
@@ -183,7 +210,6 @@ class TimerCondition(_ConditionInterface):
     def stay_active(self):
         return self.__stay_active
 
-    @override
     def _check(self):
         self.timer.read()
         while (self.timer.n_period > self.period) and self.repeat_remains:
@@ -194,10 +220,6 @@ class TimerCondition(_ConditionInterface):
         if not self.repeat_remains:
             self.soft_remove()
         
-
-    def add_handler(self, callback: Callable[[int], Any]):
-        self.trigger.add_handler(callback)
-        return self
 
 
 class Timer:
