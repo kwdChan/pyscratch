@@ -11,7 +11,7 @@ pysc.game.update_screen_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pysc.game.set_backdrops([bg])
 pysc.game.switch_backdrop(0)
 
-pysc.game.broadcast_message('folder_update', Path('preview_assets'))
+pysc.game.broadcast_message('folder_update', Path('assets'))
 pysc.game.broadcast_message('cut_or_nav_mode_change', 'nav')
 
 

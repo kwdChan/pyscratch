@@ -17,4 +17,4 @@ FRAME_PREVIEW_MARGIN = 10
 
 
 
-PATH = "preview_assets"
+PATH = "assets"
