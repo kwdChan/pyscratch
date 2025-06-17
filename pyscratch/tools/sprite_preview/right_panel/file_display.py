@@ -22,7 +22,7 @@ def FileDisplay(path: Path, order: int, panel_top_left):
     # set the position
 
     panel_x, panel_y = panel_top_left
-    sprite.x = spacing+(order%n_cols)*(width + spacing)+panel_x +width/2
+    sprite.x = spacing+(order%n_cols)*(width+spacing)+panel_x +width/2
     sprite.y = spacing+(order//n_cols)*(height+spacing)+panel_y +height/2
 
     # set the display
