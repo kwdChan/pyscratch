@@ -243,6 +243,10 @@ class Game:
 
 
 
+        self.max_number_sprite = 1000
+        """The maximum number of sprites in the game. Adding more than this will lead to an error."""
+
+
     def __key_event_handler(self, e):
         up_or_down = 'down' if e.type == pygame.KEYDOWN else 'up'
         keyname = pygame.key.name(e.key)
@@ -433,6 +437,8 @@ class Game:
 
     def _add_sprite(self, sprite, to_show=True):
         self._all_sprites.add(sprite)
+        if len(self._all_sprites) > self.max_number_sprite:
+            raise ValueError('Reached the maximum number sprite. ')
         #self._space.add(sprite.body, sprite.shape)
         self._sprite_click_trigger[sprite] = []
         if to_show:
@@ -1022,6 +1028,21 @@ class Game:
         )        
         return condition
     
+    def when_mouse_click(self, associated_sprites: Iterable[Sprite]=[] ) -> Event:
+        """
+        *EXTENDED FEATURE*
+
+        DOCUMENTATION NOT COMPLETED
+        
+        """
+        event_internal = self.create_pygame_event_trigger([pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN], associated_sprites)
+        event = self._create_event(associated_sprites)
+        def handler(e):
+            updown = "up" if e.type == pygame.MOUSEBUTTONUP else "down"
+            event.trigger(e.pos, e.button, updown)
+        event_internal.add_handler(handler)
+
+        return event
 
     def _create_event(self, associated_sprites: Iterable[Sprite]=[]) -> Event:
         """

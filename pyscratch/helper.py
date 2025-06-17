@@ -1,7 +1,7 @@
 """
 Everything in this module is directly under the pyscratch namespace. 
 For example, instead of doing `pysc.helper.random_number`,
-you can also directly do `pysc.random_number`.
+you can also directly do `pysc.random_number`
 """
 
 
