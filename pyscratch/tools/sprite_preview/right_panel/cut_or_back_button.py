@@ -10,6 +10,10 @@ button = pysc.create_rect_sprite(colour, w, d)
 button.set_xy((800, 550))
 
 
+button.when_game_start().add_handler(lambda: button.lock_to(pysc.game.shared_data['folder_navigation'], offset=(0,0)))
+
+
+
 def on_click():
     if pysc.game.shared_data['cut_or_nav_mode'] == 'nav':
         pysc.game.broadcast_message('back_nav', None)

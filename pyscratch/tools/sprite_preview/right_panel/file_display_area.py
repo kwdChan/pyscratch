@@ -50,3 +50,4 @@ def on_msg_mode_change(mode):
         folder_navigation.hide()
 
 folder_navigation.when_receive_message('cut_or_nav_mode_change').add_handler(on_msg_mode_change)
+pysc.game.shared_data['folder_navigation'] = folder_navigation
