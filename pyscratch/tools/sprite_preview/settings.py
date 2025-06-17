@@ -1,0 +1,20 @@
+import pygame
+
+SCREEN_HEIGHT = 720
+SCREEN_WIDTH = 1280
+DEFAULT_FONT24 = pygame.font.SysFont(None, 24)
+DEFAULT_FONT48 = pygame.font.SysFont(None, 24)
+
+LEFT_PANEL_WIDTH = 120
+RIGHT_PANEL_WIDTH = 600
+
+BOTTOM_RIGHT_PANEL_HEIGHT = 200
+PANEL_MARGIN = 10
+
+
+
+FRAME_PREVIEW_MARGIN = 10
+
+
+
+PATH = "preview_assets"
