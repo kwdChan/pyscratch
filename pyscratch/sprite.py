@@ -576,6 +576,7 @@ class Sprite(pygame.sprite.Sprite):
 
         self._lock_to_sprite = None
         self._lock_offset = 0, 0
+        self.__x, self.__y = self._physcis_manager.body.x,  self._physcis_manager.body.y
 
         game._add_sprite(self)
 
@@ -592,7 +593,7 @@ class Sprite(pygame.sprite.Sprite):
         "@private"
 
         if self._lock_to_sprite:
-            self._body.position = self._lock_to_sprite._body.position + self._lock_offset
+            self._body.position = self._lock_to_sprite._body.position + (self.__x, self.__y) + self._lock_offset 
             self._body.velocity = 0, 0 
 
         x, y = self._body.position
@@ -644,6 +645,8 @@ class Sprite(pygame.sprite.Sprite):
         my_sprite.x += 10 
         ```
         """
+        if self._lock_to_sprite: 
+            return self.__x        
         return self._body.position[0]
     
     @property
@@ -663,6 +666,8 @@ class Sprite(pygame.sprite.Sprite):
         my_sprite.y += 10 
         ```
         """
+        if self._lock_to_sprite: 
+            return self.__y
         return self._body.position[1]
     
     @property
@@ -692,11 +697,18 @@ class Sprite(pygame.sprite.Sprite):
    
     @x.setter
     def x(self, v):
-        self._body.position =  v, self._body.position[1]
+        if self._lock_to_sprite: 
+            self.__x = v
+        else: 
+            self._body.position =  v, self._body.position[1]
+        
     
     @y.setter
     def y(self, v):
-        self._body.position = self._body.position[0], v
+        if self._lock_to_sprite: 
+            self.__y = v
+        else: 
+            self._body.position = self._body.position[0], v
 
     @direction.setter
     def direction(self, degree):
@@ -719,13 +731,19 @@ class Sprite(pygame.sprite.Sprite):
         """
         Moves the sprite forward along `direction`.   
         """
-        self._body.position += self._body.rotation_vector*steps
+        #self._body.position += 
+        
+        xs, ys = self._body.rotation_vector*steps
+        self.x += xs
+        self.y += ys
         
     def move_across_dir(self, steps: float):
         """
         Moves the sprite forward along `direction` + 90 degrees  
         """
-        self._body.position += self._body.rotation_vector.perpendicular()*steps
+        xs, ys = self._body.rotation_vector.perpendicular()*steps
+        self.x += xs
+        self.y += ys        
         
 
     def move_xy(self, xy: Tuple[float, float]):
@@ -738,7 +756,8 @@ class Sprite(pygame.sprite.Sprite):
         my_sprite.move_xy((10, -5))
         ```
         """
-        self._body.position = self._body.position + xy
+        self.x += xy[0]
+        self.y += xy[1]
 
     def set_xy(self, xy: Tuple[float, float]):
         """
@@ -750,7 +769,7 @@ class Sprite(pygame.sprite.Sprite):
         my_sprite.set_xy((0, 0))
         ```
         """        
-        self._body.position =  xy
+        self.x, self.y = xy
 
 
     def distance_to(self, position: Tuple[float, float], return_xy=False) -> Union[float, Tuple[float, float]]:
@@ -872,6 +891,8 @@ class Sprite(pygame.sprite.Sprite):
         
         self._lock_to_sprite = sprite
         self._lock_offset = offset
+        self.x = 0
+        self.y = 0
 
     def release_position_lock(self):
         """
