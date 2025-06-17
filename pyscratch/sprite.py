@@ -576,7 +576,7 @@ class Sprite(pygame.sprite.Sprite):
 
         self._lock_to_sprite = None
         self._lock_offset = 0, 0
-        self.__x, self.__y = self._physcis_manager.body.x,  self._physcis_manager.body.y
+        self.__x, self.__y = self._physcis_manager.body.position[0],  self._physcis_manager.body.position[1]
 
         game._add_sprite(self)
 
@@ -857,7 +857,7 @@ class Sprite(pygame.sprite.Sprite):
 
 
     
-    def lock_to(self, sprite: Sprite, offset: Tuple[float, float]):
+    def lock_to(self, sprite: Sprite, offset: Tuple[float, float], reset_xy = False):
         """
         *EXTENDED FEATURE*
 
@@ -891,8 +891,9 @@ class Sprite(pygame.sprite.Sprite):
         
         self._lock_to_sprite = sprite
         self._lock_offset = offset
-        self.x = 0
-        self.y = 0
+        if reset_xy: 
+            self.x = 0
+            self.y = 0
 
     def release_position_lock(self):
         """
