@@ -484,7 +484,7 @@ class Sprite(pygame.sprite.Sprite):
             starting_mode:Optional[str]=None, 
             position= (100, 100), 
             shape_type = ShapeType.BOX, 
-            shape_size_factor=0.8, 
+            shape_size_factor=1.0, 
             body_type=pymunk.Body.KINEMATIC
         ):
         """
