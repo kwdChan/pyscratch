@@ -17,7 +17,8 @@ topleft = folder_navigation.x-width/2, folder_navigation.y-height/2
 folder_navigation.private_data['file_display_list'] = []
 
 def on_msg_folder_update(path: Path):
-    folder_navigation.private_data['path'] = path
+    #folder_navigation.private_data['path'] = path
+    pysc.game.shared_data['path'] = path
 
     for fdisp in folder_navigation.private_data['file_display_list']:
         fdisp.remove()
@@ -33,7 +34,7 @@ folder_navigation.when_receive_message('folder_update').add_handler(on_msg_folde
 
 
 def on_msg_back_nav(_):
-    path: Path = folder_navigation.private_data['path']
+    path: Path = pysc.game.shared_data['path']
     pysc.game.broadcast_message('folder_update', path.parent)
 
 
