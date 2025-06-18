@@ -256,6 +256,11 @@ class Game:
         for t in self._all_simple_key_triggers:
             t.trigger(keyname, up_or_down)
 
+    def __getitem__(self, key):
+        return self.shared_data[key]
+    
+    def __setitem__(self, k, v):
+        self.shared_data[k] = v
 
 
     def __mouse_drag_handler(self, e):
@@ -438,7 +443,7 @@ class Game:
     def _add_sprite(self, sprite, to_show=True):
         self._all_sprites.add(sprite)
         if len(self._all_sprites) > self.max_number_sprite:
-            raise ValueError('Reached the maximum number sprite. ')
+            raise RuntimeError('Reached the maximum number sprite. ')
         #self._space.add(sprite.body, sprite.shape)
         self._sprite_click_trigger[sprite] = []
         if to_show:
@@ -1043,6 +1048,23 @@ class Game:
         event_internal.add_handler(handler)
 
         return event
+    
+    def when_mouse_scroll(self, associated_sprites: Iterable[Sprite]=[] ) -> Event:
+        """
+        *EXTENDED FEATURE*
+
+        DOCUMENTATION NOT COMPLETED
+        
+        """
+        event_internal = self.create_pygame_event_trigger([pygame.MOUSEWHEEL], associated_sprites)
+        event = self._create_event(associated_sprites)
+        def handler(e):
+            updown = "up" if e.y > 0 else "down"
+            event.trigger(updown)
+        event_internal.add_handler(handler)
+
+        return event
+
 
     def _create_event(self, associated_sprites: Iterable[Sprite]=[]) -> Event:
         """

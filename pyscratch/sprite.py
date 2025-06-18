@@ -580,6 +580,12 @@ class Sprite(pygame.sprite.Sprite):
 
         game._add_sprite(self)
 
+    def __getitem__(self, key):
+        return self.private_data[key]
+    
+    def __setitem__(self, k, v):
+        self.private_data[k] = v
+
     @property
     def _body(self):
         return self._physcis_manager.body    
