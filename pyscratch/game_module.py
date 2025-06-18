@@ -214,6 +214,8 @@ class Game:
         # mouse dragging event
         self._dragged_sprite = None
         self._drag_offset = 0, 0
+        self.__clicked_sprite =  None
+        self._sprite_click_release_trigger:Dict[Sprite, List[Event]] = {}  #TODO: need to be able to destory the trigger here when the sprite is destoryed
 
         self._sprite_click_trigger:Dict[Sprite, List[Event]] = {}  #TODO: need to be able to destory the trigger here when the sprite is destoryed
         mouse_drag_trigger = self.create_pygame_event_trigger([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
@@ -266,17 +268,20 @@ class Game:
     def __mouse_drag_handler(self, e):
 
         if e.type == pygame.MOUSEBUTTONDOWN: 
-            
+
             for s in reversed(list(self._all_sprites_to_show)):
                 if TYPE_CHECKING:
                     s = cast(Sprite, s)
+                    
+                # click is on the top sprite only
                 if s._shape.point_query(e.pos).distance <= 0:
+                    self.__clicked_sprite = s
                     for t in self._sprite_click_trigger[s]:
                         t.trigger()
 
                     if not s.draggable:
-                        continue
-
+                        break
+                    
                     s._set_is_dragging (True)
                     self._dragged_sprite = s
                     offset_x = s._body.position[0]  - e.pos[0]
@@ -284,10 +289,19 @@ class Game:
                     self._drag_offset = offset_x, offset_y
                     break 
 
+
+
         elif e.type == pygame.MOUSEBUTTONUP:
             if self._dragged_sprite: 
                 self._dragged_sprite._set_is_dragging(False)
                 self._dragged_sprite = None
+
+            if self.__clicked_sprite :
+                temp  =  self._sprite_click_release_trigger.get(self.__clicked_sprite)
+                if temp: 
+                    for t in temp:
+                        t.trigger()
+                    self.__clicked_sprite = None
 
         elif e.type == pygame.MOUSEMOTION and self._dragged_sprite:
             x = e.pos[0] + self._drag_offset[0]
@@ -1064,7 +1078,23 @@ class Game:
         event_internal.add_handler(handler)
 
         return event
+    def when_this_sprite_click_released(self, sprite, other_associated_sprites: Iterable[Sprite]=[]) -> Event[[]]:
+        """
+        DOCUMENTATION NOT COMPLETED
 
+        """
+        
+        t = self._create_event(set(list(other_associated_sprites)+[sprite]))
+
+        if not sprite in self._sprite_click_release_trigger:
+            self._sprite_click_release_trigger[sprite] = []
+            
+        self._sprite_click_release_trigger[sprite].append(t)
+        if TYPE_CHECKING:
+            def sample_callback()-> Any:
+                return
+            t = _declare_callback_type(t, sample_callback)
+        return t
 
     def _create_event(self, associated_sprites: Iterable[Sprite]=[]) -> Event:
         """
