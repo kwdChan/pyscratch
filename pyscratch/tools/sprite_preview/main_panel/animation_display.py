@@ -35,7 +35,7 @@ def create_display_sprite(frames):
         display_sprite.remove()
         x, y = display_sprite.x, display_sprite.y
     else:
-        x, y = 200, 200
+        x, y = 350, 200
 
     if not len(frames):
         pysc.game['display_sprite'] = None
