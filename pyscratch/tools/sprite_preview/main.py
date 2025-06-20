@@ -4,7 +4,7 @@ from pyscratch.tools.sprite_preview import input_box
 from pyscratch.tools.sprite_preview.right_panel import back_button, cut_button
 from settings import *
 from right_panel import file_display_area, spritesheet_view, cut_parameters
-from main_panel import sprite_edit_ui, play_edit_ui, animation_display, frame_bin, set_as_sprite_folder
+from main_panel import sprite_edit_ui, play_edit_ui, animation_display, frame_bin, set_as_sprite_folder, warning_message
 from left_panel import frame_preview_card, frame_preview_panel
 
 bg = pysc.create_rect((221, 221, 221), SCREEN_WIDTH, SCREEN_HEIGHT)

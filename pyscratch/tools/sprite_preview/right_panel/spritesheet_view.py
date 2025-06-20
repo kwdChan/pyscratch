@@ -75,7 +75,7 @@ def on_msg_cut(_):
     ss_view.draw(pysc.create_rect((0,0,0,0), 1, 1)) # reset
 
     if not 'image_on_right_display' in pysc.game.shared_data:
-        print('image not selected' )
+        pysc.game.broadcast_message('warning', 'image not selected' )
         return 
     
     for f in ss_view['frame_list']:
@@ -94,10 +94,12 @@ def on_msg_cut(_):
 
     if not n_row:
         print('invalid n_row')
+        pysc.game.broadcast_message('warning', 'invalid n_row' )
         return
     
     if not n_col:
         print('invalid n_col')
+        pysc.game.broadcast_message('warning', 'invalid n_col' )
         return
 
     for i in range(n_row*n_col):

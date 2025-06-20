@@ -6,6 +6,7 @@ frame_itv = FloatInputBox("frame_interval")
 def set_xy():
     container = pysc.game['main_bottom_panel']
     frame_itv.lock_to(container, (0,0))
+    frame_itv.set_xy((200, 30))
     
 frame_itv.when_game_start().add_handler(
     set_xy
@@ -15,7 +16,7 @@ def new_switch(text0, text1, data_key):
     container = pysc.game.shared_data['main_bottom_panel']
     container_width, container_height = pysc.game.shared_data['main_bottom_size']
 
-    button_w, button_h = 150, 50
+    button_w, button_h = 80, 50
     button = pysc.create_rect_sprite((221, 221, 221), button_w, button_h)
     
     pysc.game.shared_data[data_key] = False
@@ -37,8 +38,12 @@ def new_switch(text0, text1, data_key):
 
 
 def create_play_button():
-    play_button = new_switch('play','pause', 'is_playing')
-    play_button.set_xy((200, 200))
+    container = pysc.game.shared_data['main_bottom_panel']
+
+    play_button = new_switch('Play','Pause', 'is_playing')
+    play_button.lock_to(container, (0,0))
+    
+    play_button.set_xy((0, 70))
 
 pysc.game.when_game_start().add_handler(create_play_button)
 
@@ -50,7 +55,8 @@ scale_factor_input = FloatInputBox("scale_factor", "scale_factor_change")
 
 def set_xy2():
     container = pysc.game.shared_data['main_bottom_panel']
-    scale_factor_input.lock_to(container, (100,0))
+    scale_factor_input.lock_to(container, (0,0))
+    scale_factor_input.set_xy((200, 120))
     
 scale_factor_input.when_game_start().add_handler(
     set_xy2
