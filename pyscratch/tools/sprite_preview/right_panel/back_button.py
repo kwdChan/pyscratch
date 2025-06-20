@@ -18,7 +18,8 @@ def on_click():
     if pysc.game.shared_data['cut_or_nav_mode'] == 'nav':
         pysc.game.broadcast_message('back_nav', None)
     else:
-        pysc.game.broadcast_message('cut', None)
+        #pysc.game.broadcast_message('cut', None)
+        pysc.game.broadcast_message('cut_or_nav_mode_change', 'nav')
 
 button.when_this_sprite_clicked().add_handler(on_click)
 
@@ -28,7 +29,7 @@ def on_msg_mode_change(mode):
     if mode == 'nav':
         button.write_text("back", DEFAULT_FONT24, offset=(w/2, d/2))
     else:
-        button.write_text("cut", DEFAULT_FONT24, offset=(w/2, d/2))
+        button.write_text("back", DEFAULT_FONT24, offset=(w/2, d/2))
 
 
 button.when_receive_message('cut_or_nav_mode_change').add_handler(on_msg_mode_change)
