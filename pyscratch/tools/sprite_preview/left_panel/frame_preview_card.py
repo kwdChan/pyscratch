@@ -196,9 +196,7 @@ def on_change_animation(path: Path):
 
     #pysc.game['scrolling_offset'] = 0
 
-    if not 'animation_path' in pysc.game.shared_data:
-        pysc.game.broadcast_message('warning', "Animation not selected yet.")
-        return
+
 
     pysc.game['animation_path'] = path
     for c in pysc.game['frame_card_list']:
