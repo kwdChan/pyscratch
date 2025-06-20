@@ -1,7 +1,7 @@
 from pyscratch.tools.sprite_preview.input_box import IntegerInputBox, FloatInputBox
 import pyscratch as pysc
 from settings import *
-frame_itv = FloatInputBox("frame_interval")
+frame_itv = FloatInputBox("frame_interval", default_value="0.2")
 
 def set_xy():
     container = pysc.game['main_bottom_panel']
@@ -51,7 +51,7 @@ pysc.game.when_game_start().add_handler(create_play_button)
 
 
 
-scale_factor_input = FloatInputBox("scale_factor", "scale_factor_change")
+scale_factor_input = FloatInputBox("scale_factor", "scale_factor_change", default_value="1")
 
 def set_xy2():
     container = pysc.game.shared_data['main_bottom_panel']

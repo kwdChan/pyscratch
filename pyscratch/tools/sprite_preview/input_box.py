@@ -7,7 +7,7 @@ selected_colour = (255, 255, 255)
 deselected_colour = (127, 127, 127)
 
 
-def FloatInputBox(data_key, message_on_change=""):
+def FloatInputBox(data_key, message_on_change="", default_value=""):
     label = pysc.create_rect_sprite(deselected_colour, w, h)
     label.write_text(data_key, DEFAULT_FONT24, offset=(w/2, h/2))
 
@@ -23,8 +23,14 @@ def FloatInputBox(data_key, message_on_change=""):
     #     text_box.private_data['selected'] = True
 
     # text_box.when_this_sprite_clicked().add_handler(on_click)
-    text_box.private_data['selected'] = False
-    text_box.private_data['text'] = ""
+    text_box['selected'] = False
+    text_box['text'] = default_value
+    try:
+        pysc.game.shared_data[data_key] = float(text_box.private_data['text'])
+    except:
+        pysc.game.shared_data[data_key] = None    
+
+    text_box.write_text(text_box['text'], DEFAULT_FONT24, colour=(255,255,255), offset=(w/2, h/2))
     def on_any_key_press(key:str, updown):
         if updown == 'up': return
         if not text_box.private_data['selected']: return
