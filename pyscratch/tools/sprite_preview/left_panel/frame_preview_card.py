@@ -126,6 +126,12 @@ def FramePreviewCard(surface:Surface, order):
 
 
 def on_cut_sprite_frame_drop(data):
+    if not 'animation_path' in pysc.game.shared_data:
+        pysc.game.broadcast_message('warning', "Animation not selected yet.")
+        return
+
+
+
     sprite: pysc.Sprite = data['sprite']
     surface: Surface = data['surface']
     mos_x, mos_y = data['position']
@@ -189,6 +195,11 @@ pysc.game['frame_card_list'] = []
 def on_change_animation(path: Path):
 
     #pysc.game['scrolling_offset'] = 0
+
+    if not 'animation_path' in pysc.game.shared_data:
+        pysc.game.broadcast_message('warning', "Animation not selected yet.")
+        return
+
     pysc.game['animation_path'] = path
     for c in pysc.game['frame_card_list']:
         c.remove()

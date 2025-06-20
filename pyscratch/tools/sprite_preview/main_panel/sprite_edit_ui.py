@@ -19,6 +19,7 @@ receive messages:
 
 
 from pathlib import Path
+from typing import cast
 import pyscratch as pysc
 from settings import *
 
@@ -26,7 +27,7 @@ container_width = SCREEN_WIDTH - LEFT_PANEL_WIDTH - RIGHT_PANEL_WIDTH - PANEL_MA
 container_height = 300
 
 # container
-container = pysc.create_rect_sprite((255, 255, 255), container_width, container_height)
+container = pysc.create_rect_sprite((230, 230, 230), container_width, container_height)
 container.x = container_width/2+LEFT_PANEL_WIDTH+PANEL_MARGIN
 container.y = SCREEN_HEIGHT-container_height/2-PANEL_MARGIN
 pysc.game['main_bottom_panel'] = container
@@ -42,7 +43,7 @@ def NewButton(text):
 
 
 # sprite: add sprite button
-add_sprite_button = NewButton("new sprite")
+add_sprite_button = NewButton("New Sprite")
 add_sprite_button.y=10
 add_sprite_button.x=200
 
@@ -140,13 +141,19 @@ pysc.game.when_receive_message("change_sprite_selection").add_handler(on_msg_cha
 
 
 # sprite: add animation button
-add_animation_button = NewButton("new animation")
-add_animation_button.x = 400
+add_animation_button = NewButton("New Animation")
+add_animation_button.x = 370
 add_animation_button.y = 10
 
 # event: click of the add animation button  
 def on_click2():
-    folder_path: Path = pysc.game.shared_data['sprite_folder_path']
+
+
+    if not (folder_path:= pysc.game.shared_data.get('sprite_folder_path')):
+        pysc.game.broadcast_message('warning', "Sprite folder not selected yet")
+        return
+    
+    folder_path = cast(Path, folder_path)
     c = 0
     while True:
         
