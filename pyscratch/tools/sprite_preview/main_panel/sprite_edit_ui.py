@@ -71,14 +71,38 @@ def AnimationSelection(order, path):
     
 
     w, h = 120, 30
-    colour = 127, 127, 127
-    sprite = pysc.create_rect_sprite(colour, w, h)
+    on_select = pysc.create_rect((150,150, 150), w, h)
+    not_on_select = pysc.create_rect((127, 127, 127), w, h)
+    sprite = pysc.Sprite(dict(on_select=[on_select], not_on_select=[not_on_select]))
+
     sprite.lock_to(container, (-(container_width-w)/2, -(container_height-h)/2))
     sprite.x = 3
     sprite.y = order*(h+3)+3
+
+    sprite.set_frame_mode('on_select')
     sprite.write_text(path.stem, DEFAULT_FONT24, offset=(w/2, h/2))
-    sprite.when_this_sprite_clicked().add_handler(lambda: pysc.game.broadcast_message('change_animation', path))
-    
+
+    sprite.set_frame_mode('not_on_select')
+    sprite.write_text(path.stem, DEFAULT_FONT24, offset=(w/2, h/2))
+
+
+
+    def on_click():
+        sprite.set_frame_mode('on_select')
+
+        pysc.game.broadcast_message('change_animation', path)
+        pysc.game.broadcast_message('deselect', sprite)
+
+
+    sprite.when_this_sprite_clicked().add_handler(on_click)
+
+
+    def on_deselect(s):
+        if not sprite is s:
+            sprite.set_frame_mode('not_on_select')
+
+    sprite.when_receive_message('deselect').add_handler(on_deselect)
+
     return sprite
 
 # event: msg: change_sprite_selection: 

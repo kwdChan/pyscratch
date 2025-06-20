@@ -59,7 +59,12 @@ def FramePreviewCard(surface:Surface, order):
 
     # send message on click
     def on_click():
+
+
         pysc.game.broadcast_message('preview_click', dict(surface=surface, order=order))
+        pysc.game.broadcast_message('show_bin', None)
+
+
     preview_bg.when_this_sprite_clicked().add_handler(on_click)
 
 
@@ -73,6 +78,8 @@ def FramePreviewCard(surface:Surface, order):
 
     # dragging
     def on_mouse_release():
+        pysc.game.broadcast_message('hide_bin', None)
+        
         left_panel: pysc.Sprite = pysc.game['left_panel']  
 
         frame_card_list = pysc.game['frame_card_list']
@@ -88,9 +95,11 @@ def FramePreviewCard(surface:Surface, order):
         preview_bg.y = ypos + pysc.game['scrolling_offset']
 
         new_order = min(max(new_order, 0), len(frame_card_list)-1) 
-        if not left_panel.is_touching(preview_bg): return
-        if new_order == order: return 
 
+        if not (to_remove := pysc.game['frame_bin'].is_touching_mouse()):
+            if not left_panel.is_touching(preview_bg): return
+            if new_order == order: return 
+            
 
         print(f"{order} -> {new_order}")
 
@@ -99,13 +108,12 @@ def FramePreviewCard(surface:Surface, order):
 
         temp = first_half + second_half
 
-        print([c['order'] for c in temp] )
+        #print([c['order'] for c in temp] )
 
-        temp = temp[:new_order] + [preview_bg] + (temp[new_order:] if (new_order)<len(temp) else [])
-        
+        if not to_remove: 
+            temp = temp[:new_order] + [preview_bg] + (temp[new_order:] if (new_order)<len(temp) else [])
 
-        # + temp[new_order+1:]
-        print([c['order'] for c in temp] )
+        #print([c['order'] for c in temp] )
 
         write_new_frame_list([f['surface'] for f in temp])
 
@@ -171,6 +179,7 @@ def write_new_frame_list(frame_list: List[Surface]):
 
     shutil.rmtree(pysc.game['animation_path'])
     shutil.copytree(temp_folder, pysc.game['animation_path'])
+    shutil.rmtree(temp_folder)
     
 
 
