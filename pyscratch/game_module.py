@@ -267,7 +267,7 @@ class Game:
 
     def __mouse_drag_handler(self, e):
 
-        if e.type == pygame.MOUSEBUTTONDOWN: 
+        if e.type == pygame.MOUSEBUTTONDOWN and e.button == 1: 
 
             for s in reversed(list(self._all_sprites_to_show)):
                 if TYPE_CHECKING:
@@ -291,17 +291,17 @@ class Game:
 
 
 
-        elif e.type == pygame.MOUSEBUTTONUP:
+        elif e.type == pygame.MOUSEBUTTONUP  and e.button == 1:
             if self._dragged_sprite: 
                 self._dragged_sprite._set_is_dragging(False)
                 self._dragged_sprite = None
 
-            if self.__clicked_sprite :
-                temp  =  self._sprite_click_release_trigger.get(self.__clicked_sprite)
-                if temp: 
-                    for t in temp:
-                        t.trigger()
-                    self.__clicked_sprite = None
+            if self.__clicked_sprite and (temp:= self._sprite_click_release_trigger.get(self.__clicked_sprite)):
+                #temp  =  self._sprite_click_release_trigger.get(self.__clicked_sprite)
+                #if temp: 
+                for t in temp:
+                    t.trigger()
+                self.__clicked_sprite = None
 
         elif e.type == pygame.MOUSEMOTION and self._dragged_sprite:
             x = e.pos[0] + self._drag_offset[0]
