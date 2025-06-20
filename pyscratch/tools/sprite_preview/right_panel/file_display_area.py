@@ -26,9 +26,12 @@ def on_msg_folder_update(path: Path):
     folder_navigation.private_data['file_display_list']  = []
     file_display_list = folder_navigation.private_data['file_display_list'] 
 
-    for c, f in enumerate(path.iterdir()):
+    c = 0
+    for f in path.iterdir():
         fdisp = FileDisplay(f, c, topleft)
-        file_display_list.append(fdisp)
+        if fdisp: 
+            c+=1
+            file_display_list.append(fdisp)
 
 folder_navigation.when_receive_message('folder_update').add_handler(on_msg_folder_update)
 

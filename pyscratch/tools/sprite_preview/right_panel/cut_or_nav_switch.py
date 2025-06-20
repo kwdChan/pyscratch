@@ -4,7 +4,7 @@ import pyscratch as pysc
 from pyscratch.sprite import Sprite
 from settings import *
 from .file_display import FileDisplay
-w, d = 100, 70
+w, d = 150, 70
 colour = (127, 127, 127)
 button = pysc.create_rect_sprite(colour, w, d)
 button.set_xy((1100, 550))

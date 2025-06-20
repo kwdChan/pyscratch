@@ -7,10 +7,10 @@ from .file_display import FileDisplay
 w, d = 100, 70
 colour = (127, 127, 127)
 button = pysc.create_rect_sprite(colour, w, d)
-button.set_xy((800, 550))
+button.set_xy((900, 550))
 
 
-button.when_game_start().add_handler(lambda: button.lock_to(pysc.game.shared_data['folder_navigation'], offset=(0,0)))
+#button.when_game_start().add_handler(lambda: button.lock_to(pysc.game.shared_data['folder_navigation'], offset=(0,0)))
 
 
 
