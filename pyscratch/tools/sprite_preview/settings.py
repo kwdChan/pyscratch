@@ -12,8 +12,3 @@ BOTTOM_RIGHT_PANEL_HEIGHT = 200
 PANEL_MARGIN = 10
 
 
-
-
-
-
-PATH = "assets"

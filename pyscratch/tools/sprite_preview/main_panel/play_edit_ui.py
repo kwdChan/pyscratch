@@ -4,7 +4,7 @@ from settings import *
 frame_itv = FloatInputBox("frame_interval")
 
 def set_xy():
-    container = pysc.game.shared_data['main_bottom_panel']
+    container = pysc.game['main_bottom_panel']
     frame_itv.lock_to(container, (0,0))
     
 frame_itv.when_game_start().add_handler(

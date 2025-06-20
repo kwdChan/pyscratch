@@ -7,7 +7,7 @@ width, height = 80, 100
 colour = (127, 127, 127)
 
 spacing = 10
-n_cols = 5
+n_cols = 6
 
 def try_load_image(path):
     try: 
@@ -29,8 +29,11 @@ def FileDisplay(path: Path, order: int, panel_top_left):
 
     surface = try_load_image(path)
     if not surface: 
-        dash = "" if path.is_file() else "/"
-        sprite.write_text(path.name+dash, DEFAULT_FONT24, offset=(width/2, height/2))
+        # TODO: messy af
+        if path.is_file():
+            sprite.remove()
+            return None
+        sprite.write_text(path.name+'/', DEFAULT_FONT24, offset=(width/2, height/2))
         
     else: 
         image_margin = 20
@@ -51,7 +54,7 @@ def FileDisplay(path: Path, order: int, panel_top_left):
             pysc.game.broadcast_message('folder_update', path)
         else:
             pysc.game.broadcast_message('image_selected', path)
-            pysc.game.broadcast_message('cut_or_nav_mode_change', 'cut')
+            #pysc.game.broadcast_message('cut_or_nav_mode_change', 'cut')
 
 
 
