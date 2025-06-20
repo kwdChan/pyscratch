@@ -60,8 +60,8 @@ def on_click1():
             break
         else:
             c+=1
-
     pysc.game.broadcast_message('folder_update', folder_path)
+    pysc.game.broadcast_message('cut_or_nav_mode_change', 'nav')
     pysc.game.broadcast_message('change_sprite_selection', new_folder)
         
 add_sprite_button.when_this_sprite_clicked().add_handler(on_click1)
