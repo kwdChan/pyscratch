@@ -19,11 +19,9 @@ def render_wrapped_file_name(text, max_chars, font, color=(255, 255, 255), bg_co
     :return: A Pygame surface with the rendered multiline text.
     """
     def split_file_name(text):
-        if '.' in text:
-            parts = text.split('.')
-            ext = parts[-1]
-            base = '.'.join(parts[:-1])
-            return base, ext
+        if '.' in text and not text.startswith('.') and text.rfind('.') > 0:
+            idx = text.rfind('.')
+            return text[:idx], text[idx+1:]
         else:
             return text, ''
 
