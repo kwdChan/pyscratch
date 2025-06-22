@@ -16,7 +16,7 @@ There are four functional parts of this library:
 These are just different functional parts that serve different purposes. They are separated for project management reason and are they not actual segregated components in the library. 
 
 ## Core Functions
-A minimal set of functions that is highly analogous to the Scratch blocks for easy transitioning from Scratch to python. It should be possible to "translate" the majority of the Scratch programs into python using the core features with some [exceptions](corresponding-scratch-blocks/exceptions.html).  
+A minimal set of functions that is highly analogous to the Scratch blocks for easy transitioning from Scratch to python. It should be possible to "translate" the majority of the Scratch programs into python using the core features.  
 
 The major development of this part of the library is considered completed but some small updates and testings are still required. 
 
