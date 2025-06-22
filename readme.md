@@ -1,4 +1,4 @@
-# Pyscratch
+# Pyscratch v1.0.0-alpha
 
 https://kwdchan.github.io/pyscratch/
 
