@@ -712,6 +712,37 @@ class Game:
             t = _declare_callback_type(t, sample_callback)
         return t
     
+
+    def when_this_sprite_click_released(self, sprite, other_associated_sprites: Iterable[Sprite]=[]) -> Event[[]]:
+        """
+        The shortcut `Sprite.when_this_sprite_click_released` is not yet implemented. 
+
+        Returns an `Event` that is triggered when the mouse click of the given sprite is released.  
+        The event handler does not take in any parameter.
+
+        Parameters
+        ---
+        sprite: Sprite
+            The sprite on which you want the click to be detected. The removal of this sprite will lead to the removal of this event so
+            it does not need to be included in `other_assoicated_sprite`
+        
+        other_associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        """
+        
+        t = self._create_event(set(list(other_associated_sprites)+[sprite]))
+
+        if not sprite in self._sprite_click_release_trigger:
+            self._sprite_click_release_trigger[sprite] = []
+            
+        self._sprite_click_release_trigger[sprite].append(t)
+        if TYPE_CHECKING:
+            def sample_callback()-> Any:
+                return
+            t = _declare_callback_type(t, sample_callback)
+        return t
+
+
     def when_backdrop_switched(self, backdrop_index, associated_sprites : Iterable[Sprite]=[]) -> Event[[]]:
         """
         It is recommended to use the `Sprite.when_backdrop_switched` alias instead of this method, 
@@ -1078,23 +1109,7 @@ class Game:
         event_internal.add_handler(handler)
 
         return event
-    def when_this_sprite_click_released(self, sprite, other_associated_sprites: Iterable[Sprite]=[]) -> Event[[]]:
-        """
-        DOCUMENTATION NOT COMPLETED
-
-        """
-        
-        t = self._create_event(set(list(other_associated_sprites)+[sprite]))
-
-        if not sprite in self._sprite_click_release_trigger:
-            self._sprite_click_release_trigger[sprite] = []
-            
-        self._sprite_click_release_trigger[sprite].append(t)
-        if TYPE_CHECKING:
-            def sample_callback()-> Any:
-                return
-            t = _declare_callback_type(t, sample_callback)
-        return t
+    
 
     def _create_event(self, associated_sprites: Iterable[Sprite]=[]) -> Event:
         """
