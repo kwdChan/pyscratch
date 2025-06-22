@@ -80,16 +80,16 @@ def AnimationSelection(order, path):
     sprite.x = 3
     sprite.y = order*(h+3)+3
 
-    sprite.set_frame_mode('on_select')
+    sprite.set_animation('on_select')
     sprite.write_text(path.stem, DEFAULT_FONT24, offset=(w/2, h/2))
 
-    sprite.set_frame_mode('not_on_select')
+    sprite.set_animation('not_on_select')
     sprite.write_text(path.stem, DEFAULT_FONT24, offset=(w/2, h/2))
 
 
 
     def on_click():
-        sprite.set_frame_mode('on_select')
+        sprite.set_animation('on_select')
 
         pysc.game.broadcast_message('change_animation', path)
         pysc.game.broadcast_message('deselect', sprite)
@@ -100,7 +100,7 @@ def AnimationSelection(order, path):
 
     def on_deselect(s):
         if not sprite is s:
-            sprite.set_frame_mode('not_on_select')
+            sprite.set_animation('not_on_select')
 
     sprite.when_receive_message('deselect').add_handler(on_deselect)
 

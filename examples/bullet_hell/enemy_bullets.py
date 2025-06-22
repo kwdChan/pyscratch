@@ -23,7 +23,7 @@ def create_bullet_attracted(position):
 
     
     def explode_and_destroy(a):
-        bullet.set_frame_mode('star_explosion')
+        bullet.set_animation('star_explosion')
         pysc.game.broadcast_message('player_health', -1)
         movement_event.remove()
         pysc.game.when_timer_reset(200, 1).add_handler(destory)
@@ -64,7 +64,7 @@ def create_bullet_start_pointing(position, _):
 
     
     def explode_and_destroy(a):
-        bullet.set_frame_mode('star_explosion')
+        bullet.set_animation('star_explosion')
         pysc.game.broadcast_message('player_health', -1)
         movement_event.remove()
         pysc.game.when_timer_reset(200, 1).add_handler(destory)
@@ -113,7 +113,7 @@ def create_bullet_move_sine(position, rotation):
 
     
     def explode_and_destroy(a):
-        bullet.set_frame_mode('star_explosion')
+        bullet.set_animation('star_explosion')
         pysc.game.broadcast_message('player_health', -1)
         movement_event.remove()
         pysc.game.when_timer_reset(200, 1).add_handler(destory)
@@ -152,7 +152,7 @@ def create_straight_bullet(position, rotation):
 
     
     def explode_and_destroy(a):
-        bullet.set_frame_mode('star_explosion')
+        bullet.set_animation('star_explosion')
         pysc.game.broadcast_message('player_health', -1)
         movement_event.remove()
         pysc.game.when_timer_reset(200, 1).add_handler(destory)
@@ -193,7 +193,7 @@ def create_exploding_bullet(position, rotation):
 
 
     def hit_and_destroy(a):
-        bullet.set_frame_mode('star_explosion')
+        bullet.set_animation('star_explosion')
         movement_event.remove()
         pysc.game.when_timer_reset(200, 1).add_handler(destory)
 

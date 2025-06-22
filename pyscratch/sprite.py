@@ -60,7 +60,7 @@ def create_animated_sprite(folder_path,  *args, **kwargs):
     # optionally take in whatever parameters that the `Sprite` constructor take. 
     my_sprite2 = create_animated_sprite("assets/player", position=(200, 200)) 
     
-    # For option 2 only: optionally set the `starting_frame_mode` parameter in the `Sprite` constructor, but it'd still be fine without it.
+    # For option 2 only: optionally set the `starting_animation` parameter in the `Sprite` constructor, but it'd still be fine without it.
     my_sprite3 = create_animated_sprite("assets/player", "idling")
     
     ```
@@ -94,7 +94,7 @@ def create_single_costume_sprite(image_path, *args, **kwargs):
         The path of the images
 
     \*args & \*\*kwargs: Optional
-        Whatever the `Sprite` constructor takes, except `frame_dict` & `starting_frame_mode`.
+        Whatever the `Sprite` constructor takes, except `frame_dict` & `starting_animation`.
     """
     img = pygame.image.load(image_path).convert_alpha()
     frame_dict = {"always": [img]}
@@ -140,7 +140,7 @@ def create_shared_data_display_sprite(key, font, size = (150, 50), bg_colour=(12
     update_period: float
         The variable display will update every `update_period` seconds.
     \*\*kwargs: Optional
-        Whatever the `Sprite` constructor takes, except `frame_dict`,`starting_frame_mode` & `position`
+        Whatever the `Sprite` constructor takes, except `frame_dict`,`starting_animation` & `position`
     """
 
     w, h = size
@@ -159,7 +159,7 @@ def create_shared_data_display_sprite(key, font, size = (150, 50), bg_colour=(12
 def create_circle_sprite(colour, radius:float, *args, **kwargs):
     """
     Create a circle sprite given the colour and radius
-    Also optionally takes in any parameters that the `Sprite` constructor takes, except `frame_dict` and `starting_frame_mode`
+    Also optionally takes in any parameters that the `Sprite` constructor takes, except `frame_dict` and `starting_animation`
 
     Example
     ```python
@@ -174,7 +174,7 @@ def create_circle_sprite(colour, radius:float, *args, **kwargs):
     radius: float
         the radius of the cirlce.
     \*args & \*\*kwargs: Optional
-        Whatever the `Sprite` constructor takes, except `frame_dict` & `starting_frame_mode`.
+        Whatever the `Sprite` constructor takes, except `frame_dict` & `starting_animation`.
     """
 
     circle = create_circle(colour, radius)
@@ -184,7 +184,7 @@ def create_circle_sprite(colour, radius:float, *args, **kwargs):
 def create_rect_sprite(colour, width, height, *args, **kwargs):
     """
     Create a rectanglar sprite given the colour, width and height
-    Also optionally takes in any parameters that the `Sprite` constructor takes, except `frame_dict` and `starting_frame_mode`
+    Also optionally takes in any parameters that the `Sprite` constructor takes, except `frame_dict` and `starting_animation`
 
     Example
     ```python
@@ -201,7 +201,7 @@ def create_rect_sprite(colour, width, height, *args, **kwargs):
     height: float
         the height (y length) of the rectangle.
     \*args & \*\*kwargs: Optional
-        Whatever the `Sprite` constructor take, except `frame_dict` & `starting_frame_mode`.
+        Whatever the `Sprite` constructor take, except `frame_dict` & `starting_animation`.
     """
     rect = create_rect(colour, width, height)
     return Sprite({"always":[rect]}, "always", *args, **kwargs)
@@ -242,15 +242,15 @@ class _RotationStyle(Enum):
 
 _FrameDictType = Dict[str, List[pygame.Surface]]
 class _DrawingManager:
-    def __init__(self, frame_dict, starting_frame_mode):
+    def __init__(self, frame_dict, starting_animation):
 
         
         self.frame_dict_original: _FrameDictType = {k: [i.copy() for i in v] for k, v in frame_dict.items()} # never changed
         self.frame_dict: _FrameDictType = {k: [i.copy() for i in v] for k, v in frame_dict.items()} # transformed on the spot
         
 
-        self.frame_mode = starting_frame_mode
-        self.frames = self.frame_dict[self.frame_mode]
+        self.animation_name = starting_animation
+        self.frames = self.frame_dict[self.animation_name]
         self.frame_idx: int = 0
 
         # transforming parameters -> performed during update, but only when the transform is requested
@@ -283,10 +283,10 @@ class _DrawingManager:
     def flip_vertical(self):
         self.flip_y = not self.flip_y
 
-    def set_frame_mode(self, new_mode):
-        if new_mode == self.frame_mode:
+    def set_animation(self, new_mode):
+        if new_mode == self.animation_name:
             return 
-        self.frame_mode = new_mode
+        self.animation_name = new_mode
         self.frames = self.frame_dict[new_mode]
         self.frame_idx = 0
 
@@ -315,9 +315,9 @@ class _DrawingManager:
         if centre:
             offset = (offset[0]-w/2, offset[1]-h/2)
         if reset: 
-            self.blit_surfaces[(self.frame_mode, self.frame_idx)] = [(surface, offset)]
+            self.blit_surfaces[(self.animation_name, self.frame_idx)] = [(surface, offset)]
         else: 
-            self.blit_surfaces[(self.frame_mode, self.frame_idx)].append((surface, offset))
+            self.blit_surfaces[(self.animation_name, self.frame_idx)].append((surface, offset))
         self.request_transform = True
         
     # transform related helper
@@ -344,7 +344,7 @@ class _DrawingManager:
 
             self.frame_dict[k] = new_frames
             
-        self.frames = self.frame_dict[self.frame_mode]
+        self.frames = self.frame_dict[self.animation_name]
 
     def on_update(self, x, y, angle) -> Tuple[pygame.Surface, pygame.Rect]:
         if self.request_transform:
@@ -956,7 +956,7 @@ class Sprite(pygame.sprite.Sprite):
         """
         self._drawing_manager.next_frame()
 
-    def set_frame_mode(self, new_mode:str):
+    def set_animation(self, name:str):
         """
         *EXTENDED FEATURE*
 
@@ -965,7 +965,7 @@ class Sprite(pygame.sprite.Sprite):
 
         See the [guide](https://kwdchan.github.io/pyscratch/guides/2-adding-animated-sprites.html) for more details.
         """   
-        self._drawing_manager.set_frame_mode(new_mode)
+        self._drawing_manager.set_animation(name)
         
     @property
     def frame_idx(self):
@@ -977,15 +977,15 @@ class Sprite(pygame.sprite.Sprite):
         return self._drawing_manager.frame_idx
     
     @property
-    def frame_mode(self):
+    def animation_name(self):
         """
         *EXTENDED FEATURE*
 
         The name of the set of frames that is currently used. 
 
-        Set by `set_frame_mode`
+        Set by `set_animation`
         """        
-        return self._drawing_manager.frame_mode
+        return self._drawing_manager.animation_name
 
     def set_scale(self, factor: float):
         """
@@ -1168,7 +1168,7 @@ class Sprite(pygame.sprite.Sprite):
 
         sprite = type(self)(
             frame_dict = self._drawing_manager.frame_dict_original, 
-            starting_mode = self._drawing_manager.frame_mode, 
+            starting_mode = self._drawing_manager.animation_name, 
             position = (self.x, self.y),
             shape_type = self._physcis_manager.shape_type, 
             shape_size_factor = self._physcis_manager.shape_size_factor, 

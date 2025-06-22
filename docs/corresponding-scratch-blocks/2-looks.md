@@ -12,7 +12,7 @@ nav_order: 2
 **switch costume to [costume]  / next costume**
 - `sprite.set_frame(index: int)`
 - `sprite.next_frame()`
-- extended feature: `sprite.set_frame_mode(mode: str)`
+- extended feature: `sprite.set_animation(mode: str)`
 
 **switch backdrop to [backdrop] / next backdrop**
 - `pysc.game.switch_backdrop(index: int)`
@@ -45,6 +45,6 @@ nav_order: 2
 - `pysc.game.change_layer(sprite, layer: int)`
 
 variable access: **costume number, backdrop number, size**
-- `sprite.frame_mode`, `sprite.frame_idx`
+- `sprite.animation_name`, `sprite.frame_idx`
 - `sprite.scale_factor`
 - `pysc.game.backdrop_index`

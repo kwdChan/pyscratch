@@ -109,7 +109,7 @@ def create_bullet_attracted(position):
 
     
     def explode_and_destroy(a):
-        bullet.set_frame_mode('star_explosion')
+        bullet.set_animation('star_explosion')
         game.broadcast_message('player_health', -1)
         movement_event.remove()
         game.when_timer_reset(200, 1).add_handler(destory)
@@ -150,7 +150,7 @@ def create_bullet_start_pointing(position, _):
 
     
     def explode_and_destroy(a):
-        bullet.set_frame_mode('star_explosion')
+        bullet.set_animation('star_explosion')
         game.broadcast_message('player_health', -1)
         movement_event.remove()
         game.when_timer_reset(200, 1).add_handler(destory)
@@ -199,7 +199,7 @@ def create_bullet_move_sine(position, rotation):
 
     
     def explode_and_destroy(a):
-        bullet.set_frame_mode('star_explosion')
+        bullet.set_animation('star_explosion')
         game.broadcast_message('player_health', -1)
         movement_event.remove()
         game.when_timer_reset(200, 1).add_handler(destory)
@@ -235,7 +235,7 @@ def create_bullet_type1(position, rotation):
 
     
     def explode_and_destroy(a):
-        bullet.set_frame_mode('star_explosion')
+        bullet.set_animation('star_explosion')
         game.broadcast_message('player_health', -1)
         movement_event.remove()
         game.when_timer_reset(200, 1).add_handler(destory)

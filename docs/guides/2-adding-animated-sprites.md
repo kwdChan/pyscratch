@@ -54,15 +54,15 @@ def animating():
 player.when_game_start().add_handler(animating)
 
 
-# if doing option 2: use `set_frame_mode` to select the frame
+# if doing option 2: use `set_animation` to select the frame
 # there's no equivalent scratch block
 def movement():
     while True: 
         if pysc.sensing.is_key_pressed('right'): 
-            player.set_frame_mode('walking') # reference to the folder name
+            player.set_animation('walking') # reference to the folder name
             player.x += 1
         else:
-            player.set_frame_mode('idling') 
+            player.set_animatione('idling') 
         
         yield 1/FRAMERATE
 
