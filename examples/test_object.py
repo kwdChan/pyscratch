@@ -146,12 +146,12 @@ def when_key_down(e):
         sprite2._body.velocity = -.5, sprite1._body.velocity[1]
         
     elif e.key  == pygame.key.key_code("1"):
-        sprite1.set_frame_mode("1")
+        sprite1.set_animation("1")
     elif e.key  == pygame.key.key_code("2"):
-        sprite1.set_frame_mode("2")
+        sprite1.set_animation("2")
 
     elif e.key  == pygame.key.key_code("3"):
-        sprite1.set_frame_mode("3")
+        sprite1.set_animation("3")
 
     elif e.key  == pygame.key.key_code("4"):
         game.switch_backdrop(0)

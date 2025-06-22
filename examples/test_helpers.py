@@ -10,7 +10,7 @@ import pygame
 x = pysc.create_single_costume_sprite('assets/cat/hi/0.png')
 
 def forever():
-    x.set_frame_mode('hi2')
+    x.set_animation('hi2')
     while True: 
         x.next_frame()
 

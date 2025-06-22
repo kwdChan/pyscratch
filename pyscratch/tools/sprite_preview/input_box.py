@@ -19,7 +19,7 @@ def FloatInputBox(data_key, message_on_change="", default_value=""):
     label.y = -h
 
     # def on_click():
-    #     text_box.set_frame_mode('selected')
+    #     text_box.set_animation('selected')
     #     text_box.private_data['selected'] = True
 
     # text_box.when_this_sprite_clicked().add_handler(on_click)
@@ -62,13 +62,13 @@ def FloatInputBox(data_key, message_on_change="", default_value=""):
             #print(pos)
             text_box.private_data['selected'] = False
             text_box['just_selected'] = False
-            text_box.set_frame_mode('deselected')
+            text_box.set_animation('deselected')
             text_box.write_text(text_box.private_data['text'], DEFAULT_FONT24, colour=(255,255,255), offset=(w/2, h/2))
 
         else:
             text_box.private_data['selected'] = True
             text_box['just_selected'] = True
-            text_box.set_frame_mode('selected')
+            text_box.set_animation('selected')
     pysc.game.when_mouse_click([text_box]).add_handler(on_any_mouse_click)
 
     return text_box
@@ -86,7 +86,7 @@ def IntegerInputBox(data_key):
     label.x = -w/2-wl/2
 
     # def on_click():
-    #     text_box.set_frame_mode('selected')
+    #     text_box.set_animation('selected')
     #     text_box.private_data['selected'] = True
 
     # text_box.when_this_sprite_clicked().add_handler(on_click)
@@ -122,13 +122,13 @@ def IntegerInputBox(data_key):
             #print(pos)
             text_box['selected'] = False
             text_box['just_selected'] = False
-            text_box.set_frame_mode('deselected')
+            text_box.set_animation('deselected')
             text_box.write_text(text_box['text'], DEFAULT_FONT24, colour=(255,255,255), offset=(w/2, h/2))
 
         else:
             text_box['selected'] = True
             text_box['just_selected'] = True
-            text_box.set_frame_mode('selected')
+            text_box.set_animation('selected')
     pysc.game.when_mouse_click([text_box]).add_handler(on_any_mouse_click)
 
     return text_box
