@@ -869,7 +869,7 @@ class Game:
         return trigger
 
     
-    def broadcast_message(self, topic: str, data: Any):
+    def broadcast_message(self, topic: str, data: Any=None):
         """
         Sends a message of a given `topic` and `data`.
         Triggers any event that subscribes to the topic. 

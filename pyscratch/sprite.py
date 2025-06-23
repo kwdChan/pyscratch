@@ -1396,7 +1396,7 @@ class Sprite(pygame.sprite.Sprite):
         associated_sprites = list(other_associated_sprites) + [self]
         return game.when_receive_message(topic, associated_sprites)
     
-    def broadcast_message(self, topic: str, data: Any):
+    def broadcast_message(self, topic: str, data: Any=None):
         """
         Completely the same as `game.broadcast_message`. 
         Just an alias. 
