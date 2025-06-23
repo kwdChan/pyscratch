@@ -1155,7 +1155,7 @@ class Sprite(pygame.sprite.Sprite):
         game.remove_sprite(self)
 
 
-    def clone_myself(self):
+    def create_clone(self):
         """
         Create a clone of this sprite. 
         Even though is method is provided to align with Scratch, 
@@ -1331,7 +1331,7 @@ class Sprite(pygame.sprite.Sprite):
     
     def when_started_as_clone(self, associated_sprites: Iterable[Sprite]=[]):
         """
-        Returns an `Event` that is triggered after the given sprite is cloned by `Sprite.clone_myself`.
+        Returns an `Event` that is triggered after the given sprite is cloned by `Sprite.create_clone`.
         Cloning of the clone will also trigger the event. Thus the removal of original sprite does not remove the event. 
 
         The event handler have to take one parameter:

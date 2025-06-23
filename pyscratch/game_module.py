@@ -818,7 +818,7 @@ class Game:
     
     def when_started_as_clone(self, sprite, associated_sprites : Iterable[Sprite]=[]) -> Event[[Sprite]]:
         """
-        Returns an `Event` that is triggered after the given sprite is cloned by `Sprite.clone_myself`.
+        Returns an `Event` that is triggered after the given sprite is cloned by `Sprite.create_clone`.
         Cloning of the clone will also trigger the event. 
 
         The event handler have to take one parameter:
