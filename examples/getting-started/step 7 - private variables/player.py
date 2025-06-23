@@ -4,9 +4,9 @@ import pyscratch as pysc
 player = pysc.create_single_costume_sprite("assets/player.png")
 pysc.game['player'] = player  # add the player as a shared variable so other sprites can access it
 
+player['size'] = 1  
 
 def on_game_start():
-    player.set_shape(pysc.ShapeType.CIRCLE)
 
     player.set_rotation_style_left_right()
     speed_decay = 0.9
@@ -14,7 +14,10 @@ def on_game_start():
     speed_x = 0
 
     while True:
-        max_speed = 4
+
+        player.set_scale(player['size'])
+
+        max_speed = 4/player['size']
 
 
         if pysc.is_key_pressed('w'):
@@ -48,3 +51,13 @@ game_start_event.add_handler(on_game_start)
 
 # or shorter: player.when_game_start().add_handler(on_game_start)
 
+
+def check_health():
+
+    while True:
+        if not pysc.game['health']:
+            player.remove()
+        yield 1/60
+
+
+game_start_event.add_handler(check_health)

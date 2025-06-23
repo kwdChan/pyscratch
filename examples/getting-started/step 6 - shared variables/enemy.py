@@ -8,8 +8,14 @@ enemy = pysc.create_single_costume_sprite("assets/other_fishes/0.png")
 
 def enemy_on_game_start():
     enemy.set_rotation_style_left_right()
-    enemy.hide() # hide the parent
-    enemy.set_shape_size_factor(0.8)
+
+    # hide the parent
+    enemy.hide() 
+
+    # the clone appear in the same location as the parent very briefly
+    # when it's created before we set it to a random location. 
+    enemy.set_xy((-200, -200))  
+
 
     # clone itself very 2 seconds
     while True: 

@@ -32,6 +32,8 @@ def heart_display():
         
         yield 1/pysc.game['framerate']
     
-#game_start_event = pysc.game.when_game_start() # same thing as long as you don't remove any of the hearts
-game_start_event = pysc.game.when_game_start([heart1, heart2, heart3])
-game_start_event.add_handler(heart_display)
+# ideally, you should do
+# `pysc.game.when_game_start([heart1, heart2, heart3])`, so when any of the hearts is removed, the event is removed as well. 
+# but we aren't going to remove any of the hearts, so there's no need to do so there. 
+
+pysc.game.when_game_start().add_handler(heart_display)
