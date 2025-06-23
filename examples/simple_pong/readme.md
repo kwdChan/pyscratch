@@ -1,0 +1,1 @@
+This example is intended to show how a simple game is developed using only basic features. 
