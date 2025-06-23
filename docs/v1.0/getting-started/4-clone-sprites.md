@@ -52,7 +52,7 @@ We want to clone the sprite every 2 seconds and make them appear in a somewhat r
 ```python
 def clone_every_2_sec():
     while True:
-        enemy.clone_myself() # analogous to `create clone of [enemy]` in scratch
+        enemy.create_clone() # analogous to `create clone of [enemy]` in scratch
         yield 2
 
 enemy.when_game_start().add_handler(create_enemy)
@@ -169,7 +169,7 @@ enemy = pysc.create_single_costume_sprite("assets/other_fishes.png")
 ## event: when game start -> create the clone
 def clone_every_2_sec():
     while True:
-        enemy.clone_myself() 
+        enemy.create_clone() 
         yield 2
 
 enemy.when_game_start().add_handler(create_enemy)

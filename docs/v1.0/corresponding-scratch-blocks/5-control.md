@@ -47,7 +47,7 @@ while condition:
 - sprite.when_started_as_clone
 
 **create clone of [sprite]**
-- `sprite.clone_myself()` 
+- `sprite.create_clone()` 
 - discouraged: sensing function: the touch detection is specific to the individual sprite in python 
 
 **delete this clone**
