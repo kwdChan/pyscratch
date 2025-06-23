@@ -161,7 +161,7 @@ enemy = pysc.create_single_costume_sprite("assets/other_fishes.png")
 ## event: when game start -> create the clone
 def clone_every_2_sec():
     while True:
-        enemy.clone_myself() 
+        enemy.create_clone() 
         yield 2
 
 enemy.when_game_start().add_handler(create_enemy)

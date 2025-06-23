@@ -1,10 +1,10 @@
 import pyscratch as pysc
-from settings import *
 
 
 player = pysc.create_single_costume_sprite("assets/kenney/player.png")
-player.set_draggable(True)
-player.private_data['size'] = 1
+
+# variable definitons should be done outside the event to guarantee the variables is defined before any event try to access it 
+player['size'] = 1  
 
 
 # def movement():
@@ -28,14 +28,22 @@ player.private_data['size'] = 1
 
 
 def movement():
+    player.set_draggable(True)
+      
     player.set_rotation_style_left_right()
     speed_decay = 0.9
     speed_y = 0
     speed_x = 0
 
     while True:
-        player.set_scale(player.private_data['size'])
-        max_speed = 4#/player.private_data['size']
+
+
+        player.point_towards_mouse()
+        player.move_indir(4)
+        yield 1/pysc.game['framerate']
+        continue
+        player.set_scale(player['size'])
+        max_speed = 4
 
 
         if pysc.is_key_pressed('w'):
@@ -61,7 +69,7 @@ def movement():
         player.y += speed_y
         player.x += speed_x
 
-        yield 1/FRAMERATE
+        yield 1/pysc.game['framerate']
 
 
 game_start_event = player.when_game_start()
@@ -72,13 +80,12 @@ game_start_event.add_handler(movement)
 def check_health():
 
     while True:
-        if not pysc.game.shared_data['health']:
+        if not pysc.game['health']:
             player.remove()
         yield 1/60
 
 
 game_start_event.add_handler(check_health)
 
-
-pysc.game.shared_data['player'] = player
+pysc.game['player'] = player
 
