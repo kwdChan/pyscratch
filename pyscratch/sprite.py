@@ -406,7 +406,8 @@ class _PhysicsManager:
         self.body.position = position
         self.shape = self.create_new_shape(initial_image)
 
-        self.space.add(self.body, self.shape)        
+        self.space.add(self.body, self.shape)   
+
 
 
     def request_shape_update(self):
@@ -527,7 +528,7 @@ class Sprite(pygame.sprite.Sprite):
             The pymunk body type. Leave out the parameter if unsure. 
             Can be `pymunk.Body.KINEMATIC`, `pymunk.Body.DYNAMIC` or `pymunk.Body.STATIC` 
             - Use kinematic if you want the sprite to move when when you tell it to. 
-            - Use dynamic if you want the sprite to be freely moving by physcis. Also refer to `set_collision_type` to enable collision.  
+            - Use dynamic if you want the sprite to be freely moving by physics. Also refer to `set_collision_type` to enable collision.  
             - Use static if you do not want it to move at all. 
         """
         super().__init__()
@@ -542,7 +543,7 @@ class Sprite(pygame.sprite.Sprite):
 
         self._drawing_manager = _DrawingManager(frame_dict, starting_mode)
         _initial_frame = frame_dict[starting_mode][0]
-        self._physcis_manager = _PhysicsManager(game, body_type, shape_type, shape_size_factor, position,_initial_frame)
+        self._physics_manager = _PhysicsManager(game, body_type, shape_type, shape_size_factor, position,_initial_frame)
         
         self.private_data = {}
         """
@@ -576,7 +577,11 @@ class Sprite(pygame.sprite.Sprite):
 
         self._lock_to_sprite = None
         self._lock_offset = 0, 0
-        self.__x, self.__y = self._physcis_manager.body.position[0],  self._physcis_manager.body.position[1]
+        self.__x, self.__y = self._physics_manager.body.position[0],  self._physics_manager.body.position[1]
+
+
+        self.__direction: pymunk.Vec2d = self._body.rotation_vector     
+        self.__rotation_style = _RotationStyle.ALL_AROUND
 
         game._add_sprite(self)
 
@@ -588,11 +593,11 @@ class Sprite(pygame.sprite.Sprite):
 
     @property
     def _body(self):
-        return self._physcis_manager.body    
+        return self._physics_manager.body    
     
     @property
     def _shape(self):
-        return self._physcis_manager.shape    
+        return self._physics_manager.shape    
 
     @override
     def update(self, space):
@@ -603,10 +608,9 @@ class Sprite(pygame.sprite.Sprite):
             self._body.velocity = 0, 0 
 
         x, y = self._body.position
-        self_angle = self._body.rotation_vector.angle_degrees
-        self.image, self.rect = self._drawing_manager.on_update(x, y, self_angle)
+        self.image, self.rect = self._drawing_manager.on_update(x, y, self.__direction.angle_degrees)
         
-        self._physcis_manager.on_update(self.image)
+        self._physics_manager.on_update(self.image)
         
         if self.__is_dragging:
             self._body.velocity=0,0 
@@ -699,7 +703,12 @@ class Sprite(pygame.sprite.Sprite):
         my_sprite.direction += 10 
         ```        
         """
-        return self._body.rotation_vector.angle_degrees
+
+        #self.__direction
+        if self.__rotation_style == _RotationStyle.ALL_AROUND:
+            return self._body.rotation_vector.angle_degrees
+        else: 
+            return self.__direction.angle_degrees
    
     @x.setter
     def x(self, v):
@@ -718,20 +727,12 @@ class Sprite(pygame.sprite.Sprite):
 
     @direction.setter
     def direction(self, degree):
-        self._body.angle = degree/180*np.pi
-    
+        if self.__rotation_style == _RotationStyle.ALL_AROUND:
+            self._body.angle = degree/180*np.pi
 
-    @deprecated('use Sprite.direction')
-    def get_rotation(self):
-        return self._body.rotation_vector.angle_degrees
-    
-    @deprecated('use Sprite.direction')
-    def set_rotation(self, degree):
-        self._body.angle = degree/180*np.pi
+        self.__direction = pymunk.Vec2d.from_polar(1, degree/180*np.pi) 
+        #print(self.__direction)
 
-    @deprecated('use Sprite.direction')
-    def add_rotation(self, degree):
-        self._body.angle += degree/180*np.pi
 
     def move_indir(self, steps: float):
         """
@@ -739,7 +740,7 @@ class Sprite(pygame.sprite.Sprite):
         """
         #self._body.position += 
         
-        xs, ys = self._body.rotation_vector*steps
+        xs, ys = self.__direction*steps
         self.x += xs
         self.y += ys
         
@@ -747,7 +748,7 @@ class Sprite(pygame.sprite.Sprite):
         """
         Moves the sprite forward along `direction` + 90 degrees  
         """
-        xs, ys = self._body.rotation_vector.perpendicular()*steps
+        xs, ys = self.__direction.perpendicular()*steps
         self.x += xs
         self.y += ys        
         
@@ -778,29 +779,19 @@ class Sprite(pygame.sprite.Sprite):
         self.x, self.y = xy
 
 
-    def distance_to(self, position: Tuple[float, float], return_xy=False) -> Union[float, Tuple[float, float]]:
+    def distance_to(self, position: Tuple[float, float]) -> float:
         """
         Gets the distance from the centre of this sprite to a location. 
-        Returns one float or a tuple of two floats. 
 
         Example: 
         ```python   
         # returns the distance to the centre of the screen
         distance_to_centre = my_sprite.distance_to((SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
-        
-        # OR
-        
-        # returns the x and y distance separately
-        dist_x, dist_y = my_sprite.distance_to((SCREEN_WIDTH/2, SCREEN_HEIGHT/2), return_xy=True)
-        
         ```
         """   
-        if return_xy:
-            return (position - self._body.position)
-        else:
-            return (position - self._body.position).length
+        return (position - self._body.position).length
 
-    def distance_to_sprite(self, sprite: Sprite, return_xy=False)-> Union[float, Tuple[float, float]]:
+    def distance_to_sprite(self, sprite: Sprite)-> float:
         """
         Gets the distance between the centres of two sprites. 
         Returns one float or a tuple of two floats. 
@@ -809,16 +800,10 @@ class Sprite(pygame.sprite.Sprite):
         ```python   
         # returns the distance to another sprite
         distance_to_centre = my_sprite.distance_to_sprite(my_sprite2)
-        
-        # OR
-        
-        # returns the x and y distance separately
-        dist_x, dist_y = my_sprite.distance_to_sprite(my_sprite2, return_xy=True)
-        
         ```
         """  
 
-        return self.distance_to(sprite._body.position, return_xy)
+        return self.distance_to(sprite._body.position)
     
 
     def point_towards(self, position: Tuple[float, float], offset_degree=0):
@@ -831,8 +816,10 @@ class Sprite(pygame.sprite.Sprite):
         my_sprite.point_towards((SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
         ```
         """          
+
+        
         rot_vec = (position - self._body.position).normalized()
-        self._body.angle = rot_vec.angle + offset_degree
+        self.direction = (rot_vec.angle_degrees + offset_degree) 
 
 
     def point_towards_sprite(self, sprite: Sprite, offset_degree=0):
@@ -845,8 +832,6 @@ class Sprite(pygame.sprite.Sprite):
         my_sprite.point_towards_sprite(another_sprite2)
         ```
         """  
-
-
         self.point_towards(sprite._body.position, offset_degree)
 
     def point_towards_mouse(self, offset_degree=0):
@@ -921,6 +906,7 @@ class Sprite(pygame.sprite.Sprite):
         Allow the image to rotate all around with `direction`
         """
         self._drawing_manager.set_rotation_style(_RotationStyle.ALL_AROUND)
+        self.__rotation_style = _RotationStyle.ALL_AROUND
 
     def set_rotation_style_left_right(self):
         """
@@ -930,6 +916,7 @@ class Sprite(pygame.sprite.Sprite):
         Does not constrain the direction of movement to only left and right. 
         """        
         self._drawing_manager.set_rotation_style(_RotationStyle.LEFTRIGHT)
+        self.__rotation_style = _RotationStyle.LEFTRIGHT
 
     def set_rotation_style_no_rotation(self):
         """
@@ -940,6 +927,8 @@ class Sprite(pygame.sprite.Sprite):
 
         """
         self._drawing_manager.set_rotation_style(_RotationStyle.FIXED)
+        self.__rotation_style = _RotationStyle.FIXED
+
 
     def set_frame(self, idx:int):
         """
@@ -997,7 +986,7 @@ class Sprite(pygame.sprite.Sprite):
         - A factor of 0.8 means 80%
         """
         self._drawing_manager.set_scale(factor)
-        self._physcis_manager.request_shape_update()
+        self._physics_manager.request_shape_update()
 
     def scale_by(self, factor: float):
         """
@@ -1008,7 +997,7 @@ class Sprite(pygame.sprite.Sprite):
         - A factor of 0.8 makes the sprite 80% of the *current* size
         """
         self._drawing_manager.scale_by(factor)
-        self._physcis_manager.request_shape_update()
+        self._physics_manager.request_shape_update()
 
     @property
     def scale_factor(self):
@@ -1170,18 +1159,26 @@ class Sprite(pygame.sprite.Sprite):
             frame_dict = self._drawing_manager.frame_dict_original, 
             starting_mode = self._drawing_manager.animation_name, 
             position = (self.x, self.y),
-            shape_type = self._physcis_manager.shape_type, 
-            shape_size_factor = self._physcis_manager.shape_size_factor, 
+            shape_type = self._physics_manager.shape_type, 
+            shape_size_factor = self._physics_manager.shape_size_factor, 
             body_type = self._body.body_type, 
         )
         if not self in game._all_sprites_to_show:
             game.hide_sprite(sprite)
+
+        if self.__rotation_style == _RotationStyle.LEFTRIGHT:
+            sprite.set_rotation_style_left_right()
+        elif self.__rotation_style == _RotationStyle.FIXED:
+            sprite.set_rotation_style_no_rotation()
+            
         sprite.direction = self.direction
         sprite.scale_by(self._drawing_manager.scale_factor)
         sprite.set_frame(self._drawing_manager.frame_idx)
         sprite.set_draggable(self.draggable)
         sprite.elasticity = self.elasticity
         sprite.friction = self.friction
+
+
 
         if self._body.body_type == pymunk.Body.DYNAMIC: 
             sprite.mass = self.mass
@@ -1445,7 +1442,7 @@ class Sprite(pygame.sprite.Sprite):
 
     # START: TODO: physics property getters and setters
 
-    def set_shape(self, shape_type='box'):
+    def set_shape(self, shape_type: ShapeType=ShapeType.BOX):
         """
         Sets the collision shape of the sprite. The shape type can be one of the followings
         - box
@@ -1462,7 +1459,7 @@ class Sprite(pygame.sprite.Sprite):
         game.start(60, debug_draw=True)
         ```
         """
-        self._physcis_manager.set_collision_type(shape_type)
+        self._physics_manager.set_shape_type(shape_type)
 
     def set_shape_size_factor(self, factor=0.8):
         """
@@ -1473,7 +1470,7 @@ class Sprite(pygame.sprite.Sprite):
         - factor = 1.2 -> the collision shape is 120% of the sprite image
         
         """
-        self._physcis_manager.set_shape_size_factor(factor)
+        self._physics_manager.set_shape_size_factor(factor)
 
     def set_collision_type(self, value: int=0):
         """
@@ -1485,7 +1482,7 @@ class Sprite(pygame.sprite.Sprite):
 
         Note that touching can still be detected.
         """
-        self._physcis_manager.set_collision_type(value)
+        self._physics_manager.set_collision_type(value)
 
     @property
     def mass(self):
@@ -1545,11 +1542,11 @@ class Sprite(pygame.sprite.Sprite):
     
     @elasticity.setter
     def elasticity(self, value):
-        self._physcis_manager.elasticity = value
+        self._physics_manager.elasticity = value
     
     @friction.setter
     def friction(self, value):
-        self._physcis_manager.friction = value
+        self._physics_manager.friction = value
     
     # END: physics property
 
