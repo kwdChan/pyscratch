@@ -19,5 +19,5 @@ pysc.game['screen_width'] = screen_width
 pysc.game['framerate'] = framerate
 
 pysc.game.update_screen_mode((screen_width, screen_height))
-pysc.game.start(framerate, debug_draw=True)
+pysc.game.start(framerate)
 
