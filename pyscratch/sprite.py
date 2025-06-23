@@ -346,7 +346,7 @@ class _DrawingManager:
             
         self.frames = self.frame_dict[self.animation_name]
 
-    def on_update(self, x, y, angle) -> Tuple[pygame.Surface, pygame.Rect]:
+    def on_update(self, x, y, angle) -> Tuple[pygame.Surface, pygame.Rect, pygame.Mask]:
         if self.request_transform:
             self.transform_frames()
 
@@ -374,7 +374,8 @@ class _DrawingManager:
               width=img_w,
               height=img_h,
               )
-        return img, rect
+        mask = pygame.mask.from_surface(self.image, 127)
+        return img, rect, mask 
 
 class ShapeType(Enum):
     BOX = 'box'
@@ -582,6 +583,7 @@ class Sprite(pygame.sprite.Sprite):
 
         self.__direction: pymunk.Vec2d = self._body.rotation_vector     
         self.__rotation_style = _RotationStyle.ALL_AROUND
+        
 
         game._add_sprite(self)
 
@@ -608,8 +610,9 @@ class Sprite(pygame.sprite.Sprite):
             self._body.velocity = 0, 0 
 
         x, y = self._body.position
-        self.image, self.rect = self._drawing_manager.on_update(x, y, self.__direction.angle_degrees)
+        self.image, self.rect, self.mask = self._drawing_manager.on_update(x, y, self.__direction.angle_degrees)
         
+        #self.image = self.mask.to_surface()
         self._physics_manager.on_update(self.image)
         
         if self.__is_dragging:
@@ -1103,16 +1106,47 @@ class Sprite(pygame.sprite.Sprite):
 
     ## other blocks
     def is_touching(self, other_sprite) -> bool:
-        """
-        Returns whether or not this sprite is touching another sprite.
-        """
-        return pyscratch.game_module._is_touching(self, other_sprite)
+        
+        if not self in game._all_sprites_to_show: 
+            return False
+        
+        if not other_sprite in game._all_sprites_to_show:
+            return False
+            
+        
+        if not pygame.sprite.collide_rect(self, other_sprite): 
+            return False
+        
+        return not (pygame.sprite.collide_mask(self, other_sprite) is None)
     
     def is_touching_mouse(self):
         """
         Returns whether or not this sprite is touching the mouse
         """
-        return pyscratch.game_module._is_touching_mouse(self)
+        mos_x, mos_y = pygame.mouse.get_pos()
+
+        if not self.rect.collidepoint((mos_x, mos_y)): 
+            return False
+
+        x = mos_x-self.rect.left
+        y = mos_y-self.rect.top
+        
+        return self.mask.get_at((x, y))
+    
+        
+
+    # def is_touching(self, other_sprite) -> bool:
+    #     """
+    #     Returns whether or not this sprite is touching another sprite.
+    #     """
+    #     return pyscratch.game_module._is_touching(self, other_sprite)
+    
+    
+    # def is_touching_mouse(self):
+    #     """
+    #     Returns whether or not this sprite is touching the mouse
+    #     """
+    #     return pyscratch.game_module._is_touching_mouse(self)
     
     def hide(self):
         """

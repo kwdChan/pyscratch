@@ -274,7 +274,7 @@ class Game:
                     s = cast(Sprite, s)
                     
                 # click is on the top sprite only
-                if s._shape.point_query(e.pos).distance <= 0:
+                if s.is_touching_mouse():
                     self.__clicked_sprite = s
                     for t in self._sprite_click_trigger[s]:
                         t.trigger()
@@ -354,6 +354,7 @@ class Game:
 
         for t in self._game_start_triggers:
             t.trigger()
+
 
         while True:
             dt = clock.tick(framerate)
@@ -462,6 +463,7 @@ class Game:
         self._sprite_click_trigger[sprite] = []
         if to_show:
             self._all_sprites_to_show.add(sprite)
+        sprite.update(self._space)
 
     def _cleanup_old_shape(self, old_shape):
 
@@ -1170,7 +1172,6 @@ def get_mouse_presses() -> Tuple[bool, bool, bool]:
     ```
     """
     return pygame.mouse.get_pressed(num_buttons=3)
-
 
 def _is_touching(sprite_a:Sprite, sprite_b:Sprite):
     """
