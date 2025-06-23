@@ -21,7 +21,6 @@ topleft = ss_view.x-width/2, ss_view.y-height/2
 ss_view['frame_list'] = []
 
 
-
 ss_view['spritesheet_sprite'] = None
 def on_msg_mode_change(mode):
     if not mode == 'nav':
@@ -143,6 +142,7 @@ def SpriteFrameAfterCut(surface: Surface, order, scale_factor, n_col):
 
 
 
+# TODO: The scrolling becomes hard to use because touching only happens in the non-transparent pixels
 
 
 def on_scroll(updown):
