@@ -6,10 +6,16 @@ import pyscratch as pysc
 enemy = pysc.create_single_costume_sprite("assets/other_fishes/0.png")
 
 
-# Event: when game started, clone creation
 def enemy_on_game_start():
     enemy.set_rotation_style_left_right()
-    enemy.hide() # hide the parent
+
+    # hide the parent
+    enemy.hide() 
+
+    # the clone appear in the same location as the parent very briefly
+    # when it's created before we set it to a random location. 
+    enemy.set_xy((-200, -200))  
+
 
     # clone itself very 2 seconds
     while True: 
@@ -19,8 +25,10 @@ def enemy_on_game_start():
 enemy.when_game_start().add_handler(enemy_on_game_start)
 
 
-# Event: when started as clone, clone location and movement
+# clone movement
+#def on_clone(clone_sprite): 
 def on_clone(clone_sprite: pysc.Sprite): 
+
 
     # random height
     clone_sprite.y = pysc.random_number(0, 720)
@@ -39,26 +47,37 @@ def on_clone(clone_sprite: pysc.Sprite):
 
     # show the sprite
     clone_sprite.show()
+    
 
+    #player = pysc.game['player']
+    player: pysc.Sprite = pysc.game['player']
+    
     # movement
     while True:
 
-        clone_sprite.direction += pysc.random_number(-2, 2)
-        clone_sprite.move_indir(2)
+        if clone_sprite.distance_to_sprite(player) < 200:
+            clone_sprite.point_towards_sprite(player)    
 
+        clone_sprite.direction += pysc.random_number(-2, 2)
+
+        clone_sprite.move_indir(2)
         yield 1/60
 
 enemy.when_started_as_clone().add_handler(on_clone)
 
 
+# clone touch the player 
+#def clone_touch_the_player(clone_sprite):
+def clone_touch_the_player(clone_sprite: pysc.Sprite):
 
-# Event: when started as clone, moved by the ocean current 
-def ocean_current_movement(clone_sprite):
+    player: pysc.Sprite = pysc.game['player']
     while True:
+        if clone_sprite.is_touching(player):
+            clone_sprite.remove()
 
-        clone_sprite.x += pysc.game['current_x'] 
-        clone_sprite.y += pysc.game['current_y'] 
+            pysc.game['health'] -= 1
+            
 
-        yield 1/60
-
-enemy.when_started_as_clone().add_handler(ocean_current_movement)
+        yield 1/pysc.game['framerate']
+    
+enemy.when_started_as_clone().add_handler(clone_touch_the_player)

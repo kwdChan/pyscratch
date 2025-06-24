@@ -20,10 +20,10 @@ enemy.when_game_start().add_handler(enemy_on_game_start)
 
 # clone movement
 def on_clone(clone_sprite: pysc.Sprite): 
-
+    screen_height = 720
 
     # random height
-    clone_sprite.y = pysc.random_number(0, 720)
+    clone_sprite.y = pysc.random_number(0, screen_height)
 
     # randomly either from the left or from the right
     if pysc.random_number(0, 1) > 0.5: 
@@ -42,7 +42,8 @@ def on_clone(clone_sprite: pysc.Sprite):
 
     # movement
     while True:
-    
+        
+        # slightly random direction
         clone_sprite.direction += pysc.random_number(-2, 2)
 
         clone_sprite.move_indir(2)
