@@ -1,7 +1,7 @@
 import pyscratch as pysc
 
 
-player = pysc.create_single_costume_sprite("assets/player.png")
+player = pysc.create_single_costume_sprite("assets/player-fish.png")
 
 # free to use any function name
 def on_game_start():

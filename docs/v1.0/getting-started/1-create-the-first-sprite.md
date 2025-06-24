@@ -1,7 +1,7 @@
 ---
 title: Create the First Sprite
 parent: Getting Started
-nav_order: 2
+nav_order: 1
 ---
 # Create the First Sprite
 ---
@@ -10,7 +10,7 @@ Let's first create the player sprite. First, you need to find an image for this 
 ## Find a suitable image for the sprite
 1. Create a new folder called `assets`. All the media, including images, sound and fonts will be put inside this folder. 
 
-2. We have already prepared a sprite image for this tutorial. Locate this image `my_first_game/pyscratch/example/getting-started/assets/kenney/player.png`. Open it and have a look.
+2. We have already prepared a sprite image for this tutorial. Locate this image `my_first_game/pyscratch/example/getting-started/assets/player-fish.png`. Open it and have a look.
 
 3. Copy and paste it inside the `assets` folder. 
 
@@ -26,7 +26,6 @@ We open a new file called `player.py`
     ├─ assets/
         ├─ player.png
     ├─ main.py
-    ├─ settings.py
     ├─ player.py
 ```
 
@@ -36,7 +35,7 @@ And put these lines in to `player.py` to create a new sprite.
 import pyscratch as pysc
 from settings import *
 
-player = pysc.create_single_costume_sprite("assets/player.png")
+player = pysc.create_single_costume_sprite("assets/player-fish.png")
 player.set_draggable(True) # optional: make the sprite draggable
 ```
 
