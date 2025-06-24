@@ -1,7 +1,7 @@
 import pyscratch as pysc
 
 
-player = pysc.create_single_costume_sprite("assets/player.png")
+player = pysc.create_single_costume_sprite("assets/player-fish.png")
 pysc.game['player'] = player  # add the player as a shared variable so other sprites can access it
 
 player['size'] = 1  
