@@ -24,7 +24,7 @@ We open a new file called `player.py`
 ├─ my_first_game/
     ├─ pyscratch/
     ├─ assets/
-        ├─ player.png
+        ├─ player-fish.png
     ├─ main.py
     ├─ player.py
 ```
@@ -33,7 +33,7 @@ And put these lines in to `player.py` to create a new sprite.
 
 ```python
 import pyscratch as pysc
-from settings import *
+
 
 player = pysc.create_single_costume_sprite("assets/player-fish.png")
 player.set_draggable(True) # optional: make the sprite draggable
@@ -56,11 +56,15 @@ Secondly, if you just run `main.py` as it was, you won't see your new sprite. Yo
 
 ```python
 import pyscratch as pysc
-from settings import *
 import player
 
-pysc.game.update_screen_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pysc.game.start(FRAMERATE)
+# start the game
+screen_height = 720
+screen_width = 1280
+framerate = 60
+
+pysc.game.update_screen_mode((screen_width, screen_height))
+pysc.game.start(framerate)
 ```
 
 </details>
