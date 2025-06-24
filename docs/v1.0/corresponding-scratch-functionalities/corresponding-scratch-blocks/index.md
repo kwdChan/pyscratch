@@ -1,4 +1,5 @@
 ---
+parent: Corresponding Scratch Functionalities
 title: Corresponding Scratch Blocks
 nav_order: 4
 ---

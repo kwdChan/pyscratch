@@ -1,8 +1,10 @@
 ---
-title: Assets Proceessing Functions
-nav_order: 5
+title: Adding a Sprite
+parent: Corresponding Scratch Functionalities
+nav_order: 3
 ---
-TODO: link to reference manual 
+
+
 
 ## Adding a sprite to the scene 
 **Basic shapes**
@@ -15,17 +17,5 @@ TODO: link to reference manual
 **Animated sprite** (multiple costumes with different mode)
 - [`pysc.create_animated_sprite`](../pdoc/pyscratch/sprite.html#create_animated_sprite)
 - [`pysc.helper.cut_sprite_sheet`](../pdoc/pyscratch/helper.html#cut_sprite_sheet)
-
-
-
-## Adding backdrops
-- `pysc.helper.load_image`
-- Optional
-	- `pysc.helper.scale_to_fill_screen`
-	- `pysc.helper.scale_to_fit_aspect`
-	- `pysc.helper.scale_and_tile`
-- `game.set_backdrops([background])`
-
-
 
 

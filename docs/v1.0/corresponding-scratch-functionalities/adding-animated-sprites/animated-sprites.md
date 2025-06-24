@@ -1,6 +1,6 @@
 ---
-title: Adding an Animated Sprite
-parent: Guides
+title: Animated Sprites
+parent: Adding a Sprite
 nav_order: 2
 ---
 # Adding an Animated Sprite
