@@ -27,12 +27,10 @@ This section shows you how to create your first example game using python.
 Name the new folder, let say, `my_first_game`
 
 
-### 3. Clone the [Pyscratch github repo](https://github.com/kwdChan/pyscratch) into the new folder 
+### 3. Download the [Pyscratch github repo](https://github.com/kwdChan/pyscratch) into the new folder 
 {: .no_toc }
 
-
-Your folder should look like this
-
+Your folder should look like this: 
 ```
 ├─ my_first_game/
     ├─ pyscratch/
@@ -41,8 +39,7 @@ Your folder should look like this
 
 ### 4. Pip install the library 
 {: .no_toc }
-Open the folder `my_first_game` using vscode, and then run 
-`pip install -e pyscratch`
+Open the folder `my_first_game` on vscode (or `cd` into `my_first_game`) and then run `pip install -e pyscratch` in the terminal. 
 
 
 ### 5. You are good to go!  
@@ -51,28 +48,23 @@ Open the folder `my_first_game` using vscode, and then run
 
 
 ## Start the game with an empty scene
-Create two files in the folder, one called `main.py`, another one called `settings.py` 
+Create a new file in the folder called `main.py`
 
 This is how the folder should look like:
 ```
 ├─ my_first_game/
     ├─ pyscratch/
     ├─ main.py
-    ├─ settings.py
 ```
 
-`settings.py` is where you put some constant variables for the entire game. For now, you only need these three lines in this file.
-
-```python
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
-FRAMERATE = 60 # 60 frames per second
-```
 `main.py` is where you start the game. Put in these lines below and run the script `main.py`. 
 
 ```python
 import pyscratch as pysc
-from settings import * # import all the variables from settings.py
+
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
+FRAMERATE = 60 
 
 # set screen size
 pysc.game.update_screen_mode((SCREEN_WIDTH, SCREEN_HEIGHT)) 

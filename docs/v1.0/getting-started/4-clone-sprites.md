@@ -16,25 +16,32 @@ Let's create some other fishes to the game.
 {:toc}
 </details>
 
-## Create the parent sprite
+## 1. Create the parent sprite
 
 First, we create the sprite as uaual.
 
 **1. Find a suitable image for the sprite and put in to the asset folder**     
 Again, we have prepared the sprite image for this example. 
 
-Put this image `my_first_game/pyscratch/example/getting-started/assets/kenney/other_fishes/0.png` to the asset folder and rename it to `other_fishes.png`
+Put this folder `my_first_game/pyscratch/example/getting-started/assets/other_fishes` to the asset folder. 
 
+Your asset folder should look like this
+```
+├─ assets/
+    ├─ other_fishes
+        ├─ 0.png
+        ├─ 1.png (we aren't using it yet)
+    ├─ player-fish.png
+    ├─ my_background.jpg
+```
 
 **2. Create a new file for the sprite**
 We open a file called `enemy.py` and put these lines in. 
 
 ```python
 import pyscratch as pysc
-from settings import *
 
-enemy = pysc.create_single_costume_sprite("assets/other_fishes.png")
-enemy.set_draggable(True) # make the sprite draggable
+enemy = pysc.create_single_costume_sprite("assets/other_fishes/0.png")
 ```
 
 **3. Import enemy in main.py**
@@ -45,14 +52,17 @@ import player, enemy
 ```
 Now if you run `main.py`, you should be able to see the new fish. 
 
-## Clone the sprite 
+
+
+
+## 2. Clone the sprite 
 We want to clone the sprite every 2 seconds and make them appear in a somewhat random location. 
 
 **1. Create the clones**     
 ```python
 def clone_every_2_sec():
     while True:
-        enemy.clone_myself() # analogous to `create clone of [enemy]` in scratch
+        enemy.create_clone() # analogous to `create clone of [enemy]` in scratch
         yield 2
 
 enemy.when_game_start().add_handler(create_enemy)
@@ -75,25 +85,26 @@ enemy.when_game_start().add_handler(create_enemy)
 
 **2. When I start as a clone**
 We use the `when_started_as_clone` event to program the movement of the clone. 
-This event requires a handler function that takes in a sprite as a parameter. When the clone is created, the event will call your handler function and pass in the clone sprite so you can control it. 
+This event requires a handler function that takes in a sprite as a parameter. When the clone is created, the event will call your handler function and pass in the clone sprite so you can control it. An error will occur if your function does not take exactly one parameter.  
 
 
 ```python
 def clone_movement(clone_sprite):
+    screen_height = 720
 
     # start the fish from the left edge at a random height
-    clone_sprite.y = pysc.helper.random_number(0, SCREEN_HEIGHT)
+    clone_sprite.y = pysc.random_number(0, screen_height)
     clone_sprite.x = 0
 
     # random size
-    size = pysc.helper.random_number(0.8, 1.2)
+    size = pysc.random_number(0.8, 1.2)
     clone_sprite.set_scale(size)
     
     while True:
         
         clone_sprite.move_indir(3)
 
-        yield 1/FRAMERATE
+        yield 1/60
 
 enemy.when_started_as_clone().add_handler(clone_movement)
 
@@ -107,7 +118,7 @@ enemy.when_started_as_clone().add_handler(clone_movement)
   </summary>
   <img src="img/clone-movement.png" alt="img/clone-movement" width="300"/>
 
-  Note that in this library, the top-left corner is (x=0, y=0) and buttom-right corner is (x=1280, y=720) in this example depending your `SCREEN_WIDTH` and `SCREEN_HEIGHT`.
+  Note that in this library, the top-left corner is (x=0, y=0) and buttom-right corner is (x=1280, y=720) in this example (depending your window width and height).
 
 </details>
 
@@ -116,20 +127,22 @@ Note that the `enemy` variable represents only the parent sprite that we clone f
 
 ```python
 def clone_movement(clone_sprite):
-    # incorrect
-    enemy.y = pysc.helper.random_number(0, SCREEN_HEIGHT)
+    screen_height = 720
+
+    # incorrect: referencing to the parent instead of the clone
+    enemy.y = pysc.random_number(0, screen_height)
     enemy.x = 0
     
     while True:
-        # incorrect
+        # incorrect: referencing to the parent instead of the clone
         enemy.move_indir(3)
 
-        yield 1/FRAMERATE
+        yield 1/60
 
 enemy.when_started_as_clone().add_handler(clone_movement)
 ```
 
-You will see the parent fish get moved but the clone fish does not. This behaviour cannot be achieved by Scratch.
+You will see the parent fish get moved but the clone fish does not. This behaviour (that is unwanted in this case) cannot be achieved by Scratch.
 
 
 
@@ -145,10 +158,9 @@ You will see the parent fish get moved but the clone fish does not. This behavio
     ├─ pyscratch/
     ├─ assets/
         ├─ my_background.jpg
-        ├─ player.png
-        ├─ other_fishes.png
+        ├─ player-fish.png
+        ├─ other_fishes/
     ├─ main.py
-    ├─ settings.py
     ├─ player.py
     ├─ enemy.py
 ```
@@ -161,50 +173,39 @@ You will see the parent fish get moved but the clone fish does not. This behavio
 
 ```python
 import pyscratch as pysc
-from settings import *
 
-# create the parent sprite
-enemy = pysc.create_single_costume_sprite("assets/other_fishes.png")
+# create the sprite and initial settings
+enemy = pysc.create_single_costume_sprite("assets/other_fishes/0.png")
 
-## event: when game start -> create the clone
-def clone_every_2_sec():
-    while True:
-        enemy.clone_myself() 
+# event: when_game_start
+def enemy_on_game_start():
+    enemy.set_rotation_style_left_right()
+    enemy.hide() # hide the parent
+
+    # clone itself very 2 seconds
+    while True: 
+        enemy.create_clone()
         yield 2
 
-enemy.when_game_start().add_handler(create_enemy)
+enemy.when_game_start().add_handler(enemy_on_game_start)
 
-## event: when started as clone -> movement
-def clone_movement(clone_sprite):
 
-    clone_sprite.y = pysc.helper.random_number(0, SCREEN_HEIGHT)
+# event: when_started_as_clone
+def clone_movement(clone_sprite: pysc.Sprite): 
+    screen_height = 720
+
+    # start the fish from the left edge at a random height
+    clone_sprite.y = pysc.random_number(0, screen_height)
     clone_sprite.x = 0
 
-    size = pysc.helper.random_number(0.8, 1.2)
+    # random size
+    size = pysc.random_number(0.8, 1.2)
     clone_sprite.set_scale(size)
     
     while True:
+        
         clone_sprite.move_indir(3)
-
-        yield 1/FRAMERATE
+        yield 1/60
 
 enemy.when_started_as_clone().add_handler(clone_movement)
-
 ```
-</details>
-
-
-<details markdown="block">
-  <summary>
-    main.py
-  </summary>
-
-```python
-import pyscratch as pysc
-from settings import *
-import player, enemy
-
-pysc.game.update_screen_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pysc.game.start(FRAMERATE)
-```
-</details>
