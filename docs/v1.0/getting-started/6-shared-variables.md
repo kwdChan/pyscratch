@@ -66,7 +66,7 @@ player.when_game_start().add_handler(ocean_current_movement)
 ```
 <details open markdown="block">
   <summary>
-    Analogous Scratch Code
+    Effect
   </summary>
   <img src="img/moved-by-current.png" alt="img/moved-by-current" width="220"/>
 </details>
