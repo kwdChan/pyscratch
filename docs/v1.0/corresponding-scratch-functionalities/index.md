@@ -1,6 +1,6 @@
 ---
-title: Guides
-nav_order: 2
+title: Corresponding Scratch Functionalities
+nav_order: 3
 ---
 # General Guide
 If you are new to this library, we recommend going through [Getting Started](../getting-started/) before reading this page.

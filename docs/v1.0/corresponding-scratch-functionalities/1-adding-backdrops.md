@@ -1,6 +1,6 @@
 ---
 title: Adding a Backdrop
-parent: Guides
+parent: Corresponding Scratch Functionalities
 nav_order: 1
 ---
 # Adding a Backdrop
@@ -44,7 +44,6 @@ pysc.game.switch_backdrop(0)
 ```
 
 ## Optionally fit the backdrop to the screen size
-
 ```python
 background_image = pysc.helper.load_image('assets/my_background.jpg')
 

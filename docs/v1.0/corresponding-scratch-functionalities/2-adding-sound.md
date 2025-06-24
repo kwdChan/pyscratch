@@ -1,7 +1,7 @@
 ---
 title: Adding Sound
-parent: Guides
-nav_order: 3
+parent: Corresponding Scratch Functionalities
+nav_order: 2
 ---
 # Adding Sound
 ## 1. Put the audio file into the asset folder
