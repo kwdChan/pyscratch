@@ -85,3 +85,15 @@ pysc.game.start(framerate)
 ```
 
 </details>
+
+
+
+<details open markdown="block">
+  <summary>
+    What you would see in the game
+  </summary>
+  <video autoplay loop muted playsinline style="max-width: 100%;">
+    <source src="vid/background.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+    </video>    
+</details>
