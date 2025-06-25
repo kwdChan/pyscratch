@@ -38,7 +38,7 @@ Note that in this library, the parent and clones are treated as separate sprites
   <summary>
     Analogous Scratch Code
   </summary>
-  <img src="img/collision-detection.png" alt="img/collision-detection" width="200"/>
+  <img src="{{ site.cdn_url }}img/collision-detection.png" alt="img/collision-detection" width="200"/>
 </details>
 
 
@@ -60,7 +60,7 @@ See [getting-started](index.md#optional-run-each-step-of-this-tutorial-in-your-o
     What you would see in the game
   </summary>
   <video autoplay loop muted playsinline style="max-width: 100%;">
-    <source src="vid/referencing.mp4" type="video/mp4">
+    <source src="{{ site.cdn_url }}vid/referencing.mp4" type="video/mp4">
     Your browser does not support the video tag.
     </video>    
 </details>

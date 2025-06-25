@@ -73,5 +73,5 @@ pysc.game.start(framerate)
   <summary>
     What you would see in the game
   </summary>
-  <img src="img/screenshot-sprite-creation.png" alt="img/screenshot-sprite-creation.png" width="700"/>
+  <img src="{{ site.cdn_url }}img/screenshot-sprite-creation.png" alt="img/screenshot-sprite-creation.png" width="700"/>
 </details>

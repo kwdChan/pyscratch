@@ -52,7 +52,7 @@ Note that the variables defined inside the function is not accessible outside th
   <summary>
     Analogous Scratch Code
   </summary>
-  <img src="img/movement-drift.png" alt="img/movement-drift" width="300"/>
+  <img src="{{ site.cdn_url }}img/movement-drift.png" alt="img/movement-drift" width="300"/>
 </details>
 
 <details open markdown="block">
@@ -60,7 +60,7 @@ Note that the variables defined inside the function is not accessible outside th
     What you would see in the game
   </summary>
   <video autoplay loop muted playsinline style="max-width: 100%;">
-    <source src="vid/local-variable_down.mp4" type="video/mp4">
+    <source src="{{ site.cdn_url }}vid/local-variable_down.mp4" type="video/mp4">
     Your browser does not support the video tag.
     </video>    
 </details>

@@ -56,7 +56,7 @@ Now if you run `main.py`, you should be able to see the new fish.
   <summary>
     What you would see in the game 
   </summary>
-  <img src="img/enemy-creation.png" alt="img/enemy-creation.png" width="600"/>
+  <img src="{{ site.cdn_url }}img/enemy-creation.png" alt="img/enemy-creation.png" width="600"/>
 </details>
 
 
@@ -84,7 +84,7 @@ enemy.when_game_start().add_handler(create_enemy)
   <summary>
     Analogous Scratch Code
   </summary>
-  <img src="img/create-clone-v3.png" alt="img/create-clone-v3" width="200"/>
+  <img src="{{ site.cdn_url }}img/create-clone-v3.png" alt="img/create-clone-v3" width="200"/>
 </details>
 
 
@@ -126,7 +126,7 @@ enemy.when_started_as_clone().add_handler(clone_movement)
   <summary>
     Analogous Scratch Code
   </summary>
-  <img src="img/clone-movement-v2.png" alt="img/clone-movement-v2" width="300"/>
+  <img src="{{ site.cdn_url }}img/clone-movement-v2.png" alt="img/clone-movement-v2" width="300"/>
 
   Note that in this library, the top-left corner is (x=0, y=0) and buttom-right corner is (x=1280, y=720) in this example (depending your window width and height).
 
@@ -139,7 +139,7 @@ enemy.when_started_as_clone().add_handler(clone_movement)
 
 
   <video autoplay loop muted playsinline style="max-width: 100%;">
-    <source src="vid/clone-simple_down.mp4" type="video/mp4">
+    <source src="{{ site.cdn_url }}vid/clone-simple_down.mp4" type="video/mp4">
     Your browser does not support the video tag.
     </video>    
 </details>
@@ -156,7 +156,7 @@ If you confuse the parent with the clone in the event handler, you will get this
 
 
   <video autoplay loop muted playsinline style="max-width: 100%;">
-    <source src="vid/clone-wrong_down.mp4" type="video/mp4">
+    <source src="{{ site.cdn_url }}vid/clone-wrong_down.mp4" type="video/mp4">
     Your browser does not support the video tag.
     </video>    
 </details>
@@ -288,7 +288,7 @@ See [getting-started](index.md#optional-run-each-step-of-this-tutorial-in-your-o
   </summary>
 
   <video autoplay loop muted playsinline style="max-width: 100%;">
-    <source src="vid/clone-sprite.mp4" type="video/mp4">
+    <source src="{{ site.cdn_url }}vid/clone-sprite.mp4" type="video/mp4">
     Your browser does not support the video tag.
     </video>    
 </details>

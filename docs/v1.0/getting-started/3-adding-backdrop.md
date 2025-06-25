@@ -93,7 +93,7 @@ pysc.game.start(framerate)
     What you would see in the game
   </summary>
   <video autoplay loop muted playsinline style="max-width: 100%;">
-    <source src="vid/background.mp4" type="video/mp4">
+    <source src="{{ site.cdn_url }}vid/background.mp4" type="video/mp4">
     Your browser does not support the video tag.
     </video>    
 </details>
