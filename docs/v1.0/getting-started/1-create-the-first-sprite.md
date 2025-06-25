@@ -49,14 +49,14 @@ Secondly, if you just run `main.py` as it was, you won't see your new sprite. Yo
 
 
 ## Your `main.py` should look like this
-<details markdown="block">
+<details open markdown="block">
   <summary>
     main.py
   </summary>
 
 ```python
 import pyscratch as pysc
-import player
+import player # Very important!
 
 # start the game
 screen_height = 720
@@ -66,5 +66,12 @@ framerate = 60
 pysc.game.update_screen_mode((screen_width, screen_height))
 pysc.game.start(framerate)
 ```
+</details>
 
+
+<details open markdown="block">
+  <summary>
+    What you would see in the game
+  </summary>
+  <img src="{{ site.cdn_url }}img/screenshot-sprite-creation.png" alt="img/screenshot-sprite-creation.png" width="700"/>
 </details>

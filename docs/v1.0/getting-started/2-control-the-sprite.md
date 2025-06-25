@@ -52,7 +52,7 @@ Note that in this library, 180 is pointing to the left; 0 is pointing to the rig
   <summary>
     Analogous Scratch Code
   </summary>
-  <img src="img/basic-movement.png" alt="img/basic-movement.png" width="300"/>
+  <img src="{{ site.cdn_url }}img/basic-movement.png" alt="img/basic-movement.png" width="300"/>
   
 </details>
 
@@ -108,4 +108,13 @@ game_start_event.add_handler(on_game_start)
 
 ```
 
+</details>
+<details open markdown="block">
+  <summary>
+    What you would see in the game
+  </summary>
+  <video autoplay loop muted playsinline style="max-width: 100%;">
+    <source src="{{ site.cdn_url }}vid/controlling.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+    </video>    
 </details>
