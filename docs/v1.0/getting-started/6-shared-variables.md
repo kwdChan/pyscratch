@@ -30,7 +30,7 @@ player.when_game_start().add_handler(ocean_current_change)
   <summary>
     Analogous Scratch Code
   </summary>
-  <img src="img/current-changes.png" alt="img/current-changes" width="300"/>
+  <img src="{{ site.cdn_url }}img/current-changes.png" alt="img/current-changes" width="300"/>
 </details>
 
 
@@ -48,7 +48,7 @@ enemy.when_started_as_clone().add_handler(ocean_current_movement)
   <summary>
     Analogous Scratch Code
   </summary>
-  <img src="img/moved-by-current-clone.png" alt="img/moved-by-current-clone" width="200"/>
+  <img src="{{ site.cdn_url }}img/moved-by-current-clone.png" alt="img/moved-by-current-clone" width="200"/>
 </details>
 
 
@@ -66,8 +66,17 @@ player.when_game_start().add_handler(ocean_current_movement)
 ```
 <details open markdown="block">
   <summary>
-    Effect
+    Analogous Scratch Code
   </summary>
-  <img src="img/moved-by-current.png" alt="img/moved-by-current" width="220"/>
+  <img src="{{ site.cdn_url }}img/moved-by-current.png" alt="img/moved-by-current" width="220"/>
 </details>
 
+<details open markdown="block">
+  <summary>
+    What you would see 
+  </summary>
+  <video autoplay loop muted playsinline style="max-width: 100%;">
+    <source src="{{ site.cdn_url }}vid/shared-variable-ocean-current.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+    </video>    
+</details>

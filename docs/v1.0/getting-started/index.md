@@ -74,3 +74,28 @@ pysc.game.start(FRAMERATE)
 ```
 
 You should see a pygame window open. The program finishes when you close the window. 
+
+
+## Optional: Run each step of this tutorial in your own computer
+**1. Set the working directory**
+
+Open the terminal in vscode, set the folder `my_first_game/pyscratch/example/getting-started` as your working directory using the `cd` command. 
+The `cd` command set a folder inside the current working directory to be the new working directory. 
+
+For example, assuming that you have the folder `my_first_game` opened in vscode, the default working directory of your terminal in vscode would be `my_first_game`. 
+So just run `cd pyscratch/example/getting-started` in the terminal. 
+
+
+
+**2. Open `main.py` of step you want to run, and click the run button near the top-left corner.** 
+
+
+<details open markdown="block">
+  <summary>
+    Video Guide
+  </summary>
+  <video autoplay loop muted playsinline style="max-width: 100%;">
+    <source src="vid/running-examples_down.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+    </video>    
+</details>
