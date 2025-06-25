@@ -57,10 +57,10 @@ Note that the variables defined inside the function is not accessible outside th
 
 <details open markdown="block">
   <summary>
-    Analogous Scratch Code
+    What you would see in the game
   </summary>
   <video autoplay loop muted playsinline style="max-width: 100%;">
-    <source src="img/local-variable.mp4" type="video/mp4">
+    <source src="vid/local-variable_down.mp4" type="video/mp4">
     Your browser does not support the video tag.
     </video>    
 </details>
