@@ -24,6 +24,7 @@ description: >- # this means to ignore newlines until "baseurl:"
   Documentation on how to use Pyscratch library. 
 baseurl: "/pyscratch" # the subpath of your site, e.g. /blog
 url: "https://kwdchan.github.io/" # the base hostname & protocol for your site, e.g. http://example.com
+cdn_url: "https://pub-c2a3ea7135244e11ad43c1591d006cf0.r2.dev/"
 github_username:  kwdchan
 
 # Build settings
