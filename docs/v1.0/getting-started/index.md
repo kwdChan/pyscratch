@@ -95,7 +95,7 @@ So just run `cd pyscratch/example/getting-started` in the terminal.
     Video Guide
   </summary>
   <video autoplay loop muted playsinline style="max-width: 100%;">
-    <source src="vid/running-examples_down.mp4" type="video/mp4">
+    <source src="{{ site.cdn_url }}vid/running-examples_down.mp4" type="video/mp4">
     Your browser does not support the video tag.
     </video>    
 </details>
