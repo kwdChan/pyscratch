@@ -1,0 +1,26 @@
+/* Custom column layout */
+.two-col {
+display: flex;
+gap: 0rem;
+min-height: 90px;              /* or any height you need */
+}
+
+.two-col > .col {
+flex: 1 1 0;
+flex-direction: column;
+display: flex;
+justify-content: center;
+align-items: center;
+padding: 1.5rem;
+/*background: #f1f1f1;*/
+border-bottom: 1px solid #ccc;
+border-top: 1px solid #ccc;
+font-size: large;
+}
+
+.col img {
+max-height: 50px;
+width: auto;                /* maintains aspect ratio */
+object-fit: contain;        /* no cropping */
+max-width: 100%;            /* prevents overflow */
+}
