@@ -50,7 +50,7 @@ nav_order: 5
 {% endhighlight %}
   </div>
 </div>
-<div id="forever" class="two-col">
+<div id="if" class="two-col">
   <div class="col">
     <img class="big" src="{{ site.cdn_url }}img/control/block_02.png"/>
   </div>
@@ -62,9 +62,9 @@ nav_order: 5
   </div>
 </div>
 
-<div id="forever" class="two-col">
+<div id="if_else" class="two-col">
   <div class="col">
-    <img class="big" src="{{ site.cdn_url }}img/control/block_03.png"/>
+    <img class="big" style="max-height: 130px;" src="{{ site.cdn_url }}img/control/block_03.png"/>
   </div>
   <div class="col">
 {% highlight python %}
