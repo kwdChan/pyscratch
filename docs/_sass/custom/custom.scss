@@ -20,6 +20,7 @@ font-size: large;
 
 .col img {
 max-height: 50px;
+min-width: 100px;
 width: auto;                /* maintains aspect ratio */
 object-fit: contain;        /* no cropping */
 max-width: 100%;            /* prevents overflow */
@@ -35,7 +36,7 @@ max-width: 100%;            /* prevents overflow */
 
 
 .col img.big {
-max-height: 200px;
+max-height: 100px;
 width: auto;                /* maintains aspect ratio */
 object-fit: contain;        /* no cropping */
 max-width: 100%;            /* prevents overflow */
