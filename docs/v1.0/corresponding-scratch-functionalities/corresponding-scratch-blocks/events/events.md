@@ -5,42 +5,95 @@ nav_order: 1
 ---
 # Events
 ---
+<div id="game_start" class="two-col">
+  <div class="col">
+	<img class="bigger" src="../img/events/block_03.png" height="10"/>
+  </div>
+  <div class="col">
+	<a target="_blank" href="../../../pdoc/pyscratch/sprite.html#Sprite.when_game_start">
+	<code>my_sprite.when_game_start()</code>
+	</a>  
+	</div>
+</div>
 
-**when green flag clicked**  
-- when_game_start
-	- no parameters
+<div id="key_press" class="two-col">
+  <div class="col">
+	<img class="bigger" src="../img/events/block_04.png" height="10"/>
+  </div>
+  <div class="col">
+	<a target="_blank" href="../../../pdoc/pyscratch/sprite.html#Sprite.when_key_pressed">
+	<code>my_sprite.when_key_pressed("space")</code>
+	</a>  
+	</div>
+</div>
 
-**when [key] key pressed**
-- when_any_key_pressed
-	- two parameters
-		- key 
-		- updown
-	- catch all keys and both up and down
-- when_key_pressed(key: str)
-	- one parameters
-		- updown
-**when this sprite clicked**
-- when_this_sprite_clicked
-	- no parameters
 
-**when backdrop switches to [backdrop]**
-- when_backdrop_switched
-	- no parameter
+<div id="sprite_click" class="two-col">
+  <div class="col">
+	<img class="bigger" src="../img/events/block_05.png" height="10"/>
+  </div>
+  <div class="col">
+	<a target="_blank" href="../../../pdoc/pyscratch/sprite.html#Sprite.when_this_sprite_clicked">
+	<code>my_sprite.when_this_sprite_clicked()</code>
+	</a>  
+	</div>
+</div>
 
-- when_any_backdrop_switched
-	- one parameter
-		- index: the new backdrop index
-	- catch all backdrop changes
+<div id="backdrop" class="two-col">
+  <div class="col">
+	<img class="bigger" src="../img/events/block_06.png" height="10"/>
+  </div>
+  <div class="col">
+	<a target="_blank" href="../../../pdoc/pyscratch/sprite.html#Sprite.when_backdrop_switched">
+	<code>my_sprite.when_backdrop_switched(1)</code>
+	</a>  
+	</div>
+</div>
 
-**when [timer/loudness] > [N]**
-- when_timer_above
-	- one parameter
-		- n: the remaining number of times this event will get triggered (this will always be 0 in this event)
 
-**when I receive [message]** 
-- when_receive_message (topic)
-- one parameter
-	- data: a value of any type passed by the message 
+<div id="loudness_timer" class="two-col">
+  <div class="col">
+	<img class="bigger" src="../img/events/block_07.png" height="10"/>
+	<img class="bigger" src="../img/events/block_07-2.png" height="10"/>
+  </div>
+  <div class="col">
+	Loudness: Not implemented
+	<a target="_blank" href="../../../pdoc/pyscratch/sprite.html#Sprite.when_timer_above">
+	<code>my_sprite.when_timer_above(10)</code>
+	</a>  
+	</div>
+</div>
 
-**broadcast [message] ~~and wait~~**
-- broadcast_message (topic, )
+
+<div id="receive_message" class="two-col">
+  <div  class="col">
+	<img  class="bigger" class="bigger" src="../img/events/block_08.png" height="10"/>
+  </div>
+  <div class="col">
+	<a target="_blank" href="../../../pdoc/pyscratch/sprite.html#Sprite.when_receive_message">
+	<code>my_sprite.when_receive_message("my_message1")</code>
+	</a>  
+	</div>
+</div>
+
+<div id="broadcast_message" class="two-col">
+  <div class="col">
+	<img  src="../img/events/block_09.png" height="10"/>
+  </div>
+  <div class="col">
+	<a target="_blank" href="../../../pdoc/pyscratch/sprite.html#Sprite.broadcast_message">
+	<code>my_sprite.broadcast_message("my_message1")</code>
+	</a>  
+	</div>
+</div>
+
+
+<div id="broadcast_message_and_wait" class="two-col">
+  <div class="col">
+	  <img src="../img/events/block_10.png" height="10"/>
+  </div>
+  <div class="col">
+	  Not implemented yet
+	</div>
+</div>
+
