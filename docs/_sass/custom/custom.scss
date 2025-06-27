@@ -24,3 +24,20 @@ width: auto;                /* maintains aspect ratio */
 object-fit: contain;        /* no cropping */
 max-width: 100%;            /* prevents overflow */
 }
+
+.col img.bigger {
+max-height: 70px;
+width: auto;                /* maintains aspect ratio */
+object-fit: contain;        /* no cropping */
+max-width: 100%;            /* prevents overflow */
+}
+
+
+
+.col img.big {
+max-height: 200px;
+width: auto;                /* maintains aspect ratio */
+object-fit: contain;        /* no cropping */
+max-width: 100%;            /* prevents overflow */
+}
+
