@@ -7,7 +7,7 @@ nav_order: 3
 
 <div id="start_sound" class="two-col">
   <div class="col">
-    <img src="img/sound/block_10.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/sound/block_10.png" height="10"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/game_module.html#Game.play_sound"><pre><code>pysc.game.play_sound("meow", volume=0.7)</code></pre></a> 
@@ -16,7 +16,7 @@ nav_order: 3
 
 <div id="play_sound_until_done" class="two-col">
   <div class="col">
-    <img src="img/sound/block_09.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/sound/block_09.png" height="10"/>
   </div>
   <div class="col">
     <p>Use 
@@ -28,7 +28,7 @@ nav_order: 3
 
 <div id="stop_all_sounds" class="two-col">
   <div class="col">
-    <img src="img/sound/block_11.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/sound/block_11.png" height="10"/>
   </div>
   <div class="col">
     Not implemented yet
@@ -38,7 +38,7 @@ nav_order: 3
 
 <div id="change_sound_effects" class="two-col">
   <div class="col">
-    <img src="img/sound/block_12.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/sound/block_12.png" height="10"/>
   </div>
   <div class="col">
     Will not implement unless requested
@@ -48,7 +48,7 @@ nav_order: 3
 
 <div id="set_sound_effects" class="two-col">
   <div class="col">
-    <img src="img/sound/block_13.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/sound/block_13.png" height="10"/>
   </div>
   <div class="col">
     Will not implement unless requested
@@ -57,7 +57,7 @@ nav_order: 3
 
 <div id="clear_sound_effects" class="two-col">
   <div class="col">
-    <img src="img/sound/block_14.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/sound/block_14.png" height="10"/>
   </div>
   <div class="col">
     Will not implement unless requested
@@ -66,7 +66,7 @@ nav_order: 3
 
 <div id="change_volume" class="two-col">
   <div class="col">
-    <img src="img/sound/block_15.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/sound/block_15.png" height="10"/>
   </div>
   <div class="col">
     The volume is set each time when the sound is played. 
@@ -76,7 +76,7 @@ nav_order: 3
 
 <div id="set_volume" class="two-col">
   <div class="col">
-    <img src="img/sound/block_16.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/sound/block_16.png" height="10"/>
   </div>
   <div class="col">
     The volume is set each time when the sound is played.  
