@@ -5,7 +5,7 @@ setup(
     version='1.0.0',
     packages=find_packages(),
     install_requires=[
-        'pymunk',
+        'pymunk<7',
         'pygame',
         'numpy',
         'typing_extensions'
