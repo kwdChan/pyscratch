@@ -4,52 +4,160 @@ parent: Corresponding Scratch Blocks
 nav_order: 5
 ---
 # Control
----
-**wait N second**
-- `yield N`
+<div id="wait" class="two-col">
+  <div class="col">
+    <img src="img/control/block_11.png"/>
+  </div>
+  <div class="col">
+{% highlight python %}
+    yield 1
+{% endhighlight %}
+  </div>
+</div>
 
-**repeat N** 
-- `for i in range(N): `
 
-**forever**
+<div id="repeat" class="two-col">
+  <div class="col">
+    <img class="big" src="img/control/block_00.png"/>
+  </div>
+  <div class="col">
+    <p> Repeat 10 times instantly (within one frame)<br>
+{% highlight python %}
+    for i in range(10): 
+        # do something 
+{% endhighlight %}
+    </p>
+    <p> Repeat 10 times over time
+    <br>
+{% highlight python %}
+    for i in range(10): 
+        # do something 
+        yield 1/60 # wait for some time
+{% endhighlight %}
+    </p>
+  </div>
+</div>
 
-```python
-while True: 
-    # whatever
-    yield 10
-```
-**if then else**
-```python
-if condition:
-    pass
-else:
-    pass
-```
-**wait until**
-```python
-while not condition:
-    yield 0.1
-# whatever
-```
-**repeat until**
-```python
-while condition:
-    # whatever
-    yield 0.1
+<div id="forever" class="two-col">
+  <div class="col">
+    <img class="big" src="img/control/block_01.png"/>
+  </div>
+  <div class="col">
+{% highlight python %}
+    while True:
+        # do something 
+        yield 1/60
+{% endhighlight %}
+  </div>
+</div>
+<div id="forever" class="two-col">
+  <div class="col">
+    <img class="big" src="img/control/block_02.png"/>
+  </div>
+  <div class="col">
+{% highlight python %}
+    if condition: 
+        # do something
+{% endhighlight %}
+  </div>
+</div>
 
-```
-**stop [all/this script/other scripts in sprite]**
-- no direct corresponding function
-- `event.remove()`
-- `sprite.remove()`
+<div id="forever" class="two-col">
+  <div class="col">
+    <img class="big" src="img/control/block_03.png"/>
+  </div>
+  <div class="col">
+{% highlight python %}
+    if condition: 
+        # do something
+    else: 
+        # do something else
+{% endhighlight %}
+  </div>
+</div>
 
-**when I start as a clone**
-- sprite.when_started_as_clone
 
-**create clone of [sprite]**
-- `sprite.create_clone()` 
-- discouraged: sensing function: the touch detection is specific to the individual sprite in python 
+<div id="wait_for_condition" class="two-col">
+  <div class="col">
+    <img src="img/control/block_04.png"/>
+  </div>
+  <div class="col">
+{% highlight python %}
+    while not condition: 
+        yield 1/60 
+    # after the condition is met
+{% endhighlight %}
+  </div>
+</div>
 
-**delete this clone**
-- sprite.remove()
+<div id="repeat_until" class="two-col">
+  <div class="col">
+    <img class="big" src="img/control/block_05.png"/>
+  </div>
+  <div class="col">
+{% highlight python %}
+    while condition: 
+        # do something 
+        yield 1/60 
+{% endhighlight %}
+  </div>
+</div>
 
+<div id="stop_all" class="two-col">
+  <div class="col">
+    <img src="img/control/block_06.png"/>
+  </div>
+  <div class="col">
+    Remove specific sprites:<br>
+    <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.remove">
+    <code>my_sprite.remove()</code>
+    </a> 
+    <br>
+    <a target="_blank" href="../../pdoc/pyscratch/event.html#Event.remove">Remove specific events:</a><br>
+    {% highlight python %}
+    my_event = my_sprite.when_game_start()
+    my_event.add_handler(my_handler)
+
+    # later on when the event is no longer needed 
+    my_event.remove()
+    {% endhighlight %}
+   </div>
+</div>
+
+
+<div id="when_started_as_clone" class="two-col">
+  <div class="col">
+    <img class="bigger" src="img/control/block_07.png"/>
+  </div>
+  <div class="col">
+    <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.when_started_as_clone">
+    <code>my_sprite.when_started_as_clone()</code>
+    </a>
+  </div>
+</div>
+
+
+
+<div id="create_clone" class="two-col">
+  <div class="col">
+    <img  src="img/control/block_08.png"/>
+  </div>
+  <div class="col">
+    <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.create_clone">
+    <code>my_sprite.create_clone()</code>
+    </a>  
+</div>
+</div>
+
+
+
+<div id="delete_clone" class="two-col">
+  <div class="col">
+    <img src="img/control/block_09.png"/>
+  </div>
+  <div class="col">
+    <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.remove">
+    <code>clone_sprite.remove()</code>
+    </a>     
+  </div>
+</div>

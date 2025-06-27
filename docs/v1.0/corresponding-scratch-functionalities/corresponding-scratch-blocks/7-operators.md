@@ -8,5 +8,5 @@ nav_order: 7
 ---
 Most of the items here need no mentions
 Special mentions: 
-- `pysc.helper.random_number`
-- `pysc.helper.cap`
+- `pysc.random_number`
+- `pysc.cap`
