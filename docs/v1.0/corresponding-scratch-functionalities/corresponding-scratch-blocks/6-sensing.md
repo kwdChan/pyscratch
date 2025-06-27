@@ -8,7 +8,7 @@ nav_order: 6
 ---
 <div id="touching" class="two-col">
   <div class="col">
-    <img src="img/sensing/block_00.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_00.png"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.is_touching_mouse"><code>my_sprite.is_touching_mouse()</code></a> 
@@ -19,8 +19,8 @@ nav_order: 6
 
 <div id="touching_colour" class="two-col">
   <div class="col">
-    <img src="img/sensing/block_01.png"/>
-    <img src="img/sensing/block_02.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_01.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_02.png"/>
   </div>
   <div class="col">
     Will not implement
@@ -31,7 +31,7 @@ nav_order: 6
 
 <div id="distance_to" class="two-col">
   <div class="col">
-    <img src="img/sensing/block_03.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_03.png"/>
   </div>
   <div class="col">
     <p> For the distance to mouse, use <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.distance_to"><code>my_sprite.distance_to</code></a> </p>
@@ -52,8 +52,8 @@ nav_order: 6
 
 <div id="ask" class="two-col">
   <div class="col">
-    <img src="img/sensing/block_04.png"/>
-    <img src="img/sensing/block_05.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_04.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_05.png"/>
   </div>
   <div class="col">
     Not implemented yet
@@ -65,7 +65,7 @@ nav_order: 6
 
 <div id="key_press" class="two-col">
   <div class="col">
-    <img src="img/sensing/block_06.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_06.png"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/game_module.html#is_key_pressed"><code>pysc.is_key_pressed("space")</code></a>   </div>
@@ -75,7 +75,7 @@ nav_order: 6
 
 <div id="mouse_down" class="two-col">
   <div class="col">
-    <img src="img/sensing/block_07.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_07.png"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/game_module.html#get_mouse_presses"><pre><code>left, middle, right = pysc.get_mouse_presses()</code></pre></a>   
@@ -85,8 +85,8 @@ nav_order: 6
 
 <div id="mouse_xy" class="two-col">
   <div class="col">
-    <img src="img/sensing/block_08.png"/>
-    <img src="img/sensing/block_09.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_08.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_09.png"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/game_module.html#get_mouse_pos"><pre><code>mouse_x, mouse_y = pysc.get_mouse_pos()</code></pre></a>   </div>
@@ -95,7 +95,7 @@ nav_order: 6
 
 <div id="draggable" class="two-col">
   <div class="col">
-    <img src="img/sensing/block_10.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_10.png"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.set_draggable"><code>my_sprite.set_draggable(True) </code></a>   
@@ -106,7 +106,7 @@ nav_order: 6
 
 <div id="loudness" class="two-col">
   <div class="col">
-    <img src="img/sensing/block_11.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_11.png"/>
   </div>
   <div class="col">
     Not Implemented
@@ -117,8 +117,8 @@ nav_order: 6
 
 <div id="timer" class="two-col">
   <div class="col">
-    <img src="img/sensing/block_12.png"/>
-    <img src="img/sensing/block_13.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_12.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_13.png"/>
   </div>
   <div class="col">
     {% highlight python %}
@@ -137,7 +137,7 @@ nav_order: 6
 
 <div id="what_of_what" class="two-col">
   <div class="col">
-    <img src="img/sensing/block_14.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_14.png"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/game_module.html#Game.backdrop_index">
@@ -151,8 +151,8 @@ nav_order: 6
 
 <div id="datetime" class="two-col">
   <div class="col">
-    <img src="img/sensing/block_15.png"/>
-    <img src="img/sensing/block_16.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_15.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_16.png"/>
   </div>
   <div class="col">
     <p>Try <a target="_blank" href="https://www.w3schools.com/python/python_datetime.asp">datetime</a></p>
@@ -162,7 +162,7 @@ nav_order: 6
 
 <div id="datetime" class="two-col">
   <div class="col">
-    <img src="img/sensing/block_17.png"/>
+    <img src="{{ site.cdn_url }}img/sensing/block_17.png"/>
   </div>
   <div class="col">
     Of course not implemented

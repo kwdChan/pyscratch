@@ -7,7 +7,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_04.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_04.png" height="10"/>
   </div>
   <div class="col">
     Not implemented yet
@@ -18,7 +18,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_05.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_05.png" height="10"/>
   </div>
   <div class="col">
     Not implemented yet
@@ -28,7 +28,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_06.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_06.png" height="10"/>
   </div>
   <div class="col">
     Not implemented yet
@@ -38,7 +38,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_07.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_07.png" height="10"/>
   </div>
   <div class="col">
     Not implemented yet
@@ -47,7 +47,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_08.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_08.png" height="10"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.set_frame">
@@ -59,7 +59,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_09.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_09.png" height="10"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.next_frame">
@@ -72,7 +72,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_10.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_10.png" height="10"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/game_module.html#Game.switch_backdrop">
@@ -86,7 +86,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_11.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_11.png" height="10"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/game_module.html#Game.next_backdrop">
@@ -100,7 +100,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_12.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_12.png" height="10"/>
   </div>
   <div class="col">
     <p><a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.scale_by">
@@ -113,7 +113,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_13.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_13.png" height="10"/>
   </div>
   <div class="col">
     <p><a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.set_scale">
@@ -126,7 +126,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_14.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_14.png" height="10"/>
   </div>
   <div class="col">
     Not implemented yet
@@ -135,7 +135,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_15.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_15.png" height="10"/>
   </div>
   <div class="col">
     <p><a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.set_transparency">
@@ -150,7 +150,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_16.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_16.png" height="10"/>
   </div>
   <div class="col">
     <p> Just set all the effects to 1. </p>
@@ -161,7 +161,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_17.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_17.png" height="10"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.show">
@@ -172,7 +172,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_18.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_18.png" height="10"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.hide">
@@ -184,7 +184,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_19.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_19.png" height="10"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/game_module.html#Game.move_to_back">
@@ -201,7 +201,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_20.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_20.png" height="10"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/game_module.html#Game.change_layer_by">
@@ -216,7 +216,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_21.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_21.png" height="10"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.frame_idx">
@@ -229,7 +229,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_22.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_22.png" height="10"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/game_module.html#Game.backdrop_index">
@@ -243,7 +243,7 @@ nav_order: 2
 
 <div class="two-col">
   <div class="col">
-    <img src="img/looks/block_23.png" height="10"/>
+    <img src="{{ site.cdn_url }}img/looks/block_23.png" height="10"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.scale_factor">

@@ -6,7 +6,7 @@ nav_order: 5
 # Control
 <div id="wait" class="two-col">
   <div class="col">
-    <img src="img/control/block_11.png"/>
+    <img src="{{ site.cdn_url }}img/control/block_11.png"/>
   </div>
   <div class="col">
 {% highlight python %}
@@ -18,7 +18,7 @@ nav_order: 5
 
 <div id="repeat" class="two-col">
   <div class="col">
-    <img class="big" src="img/control/block_00.png"/>
+    <img class="big" src="{{ site.cdn_url }}img/control/block_00.png"/>
   </div>
   <div class="col">
     <p> Repeat 10 times instantly (within one frame)<br>
@@ -40,7 +40,7 @@ nav_order: 5
 
 <div id="forever" class="two-col">
   <div class="col">
-    <img class="big" src="img/control/block_01.png"/>
+    <img class="big" src="{{ site.cdn_url }}img/control/block_01.png"/>
   </div>
   <div class="col">
 {% highlight python %}
@@ -52,7 +52,7 @@ nav_order: 5
 </div>
 <div id="forever" class="two-col">
   <div class="col">
-    <img class="big" src="img/control/block_02.png"/>
+    <img class="big" src="{{ site.cdn_url }}img/control/block_02.png"/>
   </div>
   <div class="col">
 {% highlight python %}
@@ -64,7 +64,7 @@ nav_order: 5
 
 <div id="forever" class="two-col">
   <div class="col">
-    <img class="big" src="img/control/block_03.png"/>
+    <img class="big" src="{{ site.cdn_url }}img/control/block_03.png"/>
   </div>
   <div class="col">
 {% highlight python %}
@@ -79,7 +79,7 @@ nav_order: 5
 
 <div id="wait_for_condition" class="two-col">
   <div class="col">
-    <img src="img/control/block_04.png"/>
+    <img src="{{ site.cdn_url }}img/control/block_04.png"/>
   </div>
   <div class="col">
 {% highlight python %}
@@ -92,7 +92,7 @@ nav_order: 5
 
 <div id="repeat_until" class="two-col">
   <div class="col">
-    <img class="big" src="img/control/block_05.png"/>
+    <img class="big" src="{{ site.cdn_url }}img/control/block_05.png"/>
   </div>
   <div class="col">
 {% highlight python %}
@@ -105,7 +105,7 @@ nav_order: 5
 
 <div id="stop_all" class="two-col">
   <div class="col">
-    <img src="img/control/block_06.png"/>
+    <img src="{{ site.cdn_url }}img/control/block_06.png"/>
   </div>
   <div class="col">
     Remove specific sprites:<br>
@@ -127,7 +127,7 @@ nav_order: 5
 
 <div id="when_started_as_clone" class="two-col">
   <div class="col">
-    <img class="bigger" src="img/control/block_07.png"/>
+    <img class="bigger" src="{{ site.cdn_url }}img/control/block_07.png"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.when_started_as_clone">
@@ -140,7 +140,7 @@ nav_order: 5
 
 <div id="create_clone" class="two-col">
   <div class="col">
-    <img  src="img/control/block_08.png"/>
+    <img  src="{{ site.cdn_url }}img/control/block_08.png"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.create_clone">
@@ -153,7 +153,7 @@ nav_order: 5
 
 <div id="delete_clone" class="two-col">
   <div class="col">
-    <img src="img/control/block_09.png"/>
+    <img src="{{ site.cdn_url }}img/control/block_09.png"/>
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.remove">
