@@ -27,6 +27,9 @@ url: "https://kwdchan.github.io/" # the base hostname & protocol for your site, 
 cdn_url: "https://pub-c2a3ea7135244e11ad43c1591d006cf0.r2.dev/"
 github_username:  kwdchan
 
+aux_links:
+  "PyScratch on GitHub":
+    - "https://github.com/kwdChan/pyscratch"
 # Build settings
 # theme: jekyll-theme-leap-day
 # plugins:
