@@ -22,19 +22,24 @@ nav_order: 5
   </div>
   <div class="col">
     <p> Repeat 10 times instantly (within one frame)<br>
-{% highlight python %}
+    {% highlight python %}
     for i in range(10): 
         # do something 
-{% endhighlight %}
+    {% endhighlight %}
     </p>
     <p> Repeat 10 times over time
     <br>
-{% highlight python %}
+    {% highlight python %}
     for i in range(10): 
         # do something 
         yield 1/60 # wait for some time
-{% endhighlight %}
+    {% endhighlight %}
     </p>
+  <p>Learn more about 
+    <a target="_blank" href="https://www.w3schools.com/python/python_for_loops.asp">
+      for loop
+    </a>
+  </p>
   </div>
 </div>
 
@@ -48,6 +53,16 @@ nav_order: 5
         # do something 
         yield 1/60
 {% endhighlight %}
+  <p>Learn more about 
+    <a target="_blank" href="https://www.w3schools.com/python/python_while_loops.asp">
+      while loop
+    </a>
+    and 
+    <a target="_blank" href="https://www.w3schools.com/python/python_booleans.asp">
+      boolean (True/False)
+    </a>
+  </p>
+
   </div>
 </div>
 <div id="if" class="two-col">
@@ -59,6 +74,15 @@ nav_order: 5
     if condition: 
         # do something
 {% endhighlight %}
+  <p>Learn more about 
+    <a target="_blank" href="https://www.w3schools.com/python/python_conditions.asp">
+      conditions (if/else)
+    </a>
+    and 
+    <a target="_blank" href="https://www.w3schools.com/python/python_booleans.asp">
+      boolean (True/False)
+    </a>
+  </p>
   </div>
 </div>
 
@@ -73,6 +97,15 @@ nav_order: 5
     else: 
         # do something else
 {% endhighlight %}
+  <p>Learn more about 
+    <a target="_blank" href="https://www.w3schools.com/python/python_conditions.asp">
+      if/else
+    </a>
+    and 
+    <a target="_blank" href="https://www.w3schools.com/python/python_booleans.asp">
+      boolean (True/False)
+    </a>
+  </p>
   </div>
 </div>
 
@@ -87,6 +120,15 @@ nav_order: 5
         yield 1/60 
     # after the condition is met
 {% endhighlight %}
+  <p>Learn more about 
+    <a target="_blank" href="https://www.w3schools.com/python/python_while_loops.asp">
+      while loop
+    </a>
+    and 
+    <a target="_blank" href="https://www.w3schools.com/python/python_booleans.asp">
+      boolean (True/False)
+    </a>
+  </p>
   </div>
 </div>
 
@@ -100,6 +142,15 @@ nav_order: 5
         # do something 
         yield 1/60 
 {% endhighlight %}
+  <p>Learn more about 
+    <a target="_blank" href="https://www.w3schools.com/python/python_while_loops.asp">
+      while loop
+    </a>
+    and 
+    <a target="_blank" href="https://www.w3schools.com/python/python_booleans.asp">
+      boolean (True/False)
+    </a>
+  </p>
   </div>
 </div>
 
