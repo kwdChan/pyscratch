@@ -5,14 +5,20 @@ nav_order: 1
 ---
 # Adding a Backdrop
 
+## 1. Find or create an image for the backdrop
+Follow this [guide](../asset-preparation-guide/) to learn how to do it. 
 
-## Find a suitable image for the backdrops
-1. Locate this image `my_first_game/pyscratch/example/getting-started/assets/vecteezy/my_background.jpg`. Open it and have a look. 
+## 2. Put the image to the asset folder
+1. For an example, locate this image `my_first_game/pyscratch/example/getting-started/assets/my_background.jpg`. 
 
 2. Copy and paste it inside this `assets` folder. 
+```
+├─ my_first_game/
+    ├─ assets/
+        ├─ my_background.jpg
+```
 
-
-## Load the image to the game
+## 3. Load the image to the game
 
 Add these lines into `main.py` after the import
 
@@ -56,12 +62,12 @@ background_image = pysc.helper.scale_to_fill_screen(background_image, screen_siz
 ## Your `main.py` should look like this
 ```python
 import pyscratch as pysc
-from settings import *
 
-screen_size = SCREEN_WIDTH, SCREEN_HEIGHT
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
 
 background_image = pysc.helper.load_image('assets/my_background.jpg')
-background_image = pysc.helper.scale_to_fill_screen(background_image, screen_size)
+# background_image = pysc.helper.scale_to_fill_screen(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 pysc.game.set_backdrops([background_image])
 pysc.game.switch_backdrop(0)
