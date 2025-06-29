@@ -52,7 +52,7 @@ def create_animated_sprite(folder_path,  *args, **kwargs):
     ``` 
 
 
-    Example
+    **Example**
     ```python
     # takes the path of the folder 
     my_sprite1 = create_animated_sprite("assets/player") 
@@ -63,6 +63,32 @@ def create_animated_sprite(folder_path,  *args, **kwargs):
     # For option 2 only: optionally set the `starting_animation` parameter in the `Sprite` constructor, but it'd still be fine without it.
     my_sprite3 = create_animated_sprite("assets/player", "idling")
     
+
+    # Event: to animate the sprite
+    def animating():
+    
+        # switch to the next frame every 0.2 second
+        while True: 
+            my_sprite1.next_frame() # scratch block: next costume
+            yield 0.2
+
+    my_sprite1.when_game_start().add_handler(animating)
+
+
+    # if doing option 2: use `set_animation` to select the frame
+    # there's no equivalent scratch block
+    def movement():
+        while True: 
+            if pysc.sensing.is_key_pressed('right'): 
+                my_sprite1.set_animation('walking') # reference to the folder name
+                my_sprite1.x += 1
+            else:
+                my_sprite1.set_animatione('idling') 
+            
+            yield 1/FRAMERATE
+
+    my_sprite1.when_game_start().add_handler(movement)
+
     ```
     Parameters
     ---

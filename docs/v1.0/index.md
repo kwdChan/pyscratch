@@ -3,7 +3,7 @@ layout: home
 title: Home
 nav_order: 0
 ---
-# Pyscratch
+# PyScratch
 ---
 This library provides an easy transitioning from Scratch to Python. Scratch-like control plus extended features provided by pymunk. 
 
