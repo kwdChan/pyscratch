@@ -1,6 +1,6 @@
 ---
 title: Font
-parent: Graphic Asset Preparation
+parent: Other Functionalities
 nav_order: 99
 ---
 # Font
