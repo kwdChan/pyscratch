@@ -400,7 +400,7 @@ class _DrawingManager:
               width=img_w,
               height=img_h,
               )
-        mask = pygame.mask.from_surface(self.image, 127)
+        mask = pygame.mask.from_surface(self.image, 1)
         return img, rect, mask 
 
 class ShapeType(Enum):
