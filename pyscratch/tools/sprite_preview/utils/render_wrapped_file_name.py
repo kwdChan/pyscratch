@@ -1,4 +1,3 @@
-from pyscratch.tools.sprite_preview.settings import pygame
 
 
 import pygame

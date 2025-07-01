@@ -1,4 +1,4 @@
-from pyscratch.tools.sprite_preview.render_wrapped_file_name import render_wrapped_file_name
+from utils.render_wrapped_file_name import render_wrapped_file_name
 import pyscratch as pysc
 from settings import *
 

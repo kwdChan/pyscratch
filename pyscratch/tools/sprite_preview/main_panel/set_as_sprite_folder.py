@@ -1,4 +1,4 @@
-from pyscratch.tools.sprite_preview.input_box import IntegerInputBox, FloatInputBox
+from utils.input_box import IntegerInputBox, FloatInputBoxVerticallyLabel
 import pyscratch as pysc
 from settings import *
 

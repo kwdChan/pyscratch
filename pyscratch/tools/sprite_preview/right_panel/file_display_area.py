@@ -14,17 +14,17 @@ folder_navigation.set_xy((SCREEN_WIDTH - PANEL_MARGIN - RIGHT_PANEL_WIDTH/2,  SC
 
 topleft = folder_navigation.x-width/2, folder_navigation.y-height/2
 
-folder_navigation.private_data['file_display_list'] = []
+folder_navigation['file_display_list'] = []
 
 def on_msg_folder_update(path: Path):
     #folder_navigation.private_data['path'] = path
     pysc.game.shared_data['path'] = path
 
-    for fdisp in folder_navigation.private_data['file_display_list']:
+    for fdisp in folder_navigation['file_display_list']:
         fdisp.remove()
 
-    folder_navigation.private_data['file_display_list']  = []
-    file_display_list = folder_navigation.private_data['file_display_list'] 
+    folder_navigation['file_display_list']  = []
+    file_display_list = folder_navigation['file_display_list'] 
 
     c = 0
     for f in path.iterdir():
@@ -37,7 +37,7 @@ folder_navigation.when_receive_message('folder_update').add_handler(on_msg_folde
 
 
 def on_msg_back_nav(_):
-    path: Path = pysc.game.shared_data['path']
+    path: Path = pysc.game['path']
     pysc.game.broadcast_message('folder_update', path.parent)
 
 
@@ -54,4 +54,4 @@ def on_msg_mode_change(mode):
         folder_navigation.hide()
 
 folder_navigation.when_receive_message('cut_or_nav_mode_change').add_handler(on_msg_mode_change)
-pysc.game.shared_data['folder_navigation'] = folder_navigation
+pysc.game['folder_navigation'] = folder_navigation

@@ -1,7 +1,8 @@
 from pathlib import Path
 from typing import Tuple
 import pyscratch as pysc
-from pyscratch.tools.sprite_preview.render_wrapped_file_name import render_wrapped_file_name
+
+from utils.render_wrapped_file_name import render_wrapped_file_name
 from settings import *
 
 width, height = 100, 140
