@@ -299,6 +299,11 @@ class _DrawingManager:
         self.rotation_style: _RotationStyle = _RotationStyle.ALL_AROUND
         self.flip_x: bool = False
         self.flip_y: bool = False
+        self.mask_threshold: int = 1
+
+
+    def set_mask_threshold(self, value=1):
+        self.mask_threshold = value
 
     def set_rotation_style(self, flag: _RotationStyle):
         self.rotation_style = flag
@@ -400,7 +405,7 @@ class _DrawingManager:
               width=img_w,
               height=img_h,
               )
-        mask = pygame.mask.from_surface(self.image, 1)
+        mask = pygame.mask.from_surface(self.image, self.mask_threshold)
         return img, rect, mask 
 
 class ShapeType(Enum):
