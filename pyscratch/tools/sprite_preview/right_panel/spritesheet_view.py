@@ -9,7 +9,7 @@ from typing import List, Tuple, cast
 from pygame import Surface
 import pyscratch as pysc
 from settings import *
-
+game = pysc.game
 width, height = RIGHT_PANEL_WIDTH, SCREEN_HEIGHT - PANEL_MARGIN - BOTTOM_RIGHT_PANEL_HEIGHT
 
 colour = 255, 255, 255, 255
@@ -75,11 +75,14 @@ def on_msg_image_selected(path):
         pysc.game['ss_sprite'] = ss_sprite
 
         
-        ss_sprite.lock_to(ss_view, offset=(0,0)) 
-        ss_sprite.set_xy((0,0))
+        #ss_sprite.lock_to(ss_view, offset=(0,0)) 
+        #ss_sprite.set_xy((0,0))
 
+        ss_sprite.set_xy((ss_view.rect.centerx, ss_view.rect.centery))
+        ss_sprite.set_draggable(True) #TODO: dragging a locked sprite leads to unexpected behaviour
 
-        #ss_sprite.set_draggable(True) #TODO: dragging a locked sprite leads to unexpected behaviour
+        ss_sprite._drawing_manager.set_mask_threshold(-1)
+
 
         pysc.game.broadcast_message('cut_or_nav_mode_change', 'cut')
     pass
@@ -166,15 +169,19 @@ def on_scroll(updown):
     #if updown.
     ss_sprite:pysc.Sprite = ss_view['spritesheet_sprite']
     if not ss_sprite: return
-    if not ss_view.is_touching_mouse():
+    if not ss_sprite.is_touching_mouse():
         return
     
     if updown == 'up':
         ss_sprite.scale_by(1.05)
     else:
         ss_sprite.scale_by(1/1.05)
+    
+    pysc.game.broadcast_message("ss_sprite_scale_change")
 
 pysc.game.when_mouse_scroll([ss_view]).add_handler(on_scroll)
+
+
 
 def draw_cutting_rect(surface, colour, x0, y0, x1, y1, n_row, n_col):
 
@@ -183,8 +190,6 @@ def draw_cutting_rect(surface, colour, x0, y0, x1, y1, n_row, n_col):
 
     x0, x1 = min(x0, x1), max(x0, x1)
     y0, y1 = min(y0, y1), max(y0, y1)
-
-
 
     n_line_h = n_row - 1
     n_line_v = n_col - 1
@@ -195,12 +200,12 @@ def draw_cutting_rect(surface, colour, x0, y0, x1, y1, n_row, n_col):
     x_step = (x1 - x0)/n_col # vertical lines
     y_step = (y1 - y0)/n_row # horizontal lines
     # 
-    for lx in range(n_line_v):
+    for lx in range(int(n_line_v)):
         xpos = (1+lx)*x_step 
         xpos += x0
         pygame.draw.line(surface, colour, (xpos, y0), (xpos, y1))
 
-    for ly in range(n_line_h):
+    for ly in range(int(n_line_h)):
         ypos = (1+ly)*y_step 
         ypos += y0
         pygame.draw.line(surface, colour, (x0, ypos), (x1, ypos))
@@ -211,42 +216,37 @@ def draw_cutting_rect(surface, colour, x0, y0, x1, y1, n_row, n_col):
 
     
 def draw_selection_rect():
-    ss_select_corner2 = pysc.game['ss_select_corner2']
-    ss_select_corner1 = pysc.game['ss_select_corner1']
+    cir0, cir1 = pysc.game['c0'], pysc.game['c1']
     while True: 
         yield 1/30
-        
-        ss_view._drawing_manager.frames[0].fill((255,255,255))
-        if not pysc.game['x1']:
+        ss_sprite:pysc.Sprite = ss_view['spritesheet_sprite']
+        if not ss_sprite: 
             continue
+
+        if game['pixel_x'] is None: continue
+        if game['pixel_y'] is None: continue
+
+        ss_view._drawing_manager.frames[0].fill((255,255,255))
 
         n_col = 1 if not pysc.game['n_col'] else pysc.game['n_col']
         n_row = 1 if not pysc.game['n_row'] else pysc.game['n_row']
 
-        x0, y0 = pysc.game['x0'], pysc.game['y0']
-        #x1, y1 = x0+(pysc.game['pixel_x']*n_col),y0+(pysc.game['pixel_y']*n_row)
 
-        x1 = pysc.game['x0']+((pysc.game['x1']-pysc.game['x0'])//n_col)*n_col
-        y1 = pysc.game['y0']+((pysc.game['y1']-pysc.game['y0'])//n_row)*n_row
-        #y1= pysc.game['y1']
-
-
-        lt = topleft()
-        x0_draw = x0-lt[0]
-        x1_draw = x1-lt[0]
-        y0_draw = y0-lt[1]
-        y1_draw = y1-lt[1]
+        # top left of the selected rect
+        gx0 =  game['offset_x']*ss_sprite.scale_factor + ss_sprite.rect.left  - ss_view.rect.left
+        gy0 = game['offset_y']*ss_sprite.scale_factor + ss_sprite.rect.top  - ss_view.rect.top
+        
+        gx1 = gx0 + game['pixel_x']*n_col*ss_sprite.scale_factor 
+        gy1 = gy0 + game['pixel_y']*n_row*ss_sprite.scale_factor
 
 
-        x_step, y_step = draw_cutting_rect(
+        #pygame.draw.lines(ss_view._drawing_manager.frames[0], (0,0,0), True, [(gx0, gy0), (gx0, gy1), (gx1, gy1), (gx1, gy0)])
+
+        draw_cutting_rect(
             ss_view._drawing_manager.frames[0],
             (0,0,0),
-            x0_draw, y0_draw, x1_draw,  y1_draw,
+            gx0, gy0, gx1,  gy1,
             pysc.game['n_row'], pysc.game['n_col']
-        )
-        
-        pysc.game['pixel_x'] = x_step
-        pysc.game['pixel_y'] = y_step
+        )       
 
-        #pygame.draw.lines(ss_view._drawing_manager.frames[0], (0,0,0), True, [(x0_draw, y0_draw), (x0_draw, y1_draw), (x1_draw, y1_draw), (x1_draw, y0_draw)])
 ss_view.when_game_start().add_handler(draw_selection_rect)

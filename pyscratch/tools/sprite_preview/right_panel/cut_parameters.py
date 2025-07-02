@@ -12,6 +12,13 @@ offset_x_input.set_xy((xpos1, 605))
 offset_y_input = IntegerInputBox('offset_y', 'offset_y_change', "0", 80)
 offset_y_input.set_xy((xpos2, 605))
 
+pysc.game['limit_x'] = None
+pysc.game['limit_y'] = None
+
+pysc.game['size_x'] = None
+pysc.game['size_y'] = None
+
+
 
 row_input = IntegerInputBox('n_row', "n_row_change", "", 80)
 row_input.set_xy((xpos1, 650))
