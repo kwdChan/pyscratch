@@ -1,69 +1,37 @@
+
+import numpy as np
 import pyscratch as pysc
+game = pysc.game
+
 
 colour = 0, 0, 0, 50
 
-cir = pysc.create_circle_sprite(colour, 30)
-pysc.game['ss_select_corner1'] = cir
+cir0 = pysc.create_circle_sprite(colour, 30)
+game['c0'] = cir0
 
-cir2 = pysc.create_circle_sprite(colour, 30)
-pysc.game['ss_select_corner2'] = cir2
+cir1 = pysc.create_circle_sprite(colour, 30)
+game['c1'] = cir1
 
 # event game start: initial setting
 def on_start():
 
-    cir.set_draggable(True)
-    cir2.set_draggable(True)
+    cir0.set_draggable(True)
+    cir1.set_draggable(True)
 
-    pysc.game.bring_to_front(cir)
-    pysc.game.bring_to_front(cir2)
+    # pysc.game.bring_to_front(cir)
+    # pysc.game.bring_to_front(cir2)
 
-    cir.x = pysc.game['ss_view_topleft'][0] + 1
-    cir.y = pysc.game['ss_view_topleft'][1] + 1
+    cir0.x = game['ss_view_topleft'][0] + 1
+    cir0.y = game['ss_view_topleft'][1] + 1
     
-    cir2.x = pysc.game['ss_view_buttom_right'][0]-1
-    cir2.y = pysc.game['ss_view_buttom_right'][1]-1
+    cir1.x = game['ss_view_buttom_right'][0]-1
+    cir1.y = game['ss_view_buttom_right'][1]-1
 
-pysc.game.when_game_start([cir, cir2]).add_handler(on_start)
-
-pysc.game['x1'] = None
-pysc.game['y1'] = None
-# event game start: set the cutting offset and the frame size if the sprite is dragged
-def on_start2():
-    while True:
-        yield 1/30
-        mouse_down = pysc.get_mouse_presses()[0]
-        if mouse_down and (cir.is_touching_mouse() or cir2.is_touching_mouse()):
-            if (ss_sprite := pysc.game['ss_sprite']):
-                topleft = ss_sprite.rect.topleft
-                bottomright = ss_sprite.rect.bottomright
-            else:
-                topleft = -10000, -10000
-                bottomright = 10000, 10000
+game.when_game_start([cir0, cir1]).add_handler(on_start)
 
 
-            n_col = 1 if not pysc.game['n_col'] else pysc.game['n_col']
-            n_row = 1 if not pysc.game['n_row'] else pysc.game['n_row']
-            x0 = max(min(cir.x, cir2.x), topleft[0])
-            y0 = max(min(cir.y, cir2.y), topleft[1])
 
-            x1 = min(max(cir.x, cir2.x), bottomright[0])
-            y1 = min(max(cir.y, cir2.y), bottomright[1])
-
-
-            pysc.game['offset_x'] = x0-topleft[0]
-            pysc.game['offset_y'] = y0-topleft[1]
-
-            pysc.game['pixel_x'] = (x1-x0)//n_col
-            pysc.game['pixel_y'] = (y1-y0)//n_row
-
-            pysc.game['x0'] = x0
-            pysc.game['y0'] = y0
-
-            pysc.game['x1'] = x1
-            pysc.game['y1'] = y1
-
-pysc.game.when_game_start([cir, cir2]).add_handler(on_start2)
-
+# useful functions
 def value_if_none(v, default):
     if v is None:
         return default
@@ -76,57 +44,159 @@ def value_if_not(v, default):
 
 
 
-def on_offset_change(data):
-    offset_x = value_if_none(pysc.game['offset_x'], 0)
-    offset_y = value_if_none(pysc.game['offset_y'], 0)
 
-    n_col = value_if_not(pysc.game['n_col'], 1)
-    n_row = value_if_not(pysc.game['n_row'], 1)
+# event game start: set the cutting offset and the frame size if the sprite is dragged
+def on_start2():
+    while True:
+        yield 1/30
+        ss_sprite: pysc.Sprite = game['ss_sprite']
+        if not ss_sprite: continue
 
-    pixel_x = value_if_none(pysc.game['pixel_x'], 1)
-    pixel_y = value_if_none(pysc.game['pixel_y'], 1)
+        mouse_down = pysc.get_mouse_presses()[0]
+        if not mouse_down: 
+            try:
+                cir0.x = game['offset_x']*ss_sprite.scale_factor + ss_sprite.rect.left
+                cir1.x = game['limit_x']*ss_sprite.scale_factor + ss_sprite.rect.left        
 
-
-
-
-def on_parameter_changes(data):
-
-    if (ss_sprite := pysc.game['ss_sprite']):
-        topleft = ss_sprite.rect.topleft
-        bottomright = ss_sprite.rect.bottomright
-
-        offset_x = value_if_none(pysc.game['offset_x'], 0)
-        offset_y = value_if_none(pysc.game['offset_y'], 0)
-
-        n_col = value_if_not(pysc.game['n_col'], 1)
-        n_row = value_if_not(pysc.game['n_row'], 1)
-
-        pixel_x = value_if_none(pysc.game['pixel_x'], ss_sprite.rect.width)
-        pixel_y = value_if_none(pysc.game['pixel_y'], ss_sprite.rect.height)
-
-
-        cir.x = offset_x+topleft[0]
-        cir.y = offset_y+topleft[1]
-
-        pysc.game['x0'] = cir.x
-        pysc.game['y0'] = cir.y
+                cir0.y = game['offset_y']*ss_sprite.scale_factor + ss_sprite.rect.top
+                cir1.y = game['limit_y']*ss_sprite.scale_factor + ss_sprite.rect.top    
+            except:
+                pass          
+            continue
+        if not (cir0.is_touching_mouse() or cir1.is_touching_mouse()): continue
 
 
 
-        cir2.x = cir.x+n_col*pixel_x
-        cir2.y = cir.y+n_row*pixel_y
-
-        pysc.game['x1'] = cir2.x
-        pysc.game['y1'] = cir2.y
+        # top left of the selected rect
+        cx0 = min(cir0.x, cir1.x)
+        cy0 = min(cir0.y, cir1.y)
         
+        # bottom right of the selected rect
+        cx1 = max(cir0.x, cir1.x)
+        cy1 = max(cir0.y, cir1.y)        
+
+        # top left of the sprite sheet
+        x0, y0 = ss_sprite.rect.topleft
+
+        img_w, img_h = ss_sprite.rect.width, ss_sprite.rect.height
+
+        # scale factor
+        scale_factor = ss_sprite.scale_factor
+        
+        # RC
+        n_col = value_if_not(game['n_col'], 1)
+        n_row = value_if_not(game['n_row'], 1)
+
+        # O
+        game['offset_x'] = Ox = max(np.floor((cx0-x0)/scale_factor), 0)
+        game['offset_y'] = Oy = max(np.floor((cy0-y0)/scale_factor), 0)
+
+        # L
+        game['limit_x'] = Lx = min(np.ceil((cx1-x0)/scale_factor), np.ceil(img_w/scale_factor)-1)
+        game['limit_y'] = Ly = min(np.ceil((cy1-y0)/scale_factor), np.ceil(img_h/scale_factor)-1) 
+
+        # update the size
+        game['size_x'] = Lx - Ox + 1
+        game['size_y'] = Ly - Oy + 1
+
+        # pix
+        game['pixel_x'] = np.floor(game['size_x']/n_col)
+        game['pixel_y'] = np.floor(game['size_y']/n_row)
 
 
-#pysc.game.when_receive_message('n_col_change').add_handler(on_parameter_changes)
-#pysc.game.when_receive_message('n_row_change').add_handler(on_parameter_changes)
-pysc.game.when_receive_message('pixel_x_change').add_handler(on_parameter_changes)
-pysc.game.when_receive_message('pixel_y_change').add_handler(on_parameter_changes)
-pysc.game.when_receive_message('offset_x_change').add_handler(on_parameter_changes)
-pysc.game.when_receive_message('offset_y_change').add_handler(on_parameter_changes)
 
 
 
+pysc.game.when_game_start([cir0, cir1]).add_handler(on_start2)
+
+
+def on_offset_x_change(data):
+
+    if not (size_x := game['size_x']): return 
+    if not (offset_x := game['offset_x']): 
+        game['offset_x'] = 0
+        offset_x = 0         
+
+    ss_sprite: pysc.Sprite = game['ss_sprite']
+    if not ss_sprite: return 
+    
+    game['limit_x'] = min(size_x+offset_x-1, ss_sprite.rect.width-1)
+
+    game['size_x'] =  game['limit_x'] - offset_x + 1
+
+    cir0.x = offset_x*ss_sprite.scale_factor + ss_sprite.rect.left
+    cir1.x = game['limit_x']*ss_sprite.scale_factor + ss_sprite.rect.left
+
+    game['n_col'] = np.floor(game['size_x']/game['pixel_x'])
+
+game.when_receive_message('offset_x_change').add_handler(on_offset_x_change)
+
+def on_offset_y_change(data):
+
+    if not (size_y := game['size_y']): return 
+    if (offset_y := game['offset_y']) is None: 
+        game['offset_y'] = 0
+        offset_y = 0
+         
+    ss_sprite: pysc.Sprite = game['ss_sprite']
+    if not ss_sprite: return 
+    
+    game['limit_y'] = min(size_y+offset_y-1, ss_sprite.rect.height-1)
+
+    game['size_y'] =  game['limit_y'] - offset_y + 1
+
+    cir0.y = offset_y*ss_sprite.scale_factor + ss_sprite.rect.top
+    cir1.y = game['limit_y']*ss_sprite.scale_factor + ss_sprite.rect.top
+
+    game['n_row'] = np.floor(game['size_y']/game['pixel_y'])
+
+game.when_receive_message('offset_y_change').add_handler(on_offset_y_change)
+
+
+def on_n_row_change(data):
+    if not game['size_y']: return 
+    game['pixel_y'] = np.floor(game['size_y']/value_if_not(game['n_row'], 1))
+
+game.when_receive_message('n_row_change').add_handler(on_n_row_change)
+
+
+def on_n_col_change(data):
+    if not game['size_x']: return 
+    game['pixel_x'] = np.floor(game['size_x']/value_if_not(game['n_col'], 1))
+
+game.when_receive_message('n_col_change').add_handler(on_n_col_change)
+
+
+
+def on_pix_x_change(data):
+    if not game['size_x']: return 
+    game['n_col'] = np.floor(game['size_x']/value_if_not(game['pixel_x'], 1))
+
+
+game.when_receive_message('pixel_x_change').add_handler(on_pix_x_change)
+
+def on_pix_y_change(data):
+    if not game['size_y']: return 
+    game['n_row'] = np.floor(game['size_y']/value_if_not(game['pixel_y'], 1))
+
+
+game.when_receive_message('pixel_y_change').add_handler(on_pix_y_change)
+
+
+
+def on_scale_change(data):
+    ss_sprite: pysc.Sprite = game['ss_sprite']
+    if game['offset_x'] is None: return 
+    if game['limit_x'] is None: return 
+    if game['offset_y'] is None: return 
+    if game['limit_y'] is None: return 
+    
+
+    cir0.x = game['offset_x']*ss_sprite.scale_factor + ss_sprite.rect.left
+    cir1.x = game['limit_x']*ss_sprite.scale_factor + ss_sprite.rect.left
+
+    cir0.y = game['offset_y']*ss_sprite.scale_factor + ss_sprite.rect.top
+    cir1.y = game['limit_y']*ss_sprite.scale_factor + ss_sprite.rect.top
+
+
+game.when_receive_message('ss_sprite_scale_change').add_handler(on_pix_y_change)
