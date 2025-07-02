@@ -51,6 +51,8 @@ def on_start2():
         yield 1/30
         ss_sprite: pysc.Sprite = game['ss_sprite']
         if not ss_sprite: continue
+        game.bring_to_front(cir0)
+        game.bring_to_front(cir1)
 
         mouse_down = pysc.get_mouse_presses()[0]
         if not mouse_down: 
