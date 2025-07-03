@@ -5,6 +5,7 @@ you can also directly do `pysc.random_number`
 """
 
 
+from itertools import product
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 import random
@@ -444,3 +445,46 @@ def adjust_brightness(image, factor):
         new_image.blit(brighten_surface, (0, 0), special_flags=pygame.BLEND_RGBA_ADD)
 
     return new_image
+
+
+def draw_guide_lines(screen: pygame.Surface, font: pygame.font.Font, minor_grid, major_grid):
+    w, h = screen.get_width(), screen.get_height()
+    
+
+    pygame.draw.lines(screen, (0,0,0), True, [(0,0), (0, h), (w, h), (w, 0)])
+    screen.blit(font.render(f"({0},{0})", True, (0,0,0)), (5,5))
+    for i in range(0, w, minor_grid):
+        lw = 1
+        if i and (not i % major_grid):
+            lw = 2
+            screen.blit(font.render(f"{i}", True, (0,0,0)), (i+5,5))
+
+        pygame.draw.line(screen, (0,0,0), (i, 0), (i, h), width=lw)
+
+
+        
+
+    for i in range(0, h, minor_grid):
+        lw = 1
+        if i and (not i % major_grid):
+            lw = 2
+            screen.blit(font.render(f"{i}", True, (0,0,0)), (5,i+5))        
+        pygame.draw.line(screen, (0,0,0), (0, i), (w, i), width=lw)
+
+    #text = font.render(f"({w},{h})", True, (0,0,0))
+    #screen.blit(text, (w-5-text.get_width(), h-5-text.get_height()))
+
+
+    for x, y in product(range(major_grid, w, major_grid), range(major_grid, h, major_grid)):
+        text = font.render(f"({x},{y})", True, (0,0,0))
+        screen.blit(text, (x+5, y+5))
+
+
+
+def show_mouse_position(screen, font):
+    w, h = screen.get_width(), screen.get_height()
+    
+    mx, my = pygame.mouse.get_pos()
+
+    text = font.render(f"({mx},{my})", True, (0,0,0))
+    screen.blit(text, (w-5-text.get_width(), h-5-text.get_height()))
