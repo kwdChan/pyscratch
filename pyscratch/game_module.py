@@ -14,6 +14,7 @@ from .event import _ConditionInterface, Event, Condition, TimerCondition, _decla
 from pymunk.pygame_util import DrawOptions
 from typing import Any, Callable, Generic, Iterable, Optional, List, Dict, ParamSpec, Set, Tuple, TypeVar, Union, cast
 from typing import TYPE_CHECKING
+from . import helper
 
 if TYPE_CHECKING:
     from .sprite import Sprite
@@ -218,8 +219,8 @@ class Game:
         self._sprite_click_release_trigger:Dict[Sprite, List[Event]] = {}  #TODO: need to be able to destory the trigger here when the sprite is destoryed
 
         self._sprite_click_trigger:Dict[Sprite, List[Event]] = {}  #TODO: need to be able to destory the trigger here when the sprite is destoryed
-        mouse_drag_trigger = self.create_pygame_event_trigger([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
-        mouse_drag_trigger.add_handler(self.__mouse_drag_handler)
+        self._mouse_drag_trigger = self.create_pygame_event_trigger([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
+        self._mouse_drag_trigger.add_handler(self.__mouse_drag_handler)
 
         ## Backdrops
         self.backdrops: List[pygame.Surface] = []
@@ -296,6 +297,7 @@ class Game:
                 self._dragged_sprite._set_is_dragging(False)
                 self._dragged_sprite = None
 
+            # TODO: what happens here?? why AND?
             if self.__clicked_sprite and (temp:= self._sprite_click_release_trigger.get(self.__clicked_sprite)):
                 #temp  =  self._sprite_click_release_trigger.get(self.__clicked_sprite)
                 #if temp: 
@@ -324,7 +326,7 @@ class Game:
 
 
 
-    def start(self, framerate, sim_step_min=300, debug_draw=False, event_count=False):
+    def start(self, framerate=30, sim_step_min=300, debug_draw=False, event_count=False, show_mouse_position: Optional[bool]=None):
         """
         Start the game. 
 
@@ -343,13 +345,14 @@ class Game:
             Whether or not to print out the number of active events for debugging purposes
 
         """
-
+        guide_lines_font = pygame.font.Font(None, 36)
 
         clock = pygame.time.Clock()
 
         draw_every_n_step = sim_step_min//framerate+1
 
         self._current_time_ms = 0
+
 
 
         for t in self._game_start_triggers:
@@ -397,18 +400,30 @@ class Game:
 
             # Drawing
 
-            self._screen.fill((30, 30, 30))
+            #self._screen.fill((30, 30, 30))
             if not (self.__backdrop_index is None): 
                 self._screen.blit(self.backdrops[self.__backdrop_index], (0, 0))
+            else:
+                self._screen.fill((255,255,255))
+                helper.draw_guide_lines(self._screen, guide_lines_font, 100, 500)
+
+                if show_mouse_position is None: 
+                    helper.show_mouse_position(self._screen, guide_lines_font)
 
             if debug_draw: 
                 self._space.debug_draw(self._draw_options)
-            
+
             self._all_sprites.update(self._space)
             self._all_sprites_to_show.draw(self._screen)
+
+            if show_mouse_position:
+                helper.show_mouse_position(self._screen, guide_lines_font)
+
+
             pygame.display.flip()
 
 
+    
 
     def load_sound(self, key: str, path: str) :
         """
