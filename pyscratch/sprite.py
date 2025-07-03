@@ -18,9 +18,22 @@ import pymunk
 
 import pyscratch.game_module
 from .game_module import Game, game
-from .helper import adjust_brightness, set_transparency, create_rect, create_circle, load_frames_from_folder
+from .helper import adjust_brightness, set_transparency, create_rect, create_circle, load_frames_from_folder, load_gif_frames, load_frames_from_gif_folder
 from pathlib import Path
 
+
+def create_sprite_from_gif(path,  *args, **kwargs):
+    path = Path(path)
+
+    if path.is_dir():
+        frame_dict = load_frames_from_gif_folder(path)
+    else:
+        frames = load_gif_frames(path)
+        frame_dict = {'always': frames}
+    return Sprite(frame_dict, *args, **kwargs)
+    
+    
+    
 
 def create_animated_sprite(folder_path,  *args, **kwargs):
     """
