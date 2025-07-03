@@ -88,7 +88,7 @@ def on_msg_image_selected(path):
     pass
 
 ss_view.when_receive_message('image_selected').add_handler(on_msg_image_selected)
-
+from itertools import product
 def on_msg_cut(_):
     ss_view.draw(pysc.create_rect((0,0,0,0), 1, 1)) # reset
 
@@ -105,7 +105,7 @@ def on_msg_cut(_):
         ss_sprite.hide()
     
 
-    spritesheet = pysc.game.shared_data['image_on_right_display'] 
+    spritesheet: pygame.Surface = pysc.game.shared_data['image_on_right_display'] 
 
     n_row =  pysc.game.shared_data['n_row'] 
     n_col =  pysc.game.shared_data['n_col'] 
@@ -119,11 +119,15 @@ def on_msg_cut(_):
         print('invalid n_col')
         pysc.game.broadcast_message('warning', 'invalid n_col' )
         return
+    n_row = int(n_row)
+    n_col = int(n_col)
 
-    for i in range(n_row*n_col):
-        frame = pysc.get_frame_from_sprite_sheet(spritesheet, n_col, n_row, i)
+    spritesheet_to_cut = spritesheet.subsurface(game['offset_x'], game['offset_y'], game['size_x'], game['size_y'])
+
+    for i, (r, c) in enumerate(product(range(n_row), range(n_col))):
+        frame = pysc.get_frame_from_sprite_sheet_by_frame_size(spritesheet_to_cut, game['pixel_x'], game['pixel_y'], c, r)
         sprite = SpriteFrameAfterCut(frame, i, ss_sprite.scale_factor, n_col)
-        ss_view.private_data['frame_list'].append(sprite)
+        ss_view['frame_list'].append(sprite)
 
 ss_view.when_receive_message('cut').add_handler(on_msg_cut)
 

@@ -44,15 +44,15 @@ def on_click():
         game['offset_y'] = offset_y
 
 
-    game.broadcast_message('n_row_change')
-    game.broadcast_message('n_col_change')
+    #game.broadcast_message('n_row_change')
+    #game.broadcast_message('n_col_change')
 
-    game.broadcast_message('pixel_x_change')
+    #game.broadcast_message('pixel_x_change')
 
-    game.broadcast_message('pixel_y_change')
+    #game.broadcast_message('pixel_y_change')
 
-    # game.broadcast_message('offset_x_change')
-    # game.broadcast_message('offset_y_change')
+    #game.broadcast_message('offset_x_change')
+    #game.broadcast_message('offset_y_change')
 
     
 
@@ -72,29 +72,30 @@ class ParamsFitter:
     
     def num_frames_x(self, offset, limit):
         # TODO: think about it: is the boundary correct?
-        return ParamsFitter.get_num_frames(self.xslits[offset: limit+1])
+        return ParamsFitter.get_num_frames(self.xslits[offset: limit+2])
     
     def num_frames_y(self, offset, limit):
-        return ParamsFitter.get_num_frames(self.yslits[offset: limit+1])
+        return ParamsFitter.get_num_frames(self.yslits[offset: limit+2])
     
     def find_best_x(self, offset_centre: int, limit:int):
         offset_centre = int(offset_centre)
         limit = int(limit)
 
-        return ParamsFitter.search_best(self.xslits[offset_centre: limit+1], offset_centre)
+        return ParamsFitter.search_best(self.xslits[: limit+2], offset_centre)
     
     def find_best_y(self, offset_centre: int, limit:int):
         offset_centre = int(offset_centre)
         limit = int(limit)
-        return ParamsFitter.search_best(self.yslits[offset_centre: limit+1], offset_centre)
+        return ParamsFitter.search_best(self.yslits[: limit+2], offset_centre)
     
     @staticmethod
     def search_best(slit_values, centre_offset, step_range_ratio=0.1, offset_range_ratio=0.1):
-
-        n_frame = int(ParamsFitter.get_num_frames(slit_values))
+        #print(len(slit_values))
+        n_frame = int(ParamsFitter.get_num_frames(slit_values[centre_offset:]))
+        print(ParamsFitter.get_num_frames_rank(slit_values[centre_offset:]))
 
         # TODO: possibly DIV BY ZERO?
-        step_size = max(1, (len(slit_values)-1)/n_frame )
+        step_size = max(1, (len(slit_values[centre_offset:])-1)/n_frame )
         
         step_range = round(step_size*step_range_ratio)
         offset_range = round(step_size*offset_range_ratio)
@@ -102,27 +103,37 @@ class ParamsFitter:
         step_size = round(step_size)
 
         # TODO: very easy to go out of boundary
-        step_sizes = range(max(0, step_size-step_range), step_size+step_range+1)
+        step_sizes = range(step_size+step_range+1, max(0, step_size-step_range), -1)
         offsets = range(max(0,centre_offset-offset_range), centre_offset+offset_range+1)
 
         vmin = np.inf
         best_ss = None
         best_os = None
         for ss, os in product(step_sizes, offsets):
-            v = ParamsFitter.eval_cut(slit_values, ss, os)
+
+            n, v = ParamsFitter.eval_cut(slit_values, ss, os)
+            #print(f"trying: pixel_sz:{ss}, offset:{os} -> {n, v}")
+            if not n == n_frame: continue
             if v < vmin:
                 best_ss = ss
                 best_os = os
                 vmin = v
             #print(ss, os, v)
 
-        print(n_frame, best_ss, best_os, "final")
+
+
+        print(f"n_frame: {n_frame}, pixel_sz:{best_ss}, offset:{best_os} -> {vmin}")
         return n_frame, best_ss, best_os
         
     @staticmethod
     def get_num_frames(slit_values):
         return np.argmax(np.abs(np.fft.fft(slit_values))[1:len(slit_values)//2])+1 
+        
+    @staticmethod
+    def get_num_frames_rank(slit_values):
+        return np.argsort(np.abs(np.fft.fft(slit_values))[1:len(slit_values)//2])+1 
     
+
     @staticmethod
     def get_rough_est_num_pixel(slit_values):
         return (len(slit_values)-1)/ParamsFitter.get_num_frames(slit_values)
@@ -130,7 +141,7 @@ class ParamsFitter:
     @staticmethod
     def eval_cut(slit_values, step_size, offset=0):
         cut_indices = np.arange(offset, len(slit_values), step_size)
-        return slit_values[cut_indices].mean()   
+        return len(cut_indices)-1, slit_values[cut_indices].mean()   
  
     @staticmethod
     def get_slit_values(axis_mean):
