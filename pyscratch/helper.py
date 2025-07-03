@@ -92,6 +92,61 @@ def get_frame_from_sprite_sheet(
 
     return sheet.subsurface(cropped_rect)
 
+def get_frame_from_sprite_sheet_by_frame_size(
+        sheet: pygame.Surface, 
+        size_x: int, size_y: int,
+        c:int, r: int):
+    """
+    Extract a specific frame from a sprite sheet. 
+    
+    **You will not need to use this function directly.**
+    """
+    crop_rect = pygame.Rect(
+        c*size_x,
+        r*size_y,
+        size_x,
+        size_y
+    )
+
+    return sheet.subsurface(crop_rect)
+
+from PIL import Image, ImageSequence
+import pygame
+
+def load_gif_frames(path) -> List[pygame.Surface]:
+    """
+    **You will not need to use this function directly.**
+    WRITTEN BY AI
+    """
+    pil = Image.open(path)
+    frames = []
+    for frame in ImageSequence.Iterator(pil):
+        mode   = frame.convert("RGBA")
+        data   = mode.tobytes()
+        size   = mode.size
+        surf   = pygame.image.frombuffer(data, size, "RGBA").convert_alpha()
+        frames.append(surf)
+    return frames
+
+
+
+def load_frames_from_gif_folder(folder_path: Path):
+    """
+    **You will not need to use this function directly.**
+    """
+    frame_dict = {}
+    for f in folder_path.iterdir():
+        if f.suffix != '.gif': 
+            print(f"ignoring {f.name} (not a gif)")
+            continue
+
+        frame_dict[f.stem] = load_gif_frames(f)
+    
+    return frame_dict
+
+
+
+
 def cut_sprite_sheet(
         sheet: pygame.Surface, 
         columns, rows, 
