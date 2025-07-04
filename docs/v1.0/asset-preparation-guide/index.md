@@ -10,10 +10,10 @@ One is to draw the arts on your own, another one is to use the artwork created b
 
 ## Option 1: Create my own images
 **Some recommended drawing software:** 
-1. <a target="_blank" href="https://www.piskelapp.com/">Piskel</a> 
+1. <a target="_blank" href="https://www.piskelapp.com/">Piskel</a>   (<i>highly recommended</i>)
     - A browser-based pixel art editor for making animated sprites
     - Includes animation preview capablity
-    - You can export the animation as a .gif file  
+    - Can easily export to PyScratch as animations 
     
 1. <a target="_blank" href="https://sketch.io/sketchpad/">sketch.io</a> 
     - A browser-based drawing software 

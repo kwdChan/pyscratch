@@ -5,7 +5,7 @@ nav_order: 6
 ---
 
 # Sensing
----
+
 <div id="touching" class="two-col">
   <div class="col">
     <img src="{{ site.cdn_url }}img/sensing/block_00.png"/>

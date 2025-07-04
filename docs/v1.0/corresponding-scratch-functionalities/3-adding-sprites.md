@@ -56,7 +56,6 @@ pysc.game.start(60)
 
 **Animated sprite** (multiple costumes and animations)
 - <a target="_blank" href="../pdoc/pyscratch/sprite.html#create_animated_sprite"><code>pysc.create_animated_sprite</code></a> 
-    - See the guide 
 
 
 **For a more custom sprite (advance)**
