@@ -1,6 +1,6 @@
 ---
 title: Font
-parent: Other Functionalities
+parent: Extended Functionalities
 nav_order: 99
 ---
 # Font
