@@ -24,7 +24,7 @@ def event():
 my_sprite.when_game_start().add_handler(event)
 ```
 
-## Display the variable for debugging purposes
+## Display the variable for debugging purposes (experimental)
 1. Add the variable to `pysc.game`
 2. Create the display using <a target="_blank" href="../../pdoc/pyscratch/sprite.html#create_shared_data_display_sprite"><code>pysc.create_shared_data_display_sprite</code></a> (experimental feature)
 
