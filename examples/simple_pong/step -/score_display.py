@@ -7,7 +7,7 @@ pysc.game.shared_data['left_score'] = 0
 pysc.game.shared_data['right_score'] = 0
 
 def display_score():
-    pysc.game.show_sprite(score_board)
+    pysc.game._show_sprite(score_board)
     l = pysc.game.shared_data['left_score'] 
     r = pysc.game.shared_data['right_score'] 
     score_board.write_text(f'{l} - {r}', font, offset=(150//2, 70//2))
@@ -39,7 +39,7 @@ resume_game_event = pysc.game.when_any_key_pressed()
 
 def resume_game():
     pysc.game.shared_data['running'] = True
-    pysc.game.hide_sprite(score_board)
+    pysc.game._hide_sprite(score_board)
 
 def on_space_release(key, updown):
     if key == 'space' and updown == 'up':

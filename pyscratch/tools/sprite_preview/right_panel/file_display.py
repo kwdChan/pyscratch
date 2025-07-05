@@ -53,7 +53,7 @@ def FileDisplay(path: Path, order: int, panel_top_left):
 
 
 
-    sprite.private_data['is_file'] = path.is_file()
+    sprite.sprite_data['is_file'] = path.is_file()
 
 
     def on_click():

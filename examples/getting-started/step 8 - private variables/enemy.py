@@ -55,7 +55,7 @@ def on_clone(clone_sprite: pysc.Sprite):
     while True:
 
 
-        if player.private_data['size'] > size:
+        if player.sprite_data['size'] > size:
             clone_sprite.set_frame(1)
         else:
             clone_sprite.set_frame(0)

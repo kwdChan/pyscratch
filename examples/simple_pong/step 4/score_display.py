@@ -55,7 +55,7 @@ score_board.when_receive_message('right_score').add_handler(on_right_score)
 # resume the game when the score board is clicked
 def resume_game():
     game['running'] = True
-    game.hide_sprite(score_board)
+    game._hide_sprite(score_board)
 
 score_board.when_this_sprite_clicked().add_handler(resume_game)
 

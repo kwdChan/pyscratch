@@ -17,7 +17,7 @@ topleft = folder_navigation.x-width/2, folder_navigation.y-height/2
 folder_navigation['file_display_list'] = []
 
 def on_msg_folder_update(path: Path):
-    #folder_navigation.private_data['path'] = path
+    #folder_navigation.sprite_data['path'] = path
     pysc.game.shared_data['path'] = path
 
     for fdisp in folder_navigation['file_display_list']:

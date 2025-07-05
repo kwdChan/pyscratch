@@ -542,7 +542,7 @@ class Game:
         for r in remove_list:
             self._contact_pairs_set.remove(r)
         
-    def remove_sprite(self, sprite: Sprite):
+    def _remove_sprite(self, sprite: Sprite):
         """
         Remove the sprite from the game.
 
@@ -565,7 +565,7 @@ class Game:
         self._sprite_event_dependency_manager.sprite_removal(sprite)
 
 
-    def show_sprite(self, sprite: Sprite):
+    def _show_sprite(self, sprite: Sprite):
         """
         Show the sprite. 
         
@@ -573,7 +573,7 @@ class Game:
         """
         self._all_sprites_to_show.add(sprite)
 
-    def hide_sprite(self, sprite: Sprite):
+    def _hide_sprite(self, sprite: Sprite):
         """
         Hide the sprite. 
         
@@ -753,8 +753,7 @@ class Game:
     
     def when_this_sprite_clicked(self, sprite, other_associated_sprites: Iterable[Sprite]=[]) -> Event[[]]:
         """
-        It is recommended to use the `Sprite.when_this_sprite_clicked` alias instead of this method, 
-        so you don't need to specify the `other_associated_sprites` in every event.  
+        It is recommended to use the `Sprite.when_this_sprite_clicked` alias instead of this method.
         
         Returns an `Event` that is triggered when the given sprite is clicked by mouse.  
         The event handler does not take in any parameter.
@@ -784,7 +783,7 @@ class Game:
 
     def when_this_sprite_click_released(self, sprite, other_associated_sprites: Iterable[Sprite]=[]) -> Event[[]]:
         """
-        The shortcut `Sprite.when_this_sprite_click_released` is not yet implemented. 
+        The alias `Sprite.when_this_sprite_click_released` is not yet implemented. 
 
         Returns an `Event` that is triggered when the mouse click of the given sprite is released.  
         The event handler does not take in any parameter.

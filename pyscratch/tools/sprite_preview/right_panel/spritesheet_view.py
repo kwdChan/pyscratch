@@ -35,12 +35,12 @@ def on_msg_mode_change(mode):
     if not mode == 'nav':
         ss_view.show()
         pysc.game.move_to_back(ss_view)
-        for f in ss_view.private_data['frame_list']:
+        for f in ss_view.sprite_data['frame_list']:
             f.show()
 
     else:
         ss_view.hide()
-        for f in ss_view.private_data['frame_list']:
+        for f in ss_view.sprite_data['frame_list']:
             f.hide()
         if ss_sprite := ss_view['spritesheet_sprite']:
             ss_sprite.hide()
