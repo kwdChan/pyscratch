@@ -6,7 +6,10 @@ you can also directly do `pysc.is_key_pressed`.
 
 from __future__ import annotations
 from os import PathLike
+import os
 import sys
+import threading
+import time
 
 import numpy as np
 import pygame
@@ -19,8 +22,6 @@ from . import helper
 
 if TYPE_CHECKING:
     from .sprite import Sprite
-
-
 
 def _collision_begin(arbiter, space, data):
     game = cast(Game, data['game'])
@@ -235,6 +236,10 @@ class Game:
         self.__backdrop_index = None
         self._backdrop_change_triggers: List[Event] = []
 
+        self._top_edge: Sprite
+        self._left_edge: Sprite
+        self._bottom_edge: Sprite
+        self._right_edge: Sprite
 
 
         ## start event
@@ -250,10 +255,9 @@ class Game:
 
         self._specific_backdrop_event_emitter: _SpecificEventEmitter[[]] = _SpecificEventEmitter()
 
-
-
         self.max_number_sprite = 1000
         """The maximum number of sprites in the game. Adding more than this will lead to an error."""
+        
 
 
     def __key_event_handler(self, e):
@@ -356,6 +360,16 @@ class Game:
                 s.remove()
                 print(f"A sprite is removed for going out of boundary above the specified limit.")
 
+    def _check_alive(self):
+
+        last_frame_time = 0
+        while True:
+            time.sleep(2)
+            if not self._current_time_ms > last_frame_time:
+                print('Timeout. Are you in a infinite loop?')
+                os._exit(1)
+
+            last_frame_time = self._current_time_ms
 
 
     def start(self, framerate=30, sim_step_min=300, debug_draw=False, event_count=False, show_mouse_position: Optional[bool]=None, exit_key: Optional[str]="escape"):
@@ -392,15 +406,17 @@ class Game:
         self._current_time_ms = 0
 
         if exit_key:
-            self.when_key_pressed(exit_key).add_handler(lambda _: sys.exit())
+            self.when_key_pressed(exit_key).add_handler(lambda _: os._exit(1))
             
-        self.create_pygame_event([pygame.QUIT]).add_handler(lambda _: sys.exit())
+        self.create_pygame_event([pygame.QUIT]).add_handler(lambda _: os._exit(1))
         
         for t in self._game_start_triggers:
             t.trigger()
 
         cleanup_period = 2*framerate
         loop_count = 0
+
+        threading.Thread(target=self._check_alive).start()
         while True:
             loop_count += 1
             
@@ -441,10 +457,10 @@ class Game:
                 self._screen.blit(self.backdrops[self.__backdrop_index], (0, 0))
             else:
                 self._screen.fill((255,255,255))
-                helper.draw_guide_lines(self._screen, guide_lines_font, 100, 500)
+                helper._draw_guide_lines(self._screen, guide_lines_font, 100, 500)
 
                 if show_mouse_position is None: 
-                    helper.show_mouse_position(self._screen, guide_lines_font)
+                    helper._show_mouse_position(self._screen, guide_lines_font)
 
             if debug_draw: 
                 self._space.debug_draw(self._draw_options)
@@ -453,7 +469,7 @@ class Game:
             self._all_sprites_to_show.draw(self._screen)
 
             if show_mouse_position:
-                helper.show_mouse_position(self._screen, guide_lines_font)
+                helper._show_mouse_position(self._screen, guide_lines_font)
 
 
             pygame.display.flip()
@@ -1225,17 +1241,17 @@ def get_mouse_presses() -> Tuple[bool, bool, bool]:
     """
     return pygame.mouse.get_pressed(num_buttons=3)
 
-def _is_touching(sprite_a:Sprite, sprite_b:Sprite):
-    """
-    pymunk
-    """
-    for pair in game._contact_pairs_set:
+# def _is_touching(sprite_a:Sprite, sprite_b:Sprite):
+#     """
+#     pymunk
+#     """
+#     for pair in game._contact_pairs_set:
 
-        if (sprite_a._shape in pair) and (sprite_b._shape in pair):
-            return True
-    return False
+#         if (sprite_a._shape in pair) and (sprite_b._shape in pair):
+#             return True
+#     return False
 
 
-def _is_touching_mouse(sprite: Sprite):
-    return sprite._shape.point_query(pygame.mouse.get_pos()).distance <= 0
+# def _is_touching_mouse(sprite: Sprite):
+#     return sprite._shape.point_query(pygame.mouse.get_pos()).distance <= 0
         
