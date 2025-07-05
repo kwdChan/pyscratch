@@ -227,6 +227,11 @@ class Game:
         self.backdrops: List[pygame.Surface] = []
         """A list of all the loaded backdrop images. You will not need to interact with this property directly."""
 
+        self.__screen_width = 0
+        
+        self.__screen_height = 0
+
+
         self.__backdrop_index = None
         self._backdrop_change_triggers: List[Event] = []
 
@@ -325,18 +330,29 @@ class Game:
         """
         self._screen  = pygame.display.set_mode( *arg, **kwargs)
 
-        self._screen_width = self._screen.get_width()
-        self._screen_height = self._screen.get_height()
+        self.__screen_width = self._screen.get_width()
+        self.__screen_height = self._screen.get_height()
 
-
+    @property
+    def screen_width(self):
+        """The width of the screen"""
+        return self.__screen_width
+    
+    @property
+    def screen_height(self):
+        """The height of the screen"""
+        return self.__screen_height
+    
 
     def _do_autoremove(self):
         for s in self._all_sprites:
-            if ((s.x < s.oob_limit) or 
-             (s.x > s.oob_limit + self._screen_width) or 
-             (s.y < s.oob_limit) or 
-             (s.y > s.oob_limit + self._screen_height) 
-            ):
+            if ((s.x < -s.oob_limit) or 
+             (s.x > (s.oob_limit + self.__screen_width)) or 
+             (s.y < -s.oob_limit) or 
+             (s.y > (s.oob_limit + self.__screen_height)) 
+            ):     
+                print(s.x, s.y)
+                print(s.oob_limit + self.__screen_width, s.oob_limit + self.__screen_height)
                 s.remove()
                 print(f"A sprite is removed for going out of boundary above the specified limit.")
 
