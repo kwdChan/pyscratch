@@ -261,10 +261,15 @@ def create_edge_sprites(edge_colour = (255, 0, 0), thickness=4, collision_type=1
     # edges
     screen_w, screen_h = game._screen.get_width(), game._screen.get_height()
 
-    top_edge = create_rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, 0),body_type= pymunk.Body.STATIC)
-    bottom_edge = create_rect_sprite(edge_colour, screen_w, thickness, (screen_w//2, screen_h),body_type= pymunk.Body.STATIC)
-    left_edge = create_rect_sprite(edge_colour, thickness, screen_h, (0, screen_h//2),body_type= pymunk.Body.STATIC)
-    right_edge = create_rect_sprite(edge_colour, thickness, screen_h, (screen_w,  screen_h//2),body_type= pymunk.Body.STATIC)
+    real_thickness = 300 + thickness
+
+    top_edge = create_rect_sprite(edge_colour, screen_w, real_thickness, (screen_w/2, -real_thickness/2+thickness), body_type= pymunk.Body.STATIC)
+    
+    bottom_edge = create_rect_sprite(edge_colour, screen_w, real_thickness, (screen_w/2, screen_h+real_thickness/2-thickness),body_type= pymunk.Body.STATIC)
+    
+    left_edge = create_rect_sprite(edge_colour, real_thickness, screen_h, (-real_thickness/2+thickness, screen_h/2),body_type= pymunk.Body.STATIC)
+    
+    right_edge = create_rect_sprite(edge_colour, real_thickness, screen_h, (screen_w+real_thickness/2-thickness,  screen_h/2),body_type= pymunk.Body.STATIC)
 
     top_edge.set_collision_type(collision_type)
     bottom_edge.set_collision_type(collision_type)
@@ -272,6 +277,8 @@ def create_edge_sprites(edge_colour = (255, 0, 0), thickness=4, collision_type=1
     right_edge.set_collision_type(collision_type)
 
     return top_edge, left_edge, bottom_edge, right_edge
+
+
 
 class _RotationStyle(Enum):
     ALL_AROUND = 0
@@ -899,6 +906,38 @@ class Sprite(pygame.sprite.Sprite):
         """  
         self.point_towards(pygame.mouse.get_pos(), offset_degree)
 
+
+    def if_on_edge_bounce(self, bounce_amplitude=5):
+        if self._lock_to_sprite:
+            print("a locked sprite cannot bounce")
+            return
+        
+        x, y = self.__direction
+        changed = False
+
+        if self.is_touching(game._top_edge):
+            changed = True
+            self.y += bounce_amplitude
+            y = abs(y)
+
+        elif self.is_touching(game._bottom_edge):
+            changed = True
+            self.y -= bounce_amplitude
+            y = -abs(y)
+        
+        if self.is_touching(game._left_edge):
+            changed = True
+            self.x += bounce_amplitude
+            x = abs(x)
+
+        elif self.is_touching(game._right_edge):
+            changed = True
+            self.x -= bounce_amplitude
+            x = -abs(x)
+
+        # is it really gonna make a difference in the performance?
+        if changed: 
+            self.direction = pymunk.Vec2d(x, y).angle_degrees
 
     
     def lock_to(self, sprite: Sprite, offset: Tuple[float, float], reset_xy = False):
@@ -1634,4 +1673,13 @@ class Sprite(pygame.sprite.Sprite):
     
     # END: physics property
 
-    
+
+
+def __create_edges_for_on_edge_bounce():
+    t, l, b, r = create_edge_sprites((255, 255, 255, 255), thickness=0, collision_type=0)
+    game._top_edge = t
+    game._left_edge = l
+    game._bottom_edge = b
+    game._right_edge = r
+
+__create_edges_for_on_edge_bounce()
