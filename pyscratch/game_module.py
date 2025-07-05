@@ -325,6 +325,21 @@ class Game:
         """
         self._screen  = pygame.display.set_mode( *arg, **kwargs)
 
+        self._screen_width = self._screen.get_width()
+        self._screen_height = self._screen.get_height()
+
+
+
+    def _do_autoremove(self):
+        for s in self._all_sprites:
+            if ((s.x < s.oob_limit) or 
+             (s.x > s.oob_limit + self._screen_width) or 
+             (s.y < s.oob_limit) or 
+             (s.y > s.oob_limit + self._screen_height) 
+            ):
+                s.remove()
+                print(f"A sprite is removed for going out of boundary above the specified limit.")
+
 
 
     def start(self, framerate=30, sim_step_min=300, debug_draw=False, event_count=False, show_mouse_position: Optional[bool]=None, exit_key: Optional[str]="escape"):
@@ -368,8 +383,11 @@ class Game:
         for t in self._game_start_triggers:
             t.trigger()
 
-
+        cleanup_period = 2*framerate
+        loop_count = 0
         while True:
+            loop_count += 1
+            
             dt = clock.tick(framerate)
             self._current_time_ms += dt
             for i in range(draw_every_n_step): 
@@ -423,8 +441,8 @@ class Game:
 
 
             pygame.display.flip()
-
-
+            if not loop_count % cleanup_period:
+                self._do_autoremove()
     
 
     def load_sound(self, key: str, path: str) :

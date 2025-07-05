@@ -620,6 +620,10 @@ class Sprite(pygame.sprite.Sprite):
         """Whether or not this sprite is draggable."""
 
 
+        self.oob_limit = 500
+        """The sprite will be removed automatically when it is out of the screen for more than `oob_limit` pixel."""
+
+
         self._lock_to_sprite = None
         self._lock_offset = 0, 0
         self.__x, self.__y = self._physics_manager.body.position[0],  self._physics_manager.body.position[1]
@@ -665,8 +669,10 @@ class Sprite(pygame.sprite.Sprite):
             # or can i change it to kinamatic temporarily
 
     def _is_mouse_selected(self):
-        # TODO: wtf 
+        # TODO: why did i do this 
         return self._mouse_selected
+    
+
     
     def set_draggable(self, draggable):
         """
