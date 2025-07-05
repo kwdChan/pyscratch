@@ -447,7 +447,7 @@ def adjust_brightness(image, factor):
     return new_image
 
 
-def draw_guide_lines(screen: pygame.Surface, font: pygame.font.Font, minor_grid, major_grid):
+def _draw_guide_lines(screen: pygame.Surface, font: pygame.font.Font, minor_grid, major_grid):
     w, h = screen.get_width(), screen.get_height()
     
 
@@ -481,7 +481,7 @@ def draw_guide_lines(screen: pygame.Surface, font: pygame.font.Font, minor_grid,
 
 
 
-def show_mouse_position(screen, font):
+def _show_mouse_position(screen, font):
     w, h = screen.get_width(), screen.get_height()
     
     mx, my = pygame.mouse.get_pos()
