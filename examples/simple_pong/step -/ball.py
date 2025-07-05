@@ -19,7 +19,7 @@ def movement():
     while True: 
         yield 1/60
         if pysc.game.shared_data['running']:
-            pysc.game.show_sprite(ball_sprite)
+            pysc.game._show_sprite(ball_sprite)
             if ball_sprite.is_touching(top_edge):
                 speed_y = abs(speed_y)
 
@@ -46,7 +46,7 @@ def movement():
             ball_sprite.y += speed_y
         else:
             # TODO: make into a method of the sprite
-            pysc.game.hide_sprite(ball_sprite)
+            pysc.game._hide_sprite(ball_sprite)
             
             ball_sprite.y = SCREEN_HEIGHT//2
             ball_sprite.x = SCREEN_WIDTH//2

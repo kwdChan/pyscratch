@@ -108,7 +108,7 @@ def create_animated_sprite(folder_path,  *args, **kwargs):
     folder_path: str
         The path of the folder that contains the images
 
-    \*args & \*\*kwargs: Optional
+    \\*args & \\*\\*kwargs: Optional
         Whatever the `Sprite` constructor takes, except the `frame_dict` parameter.
     """
     frame_dict = load_frames_from_folder(folder_path)
@@ -132,7 +132,7 @@ def create_single_costume_sprite(image_path, *args, **kwargs):
     image_path: str
         The path of the images
 
-    \*args & \*\*kwargs: Optional
+    \\*args & \\*\\*kwargs: Optional
         Whatever the `Sprite` constructor takes, except `frame_dict` & `starting_animation`.
     """
     img = pygame.image.load(image_path).convert_alpha()
@@ -178,7 +178,7 @@ def create_shared_data_display_sprite(key, font, size = (150, 50), bg_colour=(12
         The position of the display
     update_period: float
         The variable display will update every `update_period` seconds.
-    \*\*kwargs: Optional
+    \\*\\*kwargs: Optional
         Whatever the `Sprite` constructor takes, except `frame_dict`,`starting_animation` & `position`
     """
 
@@ -212,7 +212,7 @@ def create_circle_sprite(colour, radius:float, *args, **kwargs):
         The colour of the rectangle in RGB or RGBA. Value range: [0-255].
     radius: float
         the radius of the cirlce.
-    \*args & \*\*kwargs: Optional
+    \\*args & \\*\\*kwargs: Optional
         Whatever the `Sprite` constructor takes, except `frame_dict` & `starting_animation`.
     """
 
@@ -239,7 +239,7 @@ def create_rect_sprite(colour, width, height, *args, **kwargs):
         the width (x length) of the rectangle.
     height: float
         the height (y length) of the rectangle.
-    \*args & \*\*kwargs: Optional
+    \\*args & \\*\\*kwargs: Optional
         Whatever the `Sprite` constructor take, except `frame_dict` & `starting_animation`.
     """
     rect = create_rect(colour, width, height)
@@ -597,9 +597,13 @@ class Sprite(pygame.sprite.Sprite):
         _initial_frame = frame_dict[starting_mode][0]
         self._physics_manager = _PhysicsManager(game, body_type, shape_type, shape_size_factor, position,_initial_frame)
         
-        self.private_data = {}
+        self.sprite_data = {}
         """
         A dictionary similar to `game.shared_data`. 
+
+        The access of the items can be done directly through the sprite object. 
+        For example, `my_sprite['my_data'] = "hello"` is the same as `my_sprite.sprite_data['my_data'] = "hello"` 
+        
         You can put any data or variable that should belong to the individuals sprite. 
         A good example would be the health point of a charactor. 
 
@@ -607,13 +611,16 @@ class Sprite(pygame.sprite.Sprite):
         it would be messy to put the health point of each enemy to `game.shared_data`. In this 
         case, putting the health point in the private data is a better choice.
 
+
         Example:
         ```python
-        my_sprite.private_data['hp'] = 10
+        # same as `my_sprite.sprite_data['hp'] = 10`
+        my_sprite['hp'] = 10
 
         def on_hit(damage):
-            my_sprite.private_data['hp'] -= damage
-            print("how much hp I have left: ", my_sprite.private_data['hp'])
+            my_sprite['hp'] -= damage
+
+            print("how much hp I have left: ", my_sprite['hp']) 
 
         my_sprite.when_received_message('hit').add_handler(on_hit)
         
@@ -628,7 +635,7 @@ class Sprite(pygame.sprite.Sprite):
 
 
         self.oob_limit = 500
-        """The sprite will be removed automatically when it is out of the screen for more than `oob_limit` pixel."""
+        """The sprite will be removed automatically when it is out of the screen for more than `oob_limit` pixel. Default to 500."""
 
 
         self._lock_to_sprite = None
@@ -643,10 +650,10 @@ class Sprite(pygame.sprite.Sprite):
         game._add_sprite(self)
 
     def __getitem__(self, key):
-        return self.private_data[key]
+        return self.sprite_data[key]
     
     def __setitem__(self, k, v):
-        self.private_data[k] = v
+        self.sprite_data[k] = v
 
     @property
     def _body(self):
@@ -794,23 +801,32 @@ class Sprite(pygame.sprite.Sprite):
         #print(self.__direction)
 
 
-    def move_indir(self, steps: float):
+    def move_indir(self, steps: float, offset_degrees=0):
         """
-        Moves the sprite forward along `direction`.   
+        Moves the sprite forward along `direction + offset_degrees` degrees.
+
+        Example: 
+        ```python
+        # move along the direction 
+        my_sprite.move_indir(10)
+
+        # move along the direction + 90 degrees
+        my_sprite.move_indir(10, 90)        
+        ```        
         """
         #self._body.position += 
         
-        xs, ys = self.__direction*steps
+        xs, ys = self.__direction.rotated_degrees(offset_degrees)*steps
         self.x += xs
         self.y += ys
         
-    def move_across_dir(self, steps: float):
-        """
-        Moves the sprite forward along `direction` + 90 degrees  
-        """
-        xs, ys = self.__direction.perpendicular()*steps
-        self.x += xs
-        self.y += ys        
+    # def move_across_dir(self, steps: float, offset_degrees=0):
+    #     """
+    #     Moves the sprite forward along `direction` + 90 degrees  
+    #     """
+    #     xs, ys = self.__direction.rotated_degrees(offset_degrees)*steps
+    #     self.x += xs
+    #     self.y += ys        
         
 
     def move_xy(self, xy: Tuple[float, float]):
@@ -908,6 +924,11 @@ class Sprite(pygame.sprite.Sprite):
 
 
     def if_on_edge_bounce(self, bounce_amplitude=5):
+        """
+        Works very similarly to the Scratch counterpart except that it still allows the sprite to go into the edge if you force it to. 
+
+        The optional parameter `bounce_amplitude` is used for specifying by how much the sprite should be repelled from the edge.
+        """
         if self._lock_to_sprite:
             print("a locked sprite cannot bounce")
             return
@@ -942,11 +963,13 @@ class Sprite(pygame.sprite.Sprite):
     
     def lock_to(self, sprite: Sprite, offset: Tuple[float, float], reset_xy = False):
         """
-        *EXTENDED FEATURE*
+        *EXTENDED FEATURE, EXPERIMENTAL*
 
         Locks in the position of this sprite relative to the position of another sprite, 
         so the sprite will always be in the same location relative to the other sprite.  
         This method only need to run once (instead of continuously in a loop)
+
+        KNOWN ISSUE: Dragging a locked sprite will cause the sprite to go unpredictably. (It's unlikely that you would need to do so anyway.)
 
         Example: 
         ```python
@@ -980,7 +1003,7 @@ class Sprite(pygame.sprite.Sprite):
 
     def release_position_lock(self):
         """
-        *EXTENDED FEATURE*
+        *EXTENDED FEATURE, EXPERIMENTAL*
 
         Release the position lock set by `lock_to`
         """        
@@ -1044,7 +1067,8 @@ class Sprite(pygame.sprite.Sprite):
         Changes the set of frames that is used by `set_frame` and `next_frame`.
         This is mainly for sprites that have different animations for different actions. 
 
-        See the [guide](https://kwdchan.github.io/pyscratch/guides/2-adding-animated-sprites.html) for more details.
+        TODO: update the link
+        See the [guide](https://kwdchan.github.io/pyscratch/) for more details.
         """   
         self._drawing_manager.set_animation(name)
         
@@ -1114,12 +1138,16 @@ class Sprite(pygame.sprite.Sprite):
 
     def set_brightness(self, factor):
         """
+        *EXPERIMENTAL*
+
         Changes the brightness of the sprite. 
         """ 
         self._drawing_manager.set_brightness(factor)
 
     def set_transparency(self, factor):
         """
+        *EXPERIMENTAL*
+
         Changes the transparency of the sprite. 
 
         ***IMCOMPLETE IMPLEMENTATION***: 
@@ -1129,7 +1157,7 @@ class Sprite(pygame.sprite.Sprite):
 
     def write_text(self, text: str, font: pygame.font.Font, colour=(255,255,255), offset=(0,0), centre=True, reset=True):
         """
-        *EXTENDED FEATURE*
+        *EXTENDED FEATURE, EXPERIMENTAL*
 
         Writes text on the sprite given a font. 
         ```python
@@ -1165,7 +1193,7 @@ class Sprite(pygame.sprite.Sprite):
     
     def draw(self, image: pygame.Surface,  offset=(0,0), centre=True, reset=True):
         """
-        *EXTENDED FEATURE*
+        *EXTENDED FEATURE, EXPERIMENTAL*
 
         Draws an image on the sprite.
         ```python
@@ -1195,6 +1223,13 @@ class Sprite(pygame.sprite.Sprite):
 
     ## other blocks
     def is_touching(self, other_sprite) -> bool:
+        """
+        Returns whether or not this sprite is touching another sprite
+        ```python
+        if this_sprite.is_touching(another_sprite):
+            print('hi')
+        ```
+        """
         
         if not self in game._all_sprites_to_show: 
             return False
@@ -1240,17 +1275,15 @@ class Sprite(pygame.sprite.Sprite):
     def hide(self):
         """
         Hides the sprite. 
-        The hidden sprite is still in the space and can still interact with other sprites.
-        
-        Just hidden. 
+        The hidden sprite is still in the space but it cannot touch another sprites
         """
-        game.hide_sprite(self)
+        game._hide_sprite(self)
 
     def show(self):
         """
         Shows the sprite.
         """        
-        game.show_sprite(self)
+        game._show_sprite(self)
 
     @override
     def remove(self, *_):
@@ -1264,11 +1297,13 @@ class Sprite(pygame.sprite.Sprite):
         my_sprite.remove()
         ```
         """
-        game.remove_sprite(self)
+        game._remove_sprite(self)
 
 
     def create_clone(self):
         """
+        *EXPERIMENTAL*
+
         Create a clone of this sprite. 
         Even though is method is provided to align with Scratch, 
         The prefered way to create identitical or similar sprites 
@@ -1287,7 +1322,7 @@ class Sprite(pygame.sprite.Sprite):
             body_type = self._body.body_type, 
         )
         if not self in game._all_sprites_to_show:
-            game.hide_sprite(sprite)
+            game._hide_sprite(sprite)
 
         if self.__rotation_style == _RotationStyle.LEFTRIGHT:
             sprite.set_rotation_style_left_right()
@@ -1519,7 +1554,7 @@ class Sprite(pygame.sprite.Sprite):
     ## additional events
     def when_condition_met(self, checker=lambda: False, repeats=np.inf, other_associated_sprites: Iterable[Sprite]=[]):
         """
-        *EXTENDED FEATURE*
+        *EXTENDED FEATURE, EXPERIMENTAL*
 
         DOCUMENTATION NOT COMPLETED
 
@@ -1535,7 +1570,7 @@ class Sprite(pygame.sprite.Sprite):
     
     def when_timer_reset(self, reset_period=np.inf, repeats=np.inf, other_associated_sprites: Iterable[Sprite]=[]):
         """
-        *EXTENDED FEATURE*
+        *EXTENDED FEATURE, EXPERIMENTAL*
 
         DOCUMENTATION NOT COMPLETED
 
@@ -1551,7 +1586,7 @@ class Sprite(pygame.sprite.Sprite):
     
     def create_specific_collision_trigger(self, other_sprite: Sprite, other_associated_sprites: Iterable[Sprite]=[]):
         """
-        *EXTENDED FEATURE*
+        *EXTENDED FEATURE, EXPERIMENTAL*
 
         DOCUMENTATION NOT COMPLETED
 
@@ -1567,6 +1602,8 @@ class Sprite(pygame.sprite.Sprite):
 
     def set_shape(self, shape_type: ShapeType=ShapeType.BOX):
         """
+        *EXTENDED FEATURE, EXPERIMENTAL*
+        
         Sets the collision shape of the sprite. The shape type can be one of the followings
         - box
         - circle
@@ -1586,6 +1623,8 @@ class Sprite(pygame.sprite.Sprite):
 
     def set_shape_size_factor(self, factor=0.8):
         """
+        *EXTENDED FEATURE, EXPERIMENTAL*
+
         Changes the size of the collision shape relative to the size of the image of the sprite. 
         For example: 
         - factor = 1.0 -> same size
@@ -1597,7 +1636,7 @@ class Sprite(pygame.sprite.Sprite):
 
     def set_collision_type(self, value: int=0):
         """
-        *EXTENDED FEATURE*
+        *EXTENDED FEATURE, EXPERIMENTAL*
 
         Set the collision type of the sprite for detection purposes.
         The collision type can be any integer except that 

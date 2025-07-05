@@ -20,36 +20,36 @@ def FloatInputBoxVerticallyLabel(data_key, message_on_change="", default_value="
 
     # def on_click():
     #     text_box.set_animation('selected')
-    #     text_box.private_data['selected'] = True
+    #     text_box.sprite_data['selected'] = True
 
     # text_box.when_this_sprite_clicked().add_handler(on_click)
     text_box['selected'] = False
     text_box['text'] = default_value
     try:
-        pysc.game.shared_data[data_key] = float(text_box.private_data['text'])
+        pysc.game.shared_data[data_key] = float(text_box.sprite_data['text'])
     except:
         pysc.game.shared_data[data_key] = None    
 
     text_box.write_text(text_box['text'], DEFAULT_FONT24, colour=(255,255,255), offset=(w/2, h/2))
     def on_any_key_press(key:str, updown):
         if updown == 'up': return
-        if not text_box.private_data['selected']: return
+        if not text_box.sprite_data['selected']: return
         if text_box['just_selected']: 
             text_box['just_selected'] = False
             text_box['text'] = ''
 
         if key.isdigit() or key == '.':
-            text_box.private_data['text'] += key
+            text_box.sprite_data['text'] += key
 
-        if key == 'backspace' and len(text_box.private_data['text']):
-            text_box.private_data['text'] = text_box.private_data['text'][:-1]
+        if key == 'backspace' and len(text_box.sprite_data['text']):
+            text_box.sprite_data['text'] = text_box.sprite_data['text'][:-1]
 
         try:
-            pysc.game.shared_data[data_key] = float(text_box.private_data['text'])
+            pysc.game.shared_data[data_key] = float(text_box.sprite_data['text'])
         except:
             pysc.game.shared_data[data_key] = None
         
-        text_box.write_text(text_box.private_data['text'], DEFAULT_FONT24, colour=(0,0,0), offset=(w/2, h/2))
+        text_box.write_text(text_box.sprite_data['text'], DEFAULT_FONT24, colour=(0,0,0), offset=(w/2, h/2))
 
         if message_on_change:
             pysc.game.broadcast_message(message_on_change, pysc.game.shared_data[data_key])
@@ -60,13 +60,13 @@ def FloatInputBoxVerticallyLabel(data_key, message_on_change="", default_value="
         if not text_box.is_touching_mouse():
             #print(button)
             #print(pos)
-            text_box.private_data['selected'] = False
+            text_box.sprite_data['selected'] = False
             text_box['just_selected'] = False
             text_box.set_animation('deselected')
-            text_box.write_text(text_box.private_data['text'], DEFAULT_FONT24, colour=(255,255,255), offset=(w/2, h/2))
+            text_box.write_text(text_box.sprite_data['text'], DEFAULT_FONT24, colour=(255,255,255), offset=(w/2, h/2))
 
         else:
-            text_box.private_data['selected'] = True
+            text_box.sprite_data['selected'] = True
             text_box['just_selected'] = True
             text_box.set_animation('selected')
             text_box.write_text(text_box['text'], DEFAULT_FONT24, colour=(0,0,0), offset=(w/2, h/2))
@@ -90,36 +90,36 @@ def FloatInputBoxHoriLabel(data_key, message_on_change="", default_value="", lab
 
     # def on_click():
     #     text_box.set_animation('selected')
-    #     text_box.private_data['selected'] = True
+    #     text_box.sprite_data['selected'] = True
 
     # text_box.when_this_sprite_clicked().add_handler(on_click)
     text_box['selected'] = False
     text_box['text'] = default_value
     try:
-        pysc.game.shared_data[data_key] = float(text_box.private_data['text'])
+        pysc.game.shared_data[data_key] = float(text_box.sprite_data['text'])
     except:
         pysc.game.shared_data[data_key] = None    
 
     text_box.write_text(text_box['text'], DEFAULT_FONT24, colour=(255,255,255), offset=(w/2, h/2))
     def on_any_key_press(key:str, updown):
         if updown == 'up': return
-        if not text_box.private_data['selected']: return
+        if not text_box.sprite_data['selected']: return
         if text_box['just_selected']: 
             text_box['just_selected'] = False
             text_box['text'] = ''
 
         if key.isdigit() or key == '.':
-            text_box.private_data['text'] += key
+            text_box.sprite_data['text'] += key
 
-        if key == 'backspace' and len(text_box.private_data['text']):
-            text_box.private_data['text'] = text_box.private_data['text'][:-1]
+        if key == 'backspace' and len(text_box.sprite_data['text']):
+            text_box.sprite_data['text'] = text_box.sprite_data['text'][:-1]
 
         try:
-            pysc.game.shared_data[data_key] = float(text_box.private_data['text'])
+            pysc.game.shared_data[data_key] = float(text_box.sprite_data['text'])
         except:
             pysc.game.shared_data[data_key] = None
         
-        text_box.write_text(text_box.private_data['text'], DEFAULT_FONT24, colour=(0,0,0), offset=(w/2, h/2))
+        text_box.write_text(text_box.sprite_data['text'], DEFAULT_FONT24, colour=(0,0,0), offset=(w/2, h/2))
 
         if message_on_change:
             pysc.game.broadcast_message(message_on_change, pysc.game.shared_data[data_key])
@@ -130,13 +130,13 @@ def FloatInputBoxHoriLabel(data_key, message_on_change="", default_value="", lab
         if not text_box.is_touching_mouse():
             #print(button)
             #print(pos)
-            text_box.private_data['selected'] = False
+            text_box.sprite_data['selected'] = False
             text_box['just_selected'] = False
             text_box.set_animation('deselected')
-            text_box.write_text(text_box.private_data['text'], DEFAULT_FONT24, colour=(255,255,255), offset=(w/2, h/2))
+            text_box.write_text(text_box.sprite_data['text'], DEFAULT_FONT24, colour=(255,255,255), offset=(w/2, h/2))
 
         else:
-            text_box.private_data['selected'] = True
+            text_box.sprite_data['selected'] = True
             text_box['just_selected'] = True
             text_box.set_animation('selected')
             text_box.write_text(text_box['text'], DEFAULT_FONT24, colour=(0,0,0), offset=(w/2, h/2))
@@ -159,31 +159,31 @@ def IntegerInputBox(data_key, message_on_change="", default_value="", label_widt
 
     # def on_click():
     #     text_box.set_animation('selected')
-    #     text_box.private_data['selected'] = True
+    #     text_box.sprite_data['selected'] = True
 
     # text_box.when_this_sprite_clicked().add_handler(on_click)
-    text_box.private_data['selected'] = False
-    text_box.private_data['text'] = default_value
+    text_box.sprite_data['selected'] = False
+    text_box.sprite_data['text'] = default_value
     text_box.write_text(text_box['text'], DEFAULT_FONT24, colour=(255,255,255), offset=(w/2, h/2))
     def on_any_key_press(key:str, updown):
         if updown == 'up': return
-        if not text_box.private_data['selected']: return
+        if not text_box.sprite_data['selected']: return
         if text_box['just_selected']: 
             text_box['just_selected'] = False
             text_box['text'] = ''
 
         if key.isdigit():
-            text_box.private_data['text'] += key
+            text_box.sprite_data['text'] += key
 
-        if key == 'backspace' and len(text_box.private_data['text']):
-            text_box.private_data['text'] = text_box.private_data['text'][:-1]
+        if key == 'backspace' and len(text_box.sprite_data['text']):
+            text_box.sprite_data['text'] = text_box.sprite_data['text'][:-1]
 
         try:
-            pysc.game.shared_data[data_key] = int(text_box.private_data['text'])
+            pysc.game.shared_data[data_key] = int(text_box.sprite_data['text'])
         except:
             pysc.game.shared_data[data_key] = None
         
-        text_box.write_text(text_box.private_data['text'], DEFAULT_FONT24, colour=(0,0,0), offset=(w/2, h/2))
+        text_box.write_text(text_box.sprite_data['text'], DEFAULT_FONT24, colour=(0,0,0), offset=(w/2, h/2))
         if message_on_change:
             pysc.game.broadcast_message(message_on_change, pysc.game.shared_data[data_key])
         
