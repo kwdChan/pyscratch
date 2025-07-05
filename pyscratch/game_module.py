@@ -6,6 +6,7 @@ you can also directly do `pysc.is_key_pressed`.
 
 from __future__ import annotations
 from os import PathLike
+import sys
 
 import numpy as np
 import pygame
@@ -208,7 +209,7 @@ class Game:
         self._all_message_subscriptions: Dict[str, List[Event]] = {}
 
         # key events 
-        key_event = self.create_pygame_event_trigger([pygame.KEYDOWN, pygame.KEYUP])
+        key_event = self.create_pygame_event([pygame.KEYDOWN, pygame.KEYUP])
         key_event.add_handler(self.__key_event_handler)
         self._all_simple_key_triggers: List[Event] = [] # these are to be triggered by self.__key_event_handler only
 
@@ -219,7 +220,7 @@ class Game:
         self._sprite_click_release_trigger:Dict[Sprite, List[Event]] = {}  #TODO: need to be able to destory the trigger here when the sprite is destoryed
 
         self._sprite_click_trigger:Dict[Sprite, List[Event]] = {}  #TODO: need to be able to destory the trigger here when the sprite is destoryed
-        self._mouse_drag_trigger = self.create_pygame_event_trigger([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
+        self._mouse_drag_trigger = self.create_pygame_event([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
         self._mouse_drag_trigger.add_handler(self.__mouse_drag_handler)
 
         ## Backdrops
@@ -326,7 +327,7 @@ class Game:
 
 
 
-    def start(self, framerate=30, sim_step_min=300, debug_draw=False, event_count=False, show_mouse_position: Optional[bool]=None):
+    def start(self, framerate=30, sim_step_min=300, debug_draw=False, event_count=False, show_mouse_position: Optional[bool]=None, exit_key: Optional[str]="escape"):
         """
         Start the game. 
 
@@ -344,6 +345,12 @@ class Game:
         event_count: bool
             Whether or not to print out the number of active events for debugging purposes
 
+        show_mouse_position: bool
+            Whether or not to show the mouse position in the buttom-right corner
+
+        exit_key: Optional[str]
+            Very useful if you are working on a fullscreen game
+            Set to None to disable it.
         """
         guide_lines_font = pygame.font.Font(None, 36)
 
@@ -353,8 +360,11 @@ class Game:
 
         self._current_time_ms = 0
 
-
-
+        if exit_key:
+            self.when_key_pressed(exit_key).add_handler(lambda _: sys.exit())
+            
+        self.create_pygame_event([pygame.QUIT]).add_handler(lambda _: sys.exit())
+        
         for t in self._game_start_triggers:
             t.trigger()
 
@@ -365,16 +375,8 @@ class Game:
             for i in range(draw_every_n_step): 
                 self._space.step(dt/draw_every_n_step)
 
-
-
             self._all_pygame_events = pygame.event.get()
-            for event in self._all_pygame_events:
-                if event.type == pygame.QUIT:
-                    return 
 
-
-            # for j in self.all_forever_jobs:
-            #     j()
 
             # check conditions
             for c in self._all_conditions:
@@ -925,7 +927,7 @@ class Game:
 
 
     ## advance events
-    def create_pygame_event_trigger(self, flags: List[int], associated_sprites : Iterable[Sprite]=[]):
+    def create_pygame_event(self, flags: List[int], associated_sprites : Iterable[Sprite]=[]):
         """
         *EXTENDED FEATURE*
 
@@ -949,7 +951,8 @@ class Game:
                 condition.remove()
 
         condition.change_checker(checker_hijack)
-        return condition.trigger
+
+        return cast(Event[pygame.event.Event], condition.trigger)
 
 
     def create_specific_collision_trigger(self, sprite1: Sprite, sprite2: Sprite, other_associated_sprites: Iterable[Sprite]=[]):
@@ -1102,7 +1105,7 @@ class Game:
         DOCUMENTATION NOT COMPLETED
         
         """
-        event_internal = self.create_pygame_event_trigger([pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN], associated_sprites)
+        event_internal = self.create_pygame_event([pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN], associated_sprites)
         event = self._create_event(associated_sprites)
         def handler(e):
             updown = "up" if e.type == pygame.MOUSEBUTTONUP else "down"
@@ -1118,7 +1121,7 @@ class Game:
         DOCUMENTATION NOT COMPLETED
         
         """
-        event_internal = self.create_pygame_event_trigger([pygame.MOUSEWHEEL], associated_sprites)
+        event_internal = self.create_pygame_event([pygame.MOUSEWHEEL], associated_sprites)
         event = self._create_event(associated_sprites)
         def handler(e):
             updown = "up" if e.y > 0 else "down"
