@@ -359,8 +359,8 @@ class Game:
              (s.y < -s.oob_limit) or 
              (s.y > (s.oob_limit + self.__screen_height)) 
             ):     
-                print(s.x, s.y)
-                print(s.oob_limit + self.__screen_width, s.oob_limit + self.__screen_height)
+                #print(s.x, s.y)
+                #print(s.oob_limit + self.__screen_width, s.oob_limit + self.__screen_height)
                 s.remove()
                 print(f"A sprite is removed for going out of boundary above the specified limit.")
 
