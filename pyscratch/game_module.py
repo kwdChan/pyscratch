@@ -151,6 +151,7 @@ class Game:
         assert not Game._singleton_lock, "Already instantiated."
         Game._singleton_lock = True
 
+        # the screen is needed to load the images. 
         self._screen: pygame.Surface  = pygame.display.set_mode(screen_size, vsync=1)
 
         self._space: pymunk.Space = pymunk.Space()
@@ -332,19 +333,17 @@ class Game:
 
         `game.update_screen_mode((SCREEN_WIDTH, SCREEN_HEIGHT))`
         """
-        self._screen  = pygame.display.set_mode( *arg, **kwargs)
-
-        self.__screen_width = self._screen.get_width()
-        self.__screen_height = self._screen.get_height()
-
+        self.__screen_args = arg
+        self.__screen_kwargs = kwargs
+        
     @property
     def screen_width(self):
-        """The width of the screen"""
+        """The width of the screen. Not available until the game is started"""
         return self.__screen_width
     
     @property
     def screen_height(self):
-        """The height of the screen"""
+        """The height of the screen. Not available until the game is started"""
         return self.__screen_height
     
 
@@ -370,6 +369,14 @@ class Game:
                 os._exit(1)
 
             last_frame_time = self._current_time_ms
+
+    def start_parallel(self, *args, **kwargs):
+        """
+        Start the game on another thread
+        """        
+        t = threading.Thread(target=self.start, args=args, kwargs=kwargs)
+        t.start()
+        return t
 
 
     def start(self, framerate=30, sim_step_min=300, debug_draw=False, event_count=False, show_mouse_position: Optional[bool]=None, exit_key: Optional[str]="escape"):
@@ -397,6 +404,12 @@ class Game:
             Very useful if you are working on a fullscreen game
             Set to None to disable it.
         """
+
+        self._screen  = pygame.display.set_mode(*self.__screen_args, **self.__screen_kwargs)
+
+        self.__screen_width = self._screen.get_width()
+        self.__screen_height = self._screen.get_height()
+
         guide_lines_font = pygame.font.Font(None, 36)
 
         clock = pygame.time.Clock()
