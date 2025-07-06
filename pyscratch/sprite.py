@@ -657,7 +657,7 @@ class Sprite(pygame.sprite.Sprite):
         """Whether or not this sprite is draggable."""
 
 
-        self.oob_limit = 500
+        self.oob_limit: float = 500
         """The sprite will be removed automatically when it is out of the screen for more than `oob_limit` pixel. Default to 500."""
 
 
