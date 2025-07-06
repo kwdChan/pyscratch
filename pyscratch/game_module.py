@@ -144,7 +144,7 @@ class Game:
     """
     
     _singleton_lock = False
-    def __init__(self, screen_size=(1280, 720)):
+    def __init__(self):
         """@private"""
         pygame.init()
 
@@ -152,7 +152,7 @@ class Game:
         Game._singleton_lock = True
 
         # the screen is needed to load the images. 
-        self._screen: pygame.Surface  = pygame.display.set_mode(screen_size, vsync=1)
+        self._screen: pygame.Surface  = pygame.display.set_mode((1280, 720), vsync=1)
 
         self._space: pymunk.Space = pymunk.Space()
 
@@ -230,9 +230,9 @@ class Game:
         self.backdrops: List[pygame.Surface] = []
         """A list of all the loaded backdrop images. You will not need to interact with this property directly."""
 
-        self.__screen_width: Optional[int] = None
-        self.__screen_height: Optional[int] = None
-        self.__framerate: Optional[float] = None
+        self.__screen_width: int = 0
+        self.__screen_height: int = 0
+        self.__framerate: float = 0
 
 
         self.__backdrop_index = None
@@ -260,7 +260,7 @@ class Game:
         self.max_number_sprite = 1000
         """The maximum number of sprites in the game. Adding more than this will lead to an error."""
         
-
+        self.update_screen_mode()
 
     def __key_event_handler(self, e):
         up_or_down = 'down' if e.type == pygame.KEYDOWN else 'up'
@@ -409,6 +409,9 @@ class Game:
             Very useful if you are working on a fullscreen game
             Set to None to disable it.
         """
+
+        if not (len(self.__screen_args) or len(self.__screen_kwargs)):
+            self.__screen_kwargs = dict(size=(1280, 720))
 
         self._screen  = pygame.display.set_mode(*self.__screen_args, **self.__screen_kwargs)
 
