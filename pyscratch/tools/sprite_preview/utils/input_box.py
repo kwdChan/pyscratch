@@ -178,14 +178,13 @@ def IntegerInputBox(data_key, message_on_change="", default_value="", label_widt
         if key == 'backspace' and len(text_box.sprite_data['text']):
             text_box.sprite_data['text'] = text_box.sprite_data['text'][:-1]
 
-        try:
-            pysc.game.shared_data[data_key] = int(text_box.sprite_data['text'])
-        except:
-            pysc.game.shared_data[data_key] = None
+        # try:
+        #     pysc.game.shared_data[data_key] = int(text_box.sprite_data['text'])
+        # except:
+        #     pysc.game.shared_data[data_key] = None
         
         text_box.write_text(text_box.sprite_data['text'], DEFAULT_FONT24, colour=(0,0,0), offset=(w/2, h/2))
-        if message_on_change:
-            pysc.game.broadcast_message(message_on_change, pysc.game.shared_data[data_key])
+
         
         
     text_box.when_any_key_pressed().add_handler(on_any_key_press)
@@ -194,6 +193,13 @@ def IntegerInputBox(data_key, message_on_change="", default_value="", label_widt
         if not text_box.is_touching_mouse():
             #print(button)
             #print(pos)
+            if text_box['selected']:
+                try:
+                    pysc.game.shared_data[data_key] = int(text_box.sprite_data['text'])
+                except:
+                    pysc.game.shared_data[data_key] = None
+                if message_on_change:
+                    pysc.game.broadcast_message(message_on_change, pysc.game.shared_data[data_key])
             text_box['selected'] = False
             text_box['just_selected'] = False
             text_box.set_animation('deselected')
