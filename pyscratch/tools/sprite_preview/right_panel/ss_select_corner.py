@@ -27,6 +27,10 @@ def on_start():
     cir1.x = game['ss_view_buttom_right'][0]-1
     cir1.y = game['ss_view_buttom_right'][1]-1
 
+
+    cir0.oob_limit=np.inf
+    cir1.oob_limit=np.inf
+
 game.when_game_start([cir0, cir1]).add_handler(on_start)
 
 
@@ -80,7 +84,7 @@ def on_start2():
         # top left of the sprite sheet
         x0, y0 = ss_sprite.rect.topleft
 
-        img_w, img_h = ss_sprite.rect.width, ss_sprite.rect.height
+        img_w, img_h = ss_sprite['original_width'], ss_sprite['original_height']
 
         # scale factor
         scale_factor = ss_sprite.scale_factor
@@ -94,8 +98,8 @@ def on_start2():
         game['offset_y'] = Oy = max(np.floor((cy0-y0)/scale_factor), 0)
 
         # L
-        game['limit_x'] = Lx = min(np.ceil((cx1-x0)/scale_factor), np.ceil(img_w/scale_factor)-1)
-        game['limit_y'] = Ly = min(np.ceil((cy1-y0)/scale_factor), np.ceil(img_h/scale_factor)-1) 
+        game['limit_x'] = Lx = min(np.ceil((cx1-x0)/scale_factor), img_w-1)
+        game['limit_y'] = Ly = min(np.ceil((cy1-y0)/scale_factor), img_h-1) 
 
         # update the size
         game['size_x'] = Lx - Ox + 1
@@ -122,7 +126,7 @@ def on_offset_x_change(data):
     ss_sprite: pysc.Sprite = game['ss_sprite']
     if not ss_sprite: return 
     
-    game['limit_x'] = min(size_x+offset_x-1, ss_sprite.rect.width-1)
+    game['limit_x'] = min(size_x+offset_x-1, ss_sprite['original_width']-1)
 
     game['size_x'] =  game['limit_x'] - offset_x + 1
 
@@ -143,7 +147,7 @@ def on_offset_y_change(data):
     ss_sprite: pysc.Sprite = game['ss_sprite']
     if not ss_sprite: return 
     
-    game['limit_y'] = min(size_y+offset_y-1, ss_sprite.rect.height-1)
+    game['limit_y'] = min(size_y+offset_y-1, ss_sprite['original_height']-1)
 
     game['size_y'] =  game['limit_y'] - offset_y + 1
 

@@ -6,6 +6,7 @@ pysc.game.broadcast_message
 from pathlib import Path
 from typing import List, Tuple, cast
 
+import numpy as np
 from pygame import Surface
 import pyscratch as pysc
 from settings import *
@@ -73,6 +74,9 @@ def on_msg_image_selected(path):
         ss_sprite:pysc.Sprite = ss_view['spritesheet_sprite']
 
         pysc.game['ss_sprite'] = ss_sprite
+        ss_sprite.oob_limit=np.inf
+        ss_sprite['original_width'] = img.get_width()
+        ss_sprite['original_height'] = img.get_height()
 
         
         #ss_sprite.lock_to(ss_view, offset=(0,0)) 
@@ -121,7 +125,7 @@ def on_msg_cut(_):
         return
     n_row = int(n_row)
     n_col = int(n_col)
-
+    print(game['offset_x'], game['offset_y'], game['size_x'], game['size_y'])
     spritesheet_to_cut = spritesheet.subsurface(game['offset_x'], game['offset_y'], game['size_x'], game['size_y'])
 
     for i, (r, c) in enumerate(product(range(n_row), range(n_col))):
@@ -136,6 +140,7 @@ ss_view.when_receive_message('cut').add_handler(on_msg_cut)
 def SpriteFrameAfterCut(surface: Surface, order, scale_factor, n_col):
     w, h = surface.get_width()*scale_factor, surface.get_height()*scale_factor
     sprite = pysc.Sprite({'always':[surface]})
+    sprite.oob_limit = np.inf
     sprite.scale_by(scale_factor)
 
 

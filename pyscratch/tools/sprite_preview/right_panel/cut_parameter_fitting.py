@@ -37,11 +37,14 @@ def on_click():
         game['n_col'] = n_col
         game['pixel_x'] = pixel_x
         game['offset_x'] = offset_x
+        game['size_x'] = min(game['limit_x'] - game['offset_x']+1, game['size_x'])
 
     if (n_row and pixel_y and (not offset_y is None)):
         game['n_row'] = n_row
         game['pixel_y'] = pixel_y
         game['offset_y'] = offset_y
+        game['offset_y'] = offset_y
+        game['size_y'] = min(game['limit_y'] - game['offset_y']+1, game['size_y'])
 
 
     #game.broadcast_message('n_row_change')
