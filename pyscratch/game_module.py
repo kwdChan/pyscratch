@@ -156,6 +156,7 @@ class Game:
 
         self._space: pymunk.Space = pymunk.Space()
 
+
         self._draw_options = DrawOptions(self._screen)
 
         # sounds
@@ -229,9 +230,9 @@ class Game:
         self.backdrops: List[pygame.Surface] = []
         """A list of all the loaded backdrop images. You will not need to interact with this property directly."""
 
-        self.__screen_width = 0
-        
-        self.__screen_height = 0
+        self.__screen_width: Optional[int] = None
+        self.__screen_height: Optional[int] = None
+        self.__framerate: Optional[float] = None
 
 
         self.__backdrop_index = None
@@ -346,7 +347,11 @@ class Game:
         """The height of the screen. Not available until the game is started"""
         return self.__screen_height
     
-
+    @property
+    def framerate(self):
+        """The frame rate of the game. Not available until the game is started"""
+        return self.__framerate
+    
     def _do_autoremove(self):
         for s in self._all_sprites:
             if ((s.x < -s.oob_limit) or 
@@ -407,6 +412,7 @@ class Game:
 
         self._screen  = pygame.display.set_mode(*self.__screen_args, **self.__screen_kwargs)
 
+        self.__framerate = framerate
         self.__screen_width = self._screen.get_width()
         self.__screen_height = self._screen.get_height()
 
