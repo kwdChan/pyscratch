@@ -16,7 +16,7 @@ import pygame
 import pymunk
 from .event import _ConditionInterface, Event, Condition, TimerCondition, _declare_callback_type
 from pymunk.pygame_util import DrawOptions
-from typing import Any, Callable, Generic, Iterable, Optional, List, Dict, ParamSpec, Set, Tuple, TypeVar, Union, cast
+from typing import Any, Callable, Generic, Iterable, Literal, Optional, List, Dict, ParamSpec, Set, Tuple, TypeVar, Union, cast
 from typing import TYPE_CHECKING
 from . import helper
 
@@ -976,14 +976,34 @@ class Game:
 
 
     ## advance events
-    def create_pygame_event(self, flags: List[int], associated_sprites : Iterable[Sprite]=[]):
+    def create_pygame_event(self, types: List[int], associated_sprites : Iterable[Sprite]=[]) -> Event[[pygame.event.Event]]:
         """
         *EXTENDED FEATURE*
 
-        DOCUMENTATION NOT COMPLETED
+        Receives specific types of pygame events when they happen. 
+
+        See pygame.event for more details: https://www.pygame.org/docs/ref/event.html
+
+        ```python
+        def key_press_event(event):
+            # the event argument is a `pygame.event.Event`. 
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_d:
+                print("the key d is down")
+
+            if event.type == pygame.KEYUP and event.key == pygame.K_d:
+                print("the key d is up")
+
+        pysc.game.create_pygame_event([pygame.KEYDOWN, pygame.KEYUP])           
+        ```
+
+        The event handler have to take one parameter:
+        - **event** (pygame.event.Event): An pygame event object. 
 
         Parameters
         ---
+        types: List[int]
+            A list of the pygame event flags. 
+
         associated_sprites: List[Sprite]
             A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
         """
@@ -993,7 +1013,7 @@ class Game:
         
         def checker_hijack():
             for e in self._all_pygame_events:
-                if e.type in flags:
+                if e.type in types:
                     condition.trigger.trigger(e)
 
             if not condition.trigger.stay_active:
@@ -1004,9 +1024,9 @@ class Game:
         return cast(Event[pygame.event.Event], condition.trigger)
 
 
-    def create_specific_collision_trigger(self, sprite1: Sprite, sprite2: Sprite, other_associated_sprites: Iterable[Sprite]=[]):
+    def _create_specific_collision_trigger(self, sprite1: Sprite, sprite2: Sprite, other_associated_sprites: Iterable[Sprite]=[]):
         """
-        *EXTENDED FEATURE*
+        *EXTENDED FEATURE, EXPERIMENTAL*
 
         DOCUMENTATION NOT COMPLETED
 
@@ -1023,7 +1043,7 @@ class Game:
      
         return trigger
 
-    def create_type2type_collision_trigger(self, type_a:int, type_b:int, collision_suppressed=False, associated_sprites: Iterable[Sprite]=[]):
+    def _create_type2type_collision_trigger(self, type_a:int, type_b:int, collision_suppressed=False, associated_sprites: Iterable[Sprite]=[]):
         """
         *EXTENDED FEATURE*
 
@@ -1063,7 +1083,7 @@ class Game:
         return trigger
 
 
-    def create_type_collision_trigger(self, collision_type:int , collision_suppressed=False, associated_sprites: Iterable[Sprite]=[]):
+    def _create_type_collision_trigger(self, collision_type:int , collision_suppressed=False, associated_sprites: Iterable[Sprite]=[]):
         """
         *EXTENDED FEATURE*
 
@@ -1088,7 +1108,7 @@ class Game:
 
         return trigger
 
-    def suppress_type_collision(self, collision_type, collision_suppressed=True):
+    def _suppress_type_collision(self, collision_type, collision_suppressed=True):
         """
         *EXTENDED FEATURE*
 
@@ -1104,19 +1124,46 @@ class Game:
             self._collision_type_to_trigger[collision_type] = collision_allowed, t_list
 
 
-    def when_timer_reset(self, reset_period=np.inf, repeats=np.inf, associated_sprites: Iterable[Sprite]=[]):
+    def when_timer_reset(self, reset_period: Optional[float]=None, repeats: Optional[int]=None, associated_sprites: Iterable[Sprite]=[]) -> TimerCondition:
         """
         *EXTENDED FEATURE*
 
-        DOCUMENTATION NOT COMPLETED
+        Repeats an event for `repeats` time for every `reset_period` seconds. 
+
+        ```python
+        
+        def print_counts(n):
+            print(n) # n is the number of remaining repeats
+
+        # every one second, for 100 times
+        pysc.game.when_timer_reset(1, 100).add_handler(print_counts)
+
+        # will start printing 99, 98, ..., 0 every 1 second. 
+        ```
+
+        The event handler have to take one parameter:
+        - **n** (int): The number of remaining repeats
 
         Parameters
         ---
+        reset_period: float
+            The reset period of the timer. The handlers are triggered on timer reset. 
+
+        repeats: int or None
+            How many times to repeat. Set to None for infinite repeats. 
+
         associated_sprites: List[Sprite]
             A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
         """
-        
-        condition = TimerCondition(reset_period,repeats)
+        if reset_period is None: 
+            reset_period = np.inf
+
+        if repeats is None:
+            _repeats = np.inf
+        else:
+            _repeats = repeats
+
+        condition = TimerCondition(reset_period, _repeats)
         self._all_conditions.append(condition)
         self._all_triggers.append(condition.trigger)
 
@@ -1126,19 +1173,46 @@ class Game:
         return condition
     
     
-    def when_condition_met(self, checker=lambda: False, repeats=np.inf, associated_sprites: Iterable[Sprite]=[]):
+    def when_condition_met(self, checker=lambda: False,  repeats: Optional[int]=None,  associated_sprites: Iterable[Sprite]=[])-> Condition:
         """
         *EXTENDED FEATURE*
 
-        DOCUMENTATION NOT COMPLETED
+        For every frame, if a condition is met, the event is triggered. Repeated up to `repeats` times. 
+
+        The condition is provided by a function that takes no argument and returns a boolean. 
         
+        ```python
+        def slowly_move_sprite_out_of_edge(n):
+            my_sprite.x += 1
+            
+        pysc.game.when_condition_met(lambda: (my_sprite.x<0), None).add_handler(slowly_move_sprite_out_of_edge)
+        ```
+
+        The event handler have to take one parameter:
+        - **n** (int): The number of remaining repeats
+
+        Parameters
+        ---
+        checker: Callable[[], bool] 
+            A function that takes no argument and returns a boolean. 
+            The checker is run one every frame. If it returns true, the handler is called. 
+
+        repeats: int or None
+            How many times to repeat. Set to None for infinite repeats. 
+
+                    
         Parameters
         ---
         associated_sprites: List[Sprite]
             A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
         """
-        
-        condition = Condition(checker, repeats)
+
+        if repeats is None:
+            _repeats = np.inf
+        else:
+            _repeats = repeats
+
+        condition = Condition(checker, _repeats)
         self._all_conditions.append(condition)
         self._all_triggers.append(condition.trigger)
 
@@ -1147,28 +1221,46 @@ class Game:
         )        
         return condition
     
-    def when_mouse_click(self, associated_sprites: Iterable[Sprite]=[] ) -> Event:
+    def when_mouse_click(self, associated_sprites: Iterable[Sprite]=[] ) -> Event[[Tuple[int, int], int, str]]:
         """
         *EXTENDED FEATURE*
 
-        DOCUMENTATION NOT COMPLETED
+        Returns an `Event` that is triggered when the mouse is clicked or released. 
         
+        The event handler have to take three parameters:
+        - **pos** (Tuple[int, int]): The location of the click
+        - **button** (int): Indicates which button is clicked. 0 for left, 1 for middle, 2 for right and other numbers for scrolling.     
+        - **updown** (str): Either 'up' or 'down' that indicates whether it is a press or a release
+
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+    
         """
         event_internal = self.create_pygame_event([pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN], associated_sprites)
         event = self._create_event(associated_sprites)
-        def handler(e):
+        def handler(e: pygame.event.Event):
             updown = "up" if e.type == pygame.MOUSEBUTTONUP else "down"
             event.trigger(e.pos, e.button, updown)
         event_internal.add_handler(handler)
 
         return event
     
-    def when_mouse_scroll(self, associated_sprites: Iterable[Sprite]=[] ) -> Event:
+    def when_mouse_scroll(self, associated_sprites: Iterable[Sprite]=[] ) -> Event[[str]]:
         """
         *EXTENDED FEATURE*
 
-        DOCUMENTATION NOT COMPLETED
+        Returns an `Event` that is triggered when the mouse is scrolled. 
         
+        The event handler have to take one parameters:
+        - **updown** (str): Either 'up' or 'down' that indicates whether it is a scroll up or a scroll down.
+
+        Parameters
+        ---
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+    
         """
         event_internal = self.create_pygame_event([pygame.MOUSEWHEEL], associated_sprites)
         event = self._create_event(associated_sprites)

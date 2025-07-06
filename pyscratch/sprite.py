@@ -23,6 +23,29 @@ from pathlib import Path
 
 
 def create_sprite_from_gif(path,  *args, **kwargs):
+
+    """
+    Create a sprite using a GIF file or GIF files inside a folder.
+
+    The folder should be organised in the following way: 
+    ```
+    ├─ player/
+        ├─ walking.gif
+        ├─ idling.gif
+        ├─ jumping.gif
+        ...
+    ```
+    **Example**
+    ```python
+    # takes the path of a gif (single animation sprite)
+    my_sprite1 = create_sprite_from_gif("assets/player/walking.gif") 
+    
+    # takes the path of the folder (multiple animations)
+    my_sprite2 = create_sprite_from_gif("assets/player") 
+    ```
+    """
+
+
     path = Path(path)
 
     if path.is_dir():
@@ -1552,7 +1575,7 @@ class Sprite(pygame.sprite.Sprite):
 
 
     ## additional events
-    def when_condition_met(self, checker=lambda: False, repeats=np.inf, other_associated_sprites: Iterable[Sprite]=[]):
+    def when_condition_met(self, checker=lambda: False, repeats: Optional[int]=None, other_associated_sprites: Iterable[Sprite]=[]):
         """
         *EXTENDED FEATURE, EXPERIMENTAL*
 
@@ -1568,7 +1591,7 @@ class Sprite(pygame.sprite.Sprite):
         return game.when_condition_met(checker, repeats, associated_sprites)
     
     
-    def when_timer_reset(self, reset_period=np.inf, repeats=np.inf, other_associated_sprites: Iterable[Sprite]=[]):
+    def when_timer_reset(self, reset_period: Optional[int]=None, repeats: Optional[int]=None, other_associated_sprites: Iterable[Sprite]=[]):
         """
         *EXTENDED FEATURE, EXPERIMENTAL*
 
@@ -1595,7 +1618,7 @@ class Sprite(pygame.sprite.Sprite):
         associated_sprites: List[Sprite]
             A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
         """
-        return game.create_specific_collision_trigger(self, other_sprite, other_associated_sprites)
+        return game._create_specific_collision_trigger(self, other_sprite, other_associated_sprites)
     
 
     # START: TODO: physics property getters and setters

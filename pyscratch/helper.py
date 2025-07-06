@@ -52,7 +52,7 @@ def get_frame_from_sprite_sheet(
     """
     Extract a specific frame from a sprite sheet. 
     
-    **You will not need to use this function directly.**
+    *You will not need to use this function directly.*
 
     THIS FUNCTION IS WRITTEN BY AN AI. 
 
@@ -98,9 +98,27 @@ def get_frame_from_sprite_sheet_by_frame_size(
         size_x: int, size_y: int,
         c:int, r: int):
     """
-    Extract a specific frame from a sprite sheet. 
+    Extract a specific frame from a sprite sheet.
     
-    **You will not need to use this function directly.**
+    *You will not need to use this function directly.*
+
+
+    Parameters
+    ---
+    sheet: pygame.Surface
+        The sprite sheet you want to cut
+    
+    size_x: int
+        The x pixel size of the frame
+    
+    size_y: int
+        The y pixel size of the frame
+
+    c: int 
+        The column position of the frame
+
+    r: int 
+        The row position of the frame
     """
     crop_rect = pygame.Rect(
         c*size_x,
@@ -116,8 +134,12 @@ import pygame
 
 def load_gif_frames(path) -> List[pygame.Surface]:
     """
-    **You will not need to use this function directly.**
-    WRITTEN BY AI
+    Load a gif file as a list of images (as `pygame.Surface`)
+
+    *You will not need to use this function directly.*
+
+    THIS FUNCTION IS WRITTEN BY AN AI.
+
     """
     pil = Image.open(path)
     frames = []
@@ -133,7 +155,21 @@ def load_gif_frames(path) -> List[pygame.Surface]:
 
 def load_frames_from_gif_folder(folder_path: Path):
     """
-    **You will not need to use this function directly.**
+    Creates a `frame_dict` that the Sprite constructor takes using 
+    the gif files inside a folder. 
+
+    The folder should be organised in the following way: 
+    ```
+    ├─ player/
+        ├─ walking.gif
+        ├─ idling.gif
+        ├─ jumping.gif
+        ...
+    ```
+
+    *You will not need to use this function directly.*
+
+
     """
     frame_dict = {}
     for f in folder_path.iterdir():
@@ -156,7 +192,9 @@ def cut_sprite_sheet(
         suffix='png'):
     """
     Split a sprite sheet so each frame is its own image file. 
-
+    
+    *You probably won't need to use this function directly.*
+    
     Parameters
     ---
     sheet: pygame.Surface
