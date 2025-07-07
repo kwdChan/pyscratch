@@ -260,7 +260,11 @@ class Game:
         self.max_number_sprite = 1000
         """The maximum number of sprites in the game. Adding more than this will lead to an error."""
         
+        self._sprite_count_per_file: Dict[str, int] = {}
+
+
         self.update_screen_mode()
+
 
     def __key_event_handler(self, e):
         up_or_down = 'down' if e.type == pygame.KEYDOWN else 'up'
@@ -544,7 +548,19 @@ class Game:
         """
         self._space.gravity = xy
 
-    def _add_sprite(self, sprite, to_show=True):
+    def _new_sprite_of_file(self, caller_file):
+        if not caller_file in self._sprite_count_per_file:
+            self._sprite_count_per_file[caller_file] = 0
+        else: 
+            self._sprite_count_per_file[caller_file] += 1
+
+        return self._sprite_count_per_file[caller_file]
+
+
+    def _add_sprite(self, sprite, to_show=True, caller_file=None):
+
+        
+
         self._all_sprites.add(sprite)
         if len(self._all_sprites) > self.max_number_sprite:
             raise RuntimeError('Reached the maximum number sprite. ')
@@ -553,6 +569,8 @@ class Game:
         if to_show:
             self._all_sprites_to_show.add(sprite)
         sprite.update(self._space)
+        
+        return self._new_sprite_of_file(caller_file)
 
     def _cleanup_old_shape(self, old_shape):
 
