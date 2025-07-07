@@ -17,6 +17,8 @@ shared_data:
 """
 
 from typing import Dict, List
+
+import numpy as np
 import pyscratch as pysc
 from pyscratch.sprite import Sprite
 from settings import *
@@ -39,6 +41,7 @@ def FramePreviewCard(surface:Surface, order):
     )
     preview_bg['surface'] = surface
     preview_bg['order'] = order
+    preview_bg.oob_limit = np.inf
     
     preview_bg.set_draggable(True)
     
