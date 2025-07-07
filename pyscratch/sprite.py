@@ -598,7 +598,7 @@ class Sprite(pygame.sprite.Sprite):
         position: Tuple[float, float]
 
         identifier: Optional[str]
-            Used for identifying the sprite for loading sprite positions.
+            Used for identifying the sprite for loading sprite states (position and direction).
             Put to None for automatic assignment based on the file name and the order of creation.
 
         shape_type: ShapeType 
@@ -1021,6 +1021,18 @@ class Sprite(pygame.sprite.Sprite):
         if changed: 
             self.direction = pymunk.Vec2d(x, y).angle_degrees
 
+    def retrieve_saved_state(self, not_exist_ok=True):
+
+        result = game._get_saved_state(self.identifier)
+        if result:
+            self.x = result['x']
+            self.y = result['y']
+            self.direction = result['direction']
+            return True
+        if not_exist_ok:
+            return False
+        
+        raise KeyError(f"No saved stated found for this sprite: {self.identifier}")
     
     def lock_to(self, sprite: Sprite, offset: Tuple[float, float], reset_xy = False):
         """
