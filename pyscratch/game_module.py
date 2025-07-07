@@ -5,11 +5,13 @@ you can also directly do `pysc.is_key_pressed`.
 """
 
 from __future__ import annotations
+from functools import cache
 from os import PathLike
 import os
-import sys
+from pathlib import Path
 import threading
 import time
+import json, inspect
 
 import numpy as np
 import pygame
@@ -138,6 +140,41 @@ class _SpecificEventEmitter(Generic[P]):
 
 
 
+class _SavedSpriteStateManager:
+    default_filename = "saved_sprite_states.json"
+    def __init__(self):
+        self.states: Dict[str, Dict[str, Any]]  = {}
+
+
+    def save_sprite_states(self, all_sprite: Iterable[Sprite], filename=None):
+        """
+        Save the x, y & direction of the sprites. 
+        """
+        loc = {}
+        for s in all_sprite:
+            loc[s.identifier] = dict(x=s.x, y=s.y, direction=s.direction)
+
+        if not filename:
+            filename = self.default_filename
+        #caller_file = Path(inspect.stack()[-1].filename)
+
+        json.dump(loc, open(filename, "w"))
+    
+    def load_saved_state(self, filename=None):
+
+        if not filename:
+            filename = self.default_filename
+            
+        filename = Path(filename)
+        if filename.exists():
+            self.states= json.load(open(filename, "r"))
+
+
+    def get_state_of(self, sprite_id):
+
+        return self.states.get(sprite_id)
+    
+
 class Game:
     """
     This is the class that the `game` object belongs to. You cannot create another Game object. 
@@ -262,8 +299,13 @@ class Game:
         
         self._sprite_count_per_file: Dict[str, int] = {}
 
+        self.__start = False
+        """set to false to end the loop"""
+
 
         self.update_screen_mode()
+
+        self._saved_states_manager = _SavedSpriteStateManager()
 
 
     def __key_event_handler(self, e):
@@ -372,9 +414,13 @@ class Game:
 
         last_frame_time = 0
         while True:
-            time.sleep(2)
+
+            for i in range(10):
+                time.sleep(.2)
+                if not self.__start:
+                    return 
             if not self._current_time_ms > last_frame_time:
-                print('Timeout. Are you in a infinite loop?')
+                print('Stucked in the same frame for more than 1 second. This can happen when an error occur or you are in a infinite loop without yielding. ')
                 os._exit(1)
 
             last_frame_time = self._current_time_ms
@@ -386,9 +432,20 @@ class Game:
         t = threading.Thread(target=self.start, args=args, kwargs=kwargs)
         t.start()
         return t
+    
+    def stop(self):
+        self.__start = False
 
-
-    def start(self, framerate=30, sim_step_min=300, debug_draw=False, event_count=False, show_mouse_position: Optional[bool]=None, exit_key: Optional[str]="escape"):
+    def start(
+            self, 
+            framerate=30, 
+            sim_step_min=300, 
+            debug_draw=False, 
+            event_count=False, 
+            show_mouse_position: Optional[bool]=None, 
+            exit_key: Optional[str]="escape",
+            saved_state_file=None, 
+        ):
         """
         Start the game. 
 
@@ -419,6 +476,7 @@ class Game:
 
         self._screen  = pygame.display.set_mode(*self.__screen_args, **self.__screen_kwargs)
 
+        self._saved_states_manager.load_saved_state(saved_state_file)
         self.__framerate = framerate
         self.__screen_width = self._screen.get_width()
         self.__screen_height = self._screen.get_height()
@@ -432,9 +490,9 @@ class Game:
         self._current_time_ms = 0
 
         if exit_key:
-            self.when_key_pressed(exit_key).add_handler(lambda _: os._exit(1))
+            self.when_key_pressed(exit_key).add_handler(lambda _: self.stop())
             
-        self.create_pygame_event([pygame.QUIT]).add_handler(lambda _: os._exit(1))
+        self.create_pygame_event([pygame.QUIT]).add_handler(lambda _: self.stop())
         
         for t in self._game_start_triggers:
             t.trigger()
@@ -443,7 +501,9 @@ class Game:
         loop_count = 0
 
         threading.Thread(target=self._check_alive).start()
-        while True:
+
+        self.__start = True
+        while self.__start:
             loop_count += 1
             
             dt = clock.tick(framerate)
@@ -501,7 +561,15 @@ class Game:
             pygame.display.flip()
             if not loop_count % cleanup_period:
                 self._do_autoremove()
-    
+
+    def _get_saved_state(self, sprite_id):
+        return self._saved_states_manager.get_state_of(sprite_id)
+
+    def save_sprite_states(self):
+        """
+        Save the x, y & direction of the sprites. 
+        """
+        self._saved_states_manager.save_sprite_states(self._all_sprites)
 
     def load_sound(self, key: str, path: str) :
         """
@@ -569,7 +637,7 @@ class Game:
         if to_show:
             self._all_sprites_to_show.add(sprite)
         sprite.update(self._space)
-        
+
         return self._new_sprite_of_file(caller_file)
 
     def _cleanup_old_shape(self, old_shape):
