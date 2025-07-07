@@ -8,6 +8,7 @@ you can also directly do `pysc.create_animated_sprite`.
 
 from __future__ import annotations
 from enum import Enum
+import inspect
 from typing import Any, Dict, Hashable, Iterable, List, Optional, ParamSpec, Tuple, Union, cast, override
 from typing_extensions import deprecated
 
@@ -549,7 +550,7 @@ class _PhysicsManager:
             self.space.add(self.shape)         
 
 
-
+# Creating Sprite contruction function outside this file will make the automatic sprite ID assignment much less helpful
 class Sprite(pygame.sprite.Sprite):
     """
     Objects of the Sprite class represents a sprite.
@@ -559,9 +560,10 @@ class Sprite(pygame.sprite.Sprite):
             frame_dict: Dict[str, List[pygame.Surface]], 
             starting_mode:Optional[str]=None, 
             position= (100, 100), 
+            identifier:Optional[str]=None, 
             shape_type = ShapeType.BOX, 
             shape_size_factor=1.0, 
-            body_type=pymunk.Body.KINEMATIC
+            body_type=pymunk.Body.KINEMATIC, 
         ):
         """
         You might not need to create the sprite from this constructor function. 
@@ -594,6 +596,10 @@ class Sprite(pygame.sprite.Sprite):
             as the starting frame mode.
 
         position: Tuple[float, float]
+
+        identifier: Optional[str]
+            Used for identifying the sprite for loading sprite positions.
+            Put to None for automatic assignment based on the file name and the order of creation.
 
         shape_type: ShapeType 
             The collision shape. See `set_shape` for more details.
@@ -668,9 +674,41 @@ class Sprite(pygame.sprite.Sprite):
 
         self.__direction: pymunk.Vec2d = self._body.rotation_vector     
         self.__rotation_style = _RotationStyle.ALL_AROUND
-        
 
-        game._add_sprite(self)
+
+        # get the caller name
+        frame = inspect.currentframe()
+        assert frame
+
+        this_file = frame.f_code.co_filename
+
+        while True:
+            frame = frame.f_back
+            if not frame:
+                caller_file = "UNKNOWN"
+                break
+
+            caller_file = frame.f_code.co_filename
+            #print(caller_file)
+            if not caller_file == this_file:
+                break
+
+        count = game._add_sprite(self, caller_file=caller_file)
+
+
+        if not identifier: 
+
+        
+            self.identifier = caller_file + ":" + str(count) 
+        else:
+            self.identifier = identifier
+            
+
+        #print(self)
+
+    def __repr__(self):
+        return f"Sprite(id='{self.identifier}')"
+        
 
     def __getitem__(self, key):
         return self.sprite_data[key]
