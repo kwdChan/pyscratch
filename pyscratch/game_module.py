@@ -408,7 +408,7 @@ class Game:
                 #print(s.x, s.y)
                 #print(s.oob_limit + self.__screen_width, s.oob_limit + self.__screen_height)
                 s.remove()
-                print(f"A sprite is removed for going out of boundary above the specified limit.")
+                print(f"{s} is removed for going out of boundary above the specified limit.")
 
     def _check_alive(self):
 
@@ -551,7 +551,8 @@ class Game:
             if debug_draw: 
                 self._space.debug_draw(self._draw_options)
 
-            self._all_sprites.update(self._space)
+            #self._all_sprites.update()
+            self._all_sprites_to_show.update()
             self._all_sprites_to_show.draw(self._screen)
 
             if show_mouse_position:
@@ -636,7 +637,7 @@ class Game:
         self._sprite_click_trigger[sprite] = []
         if to_show:
             self._all_sprites_to_show.add(sprite)
-        sprite.update(self._space)
+        sprite.update()
 
         return self._new_sprite_of_file(caller_file)
 
