@@ -8,6 +8,7 @@ you can also directly do `pysc.create_animated_sprite`.
 
 from __future__ import annotations
 from enum import Enum
+from functools import cache
 import inspect
 from typing import Any, Dict, Hashable, Iterable, List, Optional, ParamSpec, Tuple, Union, cast, override
 from typing_extensions import deprecated
@@ -374,8 +375,13 @@ class _DrawingManager:
 
     # core transform requests 
     def set_scale(self, factor):
-        self.scale_factor = factor
-        self.request_transform = True
+        if not self.scale_factor == factor:
+            self.request_transform = True
+            self.scale_factor = factor
+            return True
+        else:
+            return False
+
 
     def set_brightness(self, factor):
         self.brightness_factor = factor
@@ -404,6 +410,7 @@ class _DrawingManager:
         self.blit_persist(text_surface, offset, centre, reset)
 
     # transform
+    #@cache
     def transform_frames(self):
         self.request_transform = False
         for k, frames in self.frame_dict_original.items():
@@ -625,7 +632,7 @@ class Sprite(pygame.sprite.Sprite):
         self._drawing_manager = _DrawingManager(frame_dict, starting_mode)
         _initial_frame = frame_dict[starting_mode][0]
         self._physics_manager = _PhysicsManager(game, body_type, shape_type, shape_size_factor, position,_initial_frame)
-        
+        self.__physics_enabled = False
         self.sprite_data = {}
         """
         A dictionary similar to `game.shared_data`. 
@@ -725,7 +732,7 @@ class Sprite(pygame.sprite.Sprite):
         return self._physics_manager.shape    
 
     @override
-    def update(self, space):
+    def update(self):
         "@private"
 
         if self._lock_to_sprite:
@@ -735,7 +742,6 @@ class Sprite(pygame.sprite.Sprite):
         x, y = self._body.position
         self.image, self.rect, self.mask = self._drawing_manager.on_update(x, y, self.__direction.angle_degrees)
         
-        #self.image = self.mask.to_surface()
         self._physics_manager.on_update(self.image)
         
         if self.__is_dragging:
@@ -1174,8 +1180,8 @@ class Sprite(pygame.sprite.Sprite):
         - A factor of 1.2 means 120%
         - A factor of 0.8 means 80%
         """
-        self._drawing_manager.set_scale(factor)
-        self._physics_manager.request_shape_update()
+        if self._drawing_manager.set_scale(factor):
+            self._physics_manager.request_shape_update()
 
     def scale_by(self, factor: float):
         """
