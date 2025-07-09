@@ -77,6 +77,7 @@ def on_msg_image_selected(path):
         ss_sprite.oob_limit=np.inf
         ss_sprite['original_width'] = img.get_width()
         ss_sprite['original_height'] = img.get_height()
+        game.change_layer(ss_sprite, 0)
 
         
         #ss_sprite.lock_to(ss_view, offset=(0,0)) 

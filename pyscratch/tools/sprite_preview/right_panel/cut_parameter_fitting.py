@@ -11,6 +11,7 @@ colour = (255, 127, 127)
 button = pysc.create_rect_sprite(colour, w, h)
 button.set_xy((1200, 650))
 button.write_text("Fit", DEFAULT_FONT24, offset=(w/2, h/2))
+pysc.game.change_layer(button, 1)
 
 
 

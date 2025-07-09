@@ -32,3 +32,11 @@ pixel_x_input.set_xy((xpos1, 695))
 
 pixel_y_input = IntegerInputBox('pixel_y', 'pixel_y_change', "0", 80)
 pixel_y_input.set_xy((xpos2, 695))
+
+
+pysc.game.change_layer(offset_x_input, 1)
+pysc.game.change_layer(offset_y_input, 1)
+pysc.game.change_layer(row_input, 1)
+pysc.game.change_layer(col_input, 1)
+pysc.game.change_layer(pixel_x_input, 1)
+pysc.game.change_layer(pixel_y_input, 1)
