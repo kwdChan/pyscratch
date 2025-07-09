@@ -682,6 +682,10 @@ class Sprite(pygame.sprite.Sprite):
         self.__direction: pymunk.Vec2d = self._body.rotation_vector     
         self.__rotation_style = _RotationStyle.ALL_AROUND
 
+        self.removed = False
+        """Indicates whether or not this sprite has been removed."""
+
+
 
         # get the caller name
         frame = inspect.currentframe()
@@ -1377,6 +1381,7 @@ class Sprite(pygame.sprite.Sprite):
         ```
         """
         game._remove_sprite(self)
+        self.removed = True
 
 
     def create_clone(self):
