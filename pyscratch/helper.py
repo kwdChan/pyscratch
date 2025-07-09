@@ -5,6 +5,7 @@ you can also directly do `pysc.random_number`
 """
 
 
+from functools import cache
 from itertools import product
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
@@ -37,7 +38,7 @@ def random_number(min_v:float, max_v:float) -> float:
     """
     return random.random()*(max_v-min_v)+min_v
 
-
+@cache
 def load_image(path: str) -> pygame.Surface:
     """
     Return the `pygame.Surface` given the path to an image. 
@@ -132,6 +133,7 @@ def get_frame_from_sprite_sheet_by_frame_size(
 from PIL import Image, ImageSequence
 import pygame
 
+@cache
 def load_gif_frames(path) -> List[pygame.Surface]:
     """
     Load a gif file as a list of images (as `pygame.Surface`)
@@ -152,7 +154,7 @@ def load_gif_frames(path) -> List[pygame.Surface]:
     return frames
 
 
-
+@cache
 def load_frames_from_gif_folder(folder_path: Path):
     """
     Creates a `frame_dict` that the Sprite constructor takes using 
@@ -243,6 +245,7 @@ def _get_frame_dict(
 
     return frame_dict
 
+@cache
 def load_frames_from_folder(folder_path: Union[Path, str]):
     """
     Creates a `frame_dict` that the Sprite constructor takes using 
@@ -279,6 +282,12 @@ def load_frames_from_folder(folder_path: Union[Path, str]):
     my_sprite1 = Sprite(frame_dict)
     ```
     """
+    return _load_frames_from_folder_uncached(folder_path)
+
+
+
+def _load_frames_from_folder_uncached(folder_path: Union[Path, str]):
+    
     def extract_images(path: Path):
         index2image: Dict[int, pygame.Surface] = {}
 
@@ -313,7 +322,6 @@ def load_frames_from_folder(folder_path: Union[Path, str]):
         frame_dict[path.stem] = extract_images(path)
 
     return frame_dict
-
 
 #RGBType = Tuple[int, int, int]
 #RGBAType = Tuple[int, int, int, int]
