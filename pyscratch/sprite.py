@@ -1795,9 +1795,15 @@ class Sprite(pygame.sprite.Sprite):
 
 def __create_edges_for_on_edge_bounce():
     t, l, b, r = create_edge_sprites((255, 255, 255, 255), thickness=0, collision_type=0)
+
+    t.identifier = "default_edge_t"
+    l.identifier = "default_edge_l"
+    b.identifier = "default_edge_b"
+    r.identifier = "default_edge_r"
+
     game._top_edge = t
     game._left_edge = l
     game._bottom_edge = b
     game._right_edge = r
 
-__create_edges_for_on_edge_bounce()
+game.when_game_start().add_handler(__create_edges_for_on_edge_bounce)
