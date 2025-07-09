@@ -1652,7 +1652,7 @@ class Sprite(pygame.sprite.Sprite):
         return game.when_condition_met(checker, repeats, associated_sprites)
     
     
-    def when_timer_reset(self, reset_period: Optional[int]=None, repeats: Optional[int]=None, other_associated_sprites: Iterable[Sprite]=[]):
+    def when_timer_reset(self, reset_period: Optional[float]=None, repeats: Optional[int]=None, other_associated_sprites: Iterable[Sprite]=[]):
         """
         *EXTENDED FEATURE, EXPERIMENTAL*
 
