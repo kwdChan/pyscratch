@@ -8,7 +8,7 @@ w, h = 50*1.62, 50
 colour = (127, 127, 127)
 button = pysc.create_rect_sprite(colour, w, h)
 button.set_xy((900, 550))
-
+pysc.game.change_layer(button, 1)
 
 #button.when_game_start().add_handler(lambda: button.lock_to(pysc.game.shared_data['folder_navigation'], offset=(0,0)))
 

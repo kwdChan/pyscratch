@@ -8,6 +8,7 @@ w, h = 50*1.62, 50
 colour = (127, 127, 127)
 button = pysc.create_rect_sprite(colour, w, h)
 button.set_xy((1100, 550))
+pysc.game.change_layer(button, 1)
 
 def on_click():
     if pysc.game.shared_data['cut_or_nav_mode'] == 'nav':
