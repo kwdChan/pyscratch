@@ -445,6 +445,7 @@ class Game:
             show_mouse_position: Optional[bool]=None, 
             exit_key: Optional[str]="escape",
             saved_state_file=None, 
+            print_fps = False,
         ):
         """
         Start the game. 
@@ -485,6 +486,8 @@ class Game:
 
         clock = pygame.time.Clock()
 
+        
+
         draw_every_n_step = sim_step_min//framerate+1
 
         self._current_time_ms = 0
@@ -504,6 +507,8 @@ class Game:
 
         self.__start = True
         while self.__start:
+            if print_fps:
+                print(f"FPS: {clock.get_fps()}")            
             loop_count += 1
             
             dt = clock.tick(framerate)
