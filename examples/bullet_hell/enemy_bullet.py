@@ -68,7 +68,7 @@ def Laser(pos0, pos1, duration):
     laser_sp.direction = -np.arctan(len_x/len_y)/np.pi*180
     laser_sp.x = (pos1[0]+pos0[0])/2
     laser_sp.y = (pos1[1]+pos0[1])/2
-
+    laser_sp.set_transparency(0)
     def change_alpha(_):
         for i in range(30):
             laser_sp.set_transparency(i/30)
