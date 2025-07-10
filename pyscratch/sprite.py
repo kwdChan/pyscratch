@@ -1232,9 +1232,6 @@ class Sprite(pygame.sprite.Sprite):
         *EXPERIMENTAL*
 
         Changes the transparency of the sprite. 
-
-        ***IMCOMPLETE IMPLEMENTATION***: 
-        The transparency of the transparent background of the image is also changed
         """ 
         self._drawing_manager.set_transparency(factor)
 

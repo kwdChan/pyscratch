@@ -434,8 +434,7 @@ def scale_to_fit_aspect(image, screen_size, fit='horizontal'):
     return pygame.transform.smoothscale(image, new_size)
 
 
-
-def set_transparency(image, factor):
+def _set_transparency(image, factor):
     """
     Set the transparency of an image.
 
@@ -456,6 +455,28 @@ def set_transparency(image, factor):
     new_image.set_alpha(int(factor*255))
     return new_image
 
+def set_transparency(image: pygame.Surface, factor):
+    """
+    Set the transparency of an image.
+
+    Parameters
+    ----------
+    image : pygame.Surface
+        The image to adjust.
+    factor : float
+        Transparency level from 0.0 (fully transparent) to 1.0 (fully opaque).
+    """
+    w = image.get_width()
+    h = image.get_height()
+
+    sur = pygame.Surface((w, h)).convert_alpha()
+
+    sur.fill((255,255,255,int(factor*255) ))
+    #sur.set_alpha(int(factor*255))
+
+    new_image = image.copy()
+    new_image.blit(sur, (0,0), special_flags=pygame.BLEND_RGBA_MULT)
+    return new_image
 
 
 def adjust_brightness(image, factor):
