@@ -1,3 +1,4 @@
+import numpy as np
 import pyscratch as pysc
 from pyscratch import game
 
@@ -44,4 +45,44 @@ def ExplodingBullet(position, direction, lifespan):
 
 
 game['ExplodingBullet'] = ExplodingBullet
+
+
+def Laser(pos0, pos1, duration):
+
+    len_x = pos1[0]-pos0[0]
+    len_y = pos1[1]-pos0[1]
+
+    length = (len_x**2 + len_y**2)**(1/2)
+
+    
+    path = "assets/used_by_examples/bullet_hell/lasers/3.png"
+    img = pysc.load_image(path)
+    w = img.get_width()
+
+    scaled_img = pysc.scale_to_fill_screen(img, (w, length))
+
+
+
+    laser_sp = pysc.Sprite(dict(always=[scaled_img]))
+
+    laser_sp.direction = -np.arctan(len_x/len_y)/np.pi*180
+    laser_sp.x = (pos1[0]+pos0[0])/2
+    laser_sp.y = (pos1[1]+pos0[1])/2
+
+    def change_alpha(_):
+        for i in range(30):
+            laser_sp.set_transparency(i/30)
+            yield 0.01
+        for i in range(30):
+            laser_sp.set_transparency(1-i/30)
+            yield 0.01            
+        laser_sp.remove()
+    laser_sp.when_timer_above(0).add_handler(change_alpha)
+
+
+game['Laser'] = Laser
+
+
+    
+    
 

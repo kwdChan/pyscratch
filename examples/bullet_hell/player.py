@@ -6,6 +6,7 @@ game['player'] = player
 def movement():
     player.set_scale(3)
     player.set_xy((360, 1080))
+    
 
     speed = 8
 
