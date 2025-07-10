@@ -389,7 +389,7 @@ class _DrawingManager:
 
     def set_transparency(self, factor):
         self.transparency_factor = factor
-        self.request_transform = True
+        #self.request_transform = True
 
     def blit_persist(self, surface: pygame.Surface, offset=(0,0), centre=True, reset=True):
         w, h = surface.get_width(), surface.get_height()
@@ -419,7 +419,7 @@ class _DrawingManager:
                 f_new = f.copy()
                 for s, o in self.blit_surfaces[(k, idx)]:
                     f_new.blit(s, o)
-                f_new = set_transparency(f_new, self.transparency_factor)
+                #f_new = set_transparency(f_new, self.transparency_factor)
                 f_new = adjust_brightness(f_new, self.brightness_factor)
                 f_new = pygame.transform.scale_by(f_new, self.scale_factor)
                 new_frames.append(f_new)
@@ -448,7 +448,6 @@ class _DrawingManager:
 
         img = pygame.transform.flip(img, self.flip_x, self.flip_y)
 
-        self.image = img
 
         img_w, img_h = img.get_width(), img.get_height()
         rect = img.get_rect(
@@ -456,7 +455,11 @@ class _DrawingManager:
               width=img_w,
               height=img_h,
               )
-        mask = pygame.mask.from_surface(self.image, self.mask_threshold)
+        
+        
+        mask = pygame.mask.from_surface(img, self.mask_threshold)
+        img = set_transparency(img, self.transparency_factor)
+
         return img, rect, mask 
 
 class ShapeType(Enum):
