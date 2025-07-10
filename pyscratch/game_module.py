@@ -481,7 +481,7 @@ class Game:
         self.__screen_width = self._screen.get_width()
         self.__screen_height = self._screen.get_height()
 
-        guide_lines_font = pygame.font.Font(None, 36)
+        guide_lines_font = pygame.font.Font(None, 30)
 
         clock = pygame.time.Clock()
 

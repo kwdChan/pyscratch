@@ -522,21 +522,25 @@ def _draw_guide_lines(screen: pygame.Surface, font: pygame.font.Font, minor_grid
     screen.blit(font.render(f"({0},{0})", True, (0,0,0)), (5,5))
     for i in range(0, w, minor_grid):
         lw = 1
+        v = 200
         if i and (not i % major_grid):
-            lw = 2
+            lw = 1
+            v = 0
             screen.blit(font.render(f"{i}", True, (0,0,0)), (i+5,5))
 
-        pygame.draw.line(screen, (0,0,0), (i, 0), (i, h), width=lw)
+        pygame.draw.line(screen, (v,v,v,255-v), (i, 0), (i, h), width=lw)
 
 
         
 
     for i in range(0, h, minor_grid):
         lw = 1
+        v = 200
         if i and (not i % major_grid):
-            lw = 2
+            lw = 1
+            v = 0
             screen.blit(font.render(f"{i}", True, (0,0,0)), (5,i+5))        
-        pygame.draw.line(screen, (0,0,0), (0, i), (w, i), width=lw)
+        pygame.draw.line(screen, (v,v,v,255-v), (0, i), (w, i), width=lw)
 
     #text = font.render(f"({w},{h})", True, (0,0,0))
     #screen.blit(text, (w-5-text.get_width(), h-5-text.get_height()))
