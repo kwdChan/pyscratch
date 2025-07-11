@@ -5,6 +5,50 @@ nav_order: 0
 ---
 # PyScratch
 ---
+## Showcase
+<div class="card-container">
+  <div class="card">
+  <video autoplay loop muted playsinline>
+      <source src="media/perspective_background.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+  </video>  
+  <a style="display:block" href="http://justinbieber.com">
+  <div class="card-body">
+    <p class="card-title">Perspective Background</p>
+    <p class="card-text">Scale and move the trees based on the depth and the viewing position to achieve a 3D-like effect. </p>
+  </div>
+  </a>
+
+</div>
+<div class="card">
+ 
+  <video autoplay loop muted playsinline style="max-height: 100%;">
+      <source src="media/bullet_hell.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+  </video>  
+  
+  
+  <div class="card-body">
+    <p class="card-title">Bullet Hell</p>
+    <p class="card-text">Create sprites and events within events to program complex behaviours. </p>
+  </div>
+</div>
+
+<div class="card">
+ 
+  <video autoplay loop muted playsinline style="max-height: 100%;">
+      <source src="media/doodle_jump.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+  </video>  
+  
+  
+  <div class="card-body">
+    <p class="card-title">Partial Recreation of Doddle Jump</p>
+    <p class="card-text"> Offset the platform height with the viewing height and use a sprite with 100% transparency to detect the feet touching the platform. </p>
+  </div>
+</div>
+</div>
+
 This library provides an easy transitioning from Scratch to Python. Scratch-like control plus extended features provided by pymunk. 
 
 There are four functional parts of this library:
