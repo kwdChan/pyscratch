@@ -556,8 +556,8 @@ class Game:
             if debug_draw: 
                 self._space.debug_draw(self._draw_options)
 
-            #self._all_sprites.update()
-            self._all_sprites_to_show.update()
+            self._all_sprites.update()
+            #self._all_sprites_to_show.update()
             self._all_sprites_to_show.draw(self._screen)
 
             if show_mouse_position:
