@@ -49,7 +49,6 @@ Before coding happens, the sprites first need to be created. On Scratch, the use
     title = "Pong Game" 
     description = "The classic pong game. " 
   %}
-  
 
   {% include card.html 
     video_path = "showcase-video/bullet_hell.mp4" 
