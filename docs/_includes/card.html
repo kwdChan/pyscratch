@@ -1,7 +1,7 @@
 
 <div class="card">
   <video autoplay loop muted playsinline>
-      <source src="{{include.video_path}}" type="video/mp4">
+      <source src="{{ site.cdn_url }}{{include.video_path}}" type="video/mp4">
       Your browser does not support the video tag.
   </video>  
   <a class="card_link" target="_blank" href="{{include.url}}">
