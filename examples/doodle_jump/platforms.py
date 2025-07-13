@@ -5,6 +5,7 @@ def Platform(position):
     sp = pysc.create_animated_sprite("assets/used_by_examples/doodle_jump/platform")
     sp.x = position[0]
     sp['world_y'] = position[1]
+    game.move_to_back(sp)
 
     sp.y = sp['world_y'] -game['view_y']
     player = game['player']
@@ -26,7 +27,7 @@ def create_platform():
 
     platforms = []
     for i in range(20):
-        y = i*pysc.random_number(90, 120)
+        y = i*pysc.random_number(70, 100)
         p = Platform((pysc.random_number(0, game.screen_width), y))
         platforms.append(p)
 
@@ -36,7 +37,7 @@ def create_platform():
         if len(platforms) < 5:
             #print(len(platforms))
 
-            y = 3*pysc.random_number(90, 120)
+            y = 3*pysc.random_number(70, 100)
             p = Platform((pysc.random_number(0, game.screen_width), game['view_y']-y))
             print(p.y)
             platforms.append(p)

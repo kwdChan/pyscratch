@@ -18,6 +18,7 @@ def movement():
     x_speed = 300
     dt = 1/game.framerate
     player_skin.set_rotation_style_left_right()
+    #game.bring_to_front(player_skin)
     while True:
         player_skin.x = player.x
         player_skin.y = player.y-60
