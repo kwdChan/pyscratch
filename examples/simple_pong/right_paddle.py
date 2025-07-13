@@ -1,7 +1,14 @@
 import pyscratch as pysc
-from settings import *
+from pyscratch import game
 
-# TODO: bad naming consistency 
+SCREEN_HEIGHT = 720
+SCREEN_WIDTH = 1280
+
+paddle_colour = (200, 200, 200)
+paddle_width = 20
+paddle_height = 130
+paddle_margin = 30
+
 sprite = pysc.create_rect_sprite(paddle_colour, paddle_width, paddle_height,  position=(SCREEN_WIDTH-paddle_margin, SCREEN_HEIGHT//2))
 
 #sprite.set_draggable(True)
@@ -18,13 +25,13 @@ def movement():
 
         sprite.y += speed
         
-        sprite.y = pysc.helper.cap(sprite.y, 0+paddle_height//2, SCREEN_HEIGHT-paddle_height//2)
+        sprite.y = pysc.cap(sprite.y, 0+paddle_height//2, SCREEN_HEIGHT-paddle_height//2)
 
 
-        # wait for 1000/60 miliseconds
-        yield 1/60
+        # wait for 1 frame
+        yield 1/game.framerate
 
 game_start_event.add_handler(movement)
 
 
-pysc.game.shared_data['right_paddle'] = sprite
+game['right_paddle'] = sprite

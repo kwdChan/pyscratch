@@ -9,6 +9,6 @@ sur.blit(sur_sky, (0,0))
 game.set_backdrops([sur])
 game.switch_backdrop(0)
 
-game.start(show_mouse_position=True)
+game.start(show_mouse_position=True, use_frame_time=True)
 game.save_sprite_states()
 

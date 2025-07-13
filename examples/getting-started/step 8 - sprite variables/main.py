@@ -1,4 +1,3 @@
-from numpy import deg2rad
 import pyscratch as pysc
 import player, enemy, hearts
 
