@@ -34,45 +34,43 @@ Before coding happens, the sprites first need to be created. On Scratch, the use
 
 ## Showcase
 <div class="card-container">
-  <div class="card">
-  <video autoplay loop muted playsinline>
-      <source src="media/perspective_background.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-  </video>  
-  <a class="card_link" href="http://justinbieber.com">
-  <div class="card-body">
-    <p class="card-title">Perspective Background</p>
-    <p class="card-text">Scale and move the trees based on the depth and the viewing position to achieve a 3D-like effect. </p>
-  </div>
-  </a>
 
-</div>
-<div class="card">
- 
-  <video autoplay loop muted playsinline style="max-height: 100%;">
-      <source src="media/bullet_hell.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-  </video>  
-  
-  
-  <div class="card-body">
-    <p class="card-title">Bullet Hell</p>
-    <p class="card-text">Create sprites and events within events to program complex behaviours. Also notice the </p>
-  </div>
-</div>
 
-<div class="card">
- 
-  <video autoplay loop muted playsinline style="max-height: 100%;">
-      <source src="media/doodle_jump.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-  </video>  
+  {% include card.html 
+    video_path = "showcase-video/getting-started.mp4" 
+    url = "./getting-started" 
+    title = "Tutorial" 
+    description = "An example game used in the getting-started tutorial. " 
+  %}
   
+  {% include card.html 
+    video_path = "showcase-video/pong.mp4" 
+    url = "https://github.com/kwdChan/pyscratch/tree/v1.0/examples/simple_pong" 
+    title = "Pong Game" 
+    description = "The classic pong game. " 
+  %}
   
-  <div class="card-body">
-    <p class="card-title">Partial Recreation of Doddle Jump</p>
-    <p class="card-text"> Offset the platform height with the viewing height and use a sprite with 100% transparency to detect the feet touching the platform. </p>
-  </div>
-</div>
+
+  {% include card.html 
+    video_path = "showcase-video/bullet_hell.mp4" 
+    url = "https://github.com/kwdChan/pyscratch/tree/v1.0/examples/bullet_hell" 
+    title = "Bullet Hell" 
+    description = "Create sprites and events within events to program complex behaviours." 
+  %}
+
+  {% include card.html 
+    video_path = "showcase-video/doodle_jump.mp4" 
+    url = "https://github.com/kwdChan/pyscratch/tree/v1.0/examples/doodle_jump" 
+    title = "Partial Recreation of Doddle Jump" 
+    description = "Offset the platform height with the viewing height and use a sprite with 100% transparency to detect the feet touching the platform." 
+  %}
+
+  {% include card.html 
+    video_path = "showcase-video/perspective_background.mp4" 
+    url = "https://github.com/kwdChan/pyscratch/tree/v1.0/examples/perspective_background" 
+    title = "Perspective Background" 
+    description = "Scale and move the trees based on the depth and the viewing position to achieve a 3D-like effect." 
+  %}
+  
 </div>
 
