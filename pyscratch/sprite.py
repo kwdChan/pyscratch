@@ -10,7 +10,7 @@ from __future__ import annotations
 from enum import Enum
 from functools import cache
 import inspect
-from typing import Any, Dict, Hashable, Iterable, List, Optional, ParamSpec, Tuple, Union, cast, override
+from typing import Any, Callable, Dict, Hashable, Iterable, List, Optional, ParamSpec, Tuple, Union, cast, override
 from typing_extensions import deprecated
 
 
@@ -1666,6 +1666,27 @@ class Sprite(pygame.sprite.Sprite):
         associated_sprites = list(other_associated_sprites) + [self]
 
         return game.when_timer_reset(reset_period, repeats, associated_sprites)
+    
+    
+    def start_handler(self, handler:Optional[Callable[[], Any]]=None,  other_associated_sprites : Iterable[Sprite]=[]):
+        """
+        Run the event handler immediately. Useful when creating a sprite within a function.
+
+        The handler does not take in any parameters. 
+
+        Parameters
+        ---
+        handler: Function
+            A function to run. 
+
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        
+        """
+        
+        associated_sprites = list(other_associated_sprites) + [self]
+        return game.start_handler(handler, associated_sprites)
+    
     
     
     def create_specific_collision_trigger(self, other_sprite: Sprite, other_associated_sprites: Iterable[Sprite]=[]):
