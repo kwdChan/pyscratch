@@ -467,6 +467,7 @@ class Game:
             exit_key: Optional[str]="escape",
             saved_state_file=None, 
             print_fps = False,
+            use_frame_time = False
         ):
         """
         Start the game. 
@@ -497,6 +498,9 @@ class Game:
 
         print_fps: bool
             Whether or not to print the fps
+
+        use_frame_time: bool
+            Use the number of frames to define game time. Note: highly experimental. 
 
         """
 
@@ -532,6 +536,7 @@ class Game:
         loop_count = 0
 
         threading.Thread(target=self._check_alive).start()
+        frame_interval = 1000/framerate
 
         self.__start = True
         while self.__start:
@@ -540,7 +545,7 @@ class Game:
             loop_count += 1
             
             dt = clock.tick(framerate)
-            self._current_time_ms += dt
+            self._current_time_ms += frame_interval if use_frame_time else dt 
             for i in range(draw_every_n_step): 
                 self._space.step(dt/draw_every_n_step)
 
