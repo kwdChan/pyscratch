@@ -306,6 +306,8 @@ class Game:
         self.update_screen_mode()
 
         self._saved_states_manager = _SavedSpriteStateManager()
+        self.__sprite_last_clicked_for_removal: Optional[Sprite] = None
+        self.__started_interactive = False
 
 
     def __key_event_handler(self, e):
@@ -335,6 +337,8 @@ class Game:
                 # click is on the top sprite only
                 if s.is_touching_mouse():
                     self.__clicked_sprite = s
+                    self.__sprite_last_clicked_for_removal = s
+
                     for t in self._sprite_click_trigger[s]:
                         t.trigger()
 
@@ -425,16 +429,33 @@ class Game:
 
             last_frame_time = self._current_time_ms
 
-    def start_parallel(self, *args, **kwargs):
+    def start_interactive(self, *args, sprite_removal_key='backspace', **kwargs):
         """
-        Start the game on another thread
-        """        
+        Start the game on another thread 
+        """ 
+        if self.__started_interactive: 
+            raise RuntimeError("The game must not be restarted. Please restart the kernal. ")
+        self.__started_interactive = True    
+        
+        def remove_sprite(_):
+            if s:=self.__clicked_sprite: 
+                s.remove()
+
+        self.when_key_pressed(sprite_removal_key).add_handler(remove_sprite)
+
         t = threading.Thread(target=self.start, args=args, kwargs=kwargs)
         t.start()
+        self.__screen_thread = t
+        
+        
         return t
     
     def stop(self):
         self.__start = False
+        if self.__started_interactive:
+            #self.__started_interactive = False
+            pygame.display.quit()
+        
 
     def start(
             self, 
@@ -470,6 +491,13 @@ class Game:
         exit_key: Optional[str]
             Very useful if you are working on a fullscreen game
             Set to None to disable it.
+
+        saved_state_file: Optional[str]
+            The path of the saved state. Default location will be used if set to None. 
+
+        print_fps: bool
+            Whether or not to print the fps
+
         """
 
         if not (len(self.__screen_args) or len(self.__screen_kwargs)):
@@ -631,9 +659,7 @@ class Game:
         return self._sprite_count_per_file[caller_file]
 
 
-    def _add_sprite(self, sprite, to_show=True, caller_file=None):
-
-        
+    def _add_sprite(self, sprite: Sprite, to_show=True, caller_file=None):
 
         self._all_sprites.add(sprite)
         if len(self._all_sprites) > self.max_number_sprite:
@@ -643,6 +669,9 @@ class Game:
         if to_show:
             self._all_sprites_to_show.add(sprite)
         sprite.update()
+
+        if self.__started_interactive:
+            sprite.set_draggable(True)
 
         return self._new_sprite_of_file(caller_file)
 
@@ -1087,6 +1116,29 @@ class Game:
 
         self._all_message_subscriptions[topic].append(trigger)
 
+    def start_handler(self, handler:Optional[Callable[[], Any]]=None, associated_sprites: Iterable[Sprite]=[]):
+        """
+        It is recommended to use the `Sprite.start_handler` alias instead of this method, 
+        so you don't need to specify the `associated_sprites` in every event.  
+
+        Run the event handler immediately. Useful when creating a sprite within a function.
+
+        The handler does not take in any parameters. 
+
+        Parameters
+        ---
+        handler: Function
+            A function to run. 
+
+        associated_sprites: List[Sprite]
+            A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
+        
+        """
+        e = self._create_event(associated_sprites)
+        if handler: 
+            e.add_handler(handler)
+        e.trigger()
+        return e
 
 
     ## advance events
