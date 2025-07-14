@@ -59,7 +59,7 @@ def Laser(pos0, pos1, duration):
     img = pysc.load_image(path)
     w = img.get_width()
 
-    scaled_img = pysc.scale_to_fill_screen(img, (w, length))
+    scaled_img = pysc.scale_to_fill(img, (w, length))
 
 
 
