@@ -353,11 +353,11 @@ class _DrawingManager:
     def set_rotation_style(self, flag: _RotationStyle):
         self.rotation_style = flag
 
-    def flip_horizontal(self):
-        self.flip_x = not self.flip_x
+    def flip_horizontal(self, to_flip:bool):
+        self.flip_x = to_flip
 
-    def flip_vertical(self):
-        self.flip_y = not self.flip_y
+    def flip_vertical(self, to_flip:bool):
+        self.flip_y = to_flip
 
     def set_animation(self, new_mode):
         if new_mode == self.animation_name:
@@ -1208,19 +1208,19 @@ class Sprite(pygame.sprite.Sprite):
         """
         return self._drawing_manager.scale_factor
 
-    def flip_horizontal(self):
+    def flip_horizontal(self, to_flip:bool):
         """
-        Flips the image horizontally. 
+        Whether or not to flip the image horizontally. 
         Does not affect the direction of movement.
         """        
-        self._drawing_manager.flip_horizontal()
+        self._drawing_manager.flip_horizontal(to_flip)
 
-    def flip_vertical(self):
+    def flip_vertical(self, to_flip:bool):
         """
-        Flips the image vertically. 
+        Whether of not to flip the image vertically. 
         Does not affect the direction of movement.
         """ 
-        self._drawing_manager.flip_vertical()
+        self._drawing_manager.flip_vertical(to_flip)
 
     def set_brightness(self, factor):
         """
