@@ -172,7 +172,9 @@ nav_order: 1
     <img src="{{ site.cdn_url }}img/motion/block_13.png" height="10"/>
   </div>
   <div class="col">
-        NOT YET IMPLEMENTED
+        {%include new_tab_hyperlink.html
+          url="../../pdoc/pyscratch/sprite.html#Sprite.if_on_edge_bounce" content="<code>my_sprite.if_on_edge_bounce()</code>" 
+        %}
   </div>
 </div>
 
