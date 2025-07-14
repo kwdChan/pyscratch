@@ -149,6 +149,16 @@ class _SavedSpriteStateManager:
     def save_sprite_states(self, all_sprite: Iterable[Sprite], filename=None):
         """
         Save the x, y & direction of the sprites. 
+
+        Usage: 
+        ```python
+        # main.py
+        from pyscratch import game
+
+        game.start() # when you close the game window, the game.start() function finishes.
+        game.save_sprite_states() # then this function will be run.   
+        
+        ```
         """
         loc = {}
         for s in all_sprite:
@@ -159,6 +169,7 @@ class _SavedSpriteStateManager:
         #caller_file = Path(inspect.stack()[-1].filename)
 
         json.dump(loc, open(filename, "w"))
+        print("Sprite states saved.")
     
     def load_saved_state(self, filename=None):
 
@@ -178,6 +189,7 @@ class _SavedSpriteStateManager:
 class Game:
     """
     This is the class that the `game` object belongs to. You cannot create another Game object. 
+    To exit the game, either close the window, or to press the escape key (esc) by default
     """
     
     _singleton_lock = False
@@ -203,7 +215,34 @@ class Game:
 
         # shared variables 
         self.shared_data: Dict[Any, Any] = {}
-        """A dictionary of variables shared across the entire game. You can put anything in it."""
+        """
+        A dictionary of variables shared across the entire game. You can put anything in it.
+        
+        The access of the items can be done directly through the game object. 
+        For example, `game['my_data'] = "hello"` is just an alias of `game.shared_data['my_data'] = "hello"` 
+        
+        Example:
+        ```python
+        # for convenience so you don't have type pysc.game everytime. 
+        from pyscratch import game 
+
+        # same as `game.shared_data['score_left'] = 0`
+        game['score_left'] = 0
+        game['score_right'] = 0
+
+        def on_score(side):
+            if side == "left":
+                game['score_left'] += 1
+            else:
+                game['score_right'] += 1
+
+            print(f"Left score: {game['score_left']}") 
+            print(f"Right score: {game['score_right']}") 
+
+        game.when_received_message('score').add_handler(on_score)
+        game.broadcast_message('on_score', 'left')
+        ```
+        """
         
         # sprite event dependency manager
         self._sprite_event_dependency_manager = _SpriteEventDependencyManager()

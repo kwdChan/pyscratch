@@ -398,7 +398,7 @@ def scale_to_fill(image:pygame.Surface, new_size:Tuple[int, int]):
     ----------
     image : pygame.Surface
         The image to scale.
-    size : tuple of int
+    new_size : tuple of int
         Target width and height of the image.
     """
     return pygame.transform.smoothscale(image, new_size)
@@ -416,7 +416,7 @@ def scale_to_fit_aspect(image:pygame.Surface, new_size:Tuple[int, int], fit='hor
         The image to scale.
     new_size : tuple of int
         The width and height of the target rect.
-    fit : {'horizontal', 'vertical'}, optional
+    fit : 'horizontal' or 'vertical'
         Axis to fit the image against. Default is 'horizontal'.
     """
     img_rect = image.get_rect()
@@ -457,7 +457,7 @@ def _set_transparency(image, factor):
 
 def set_transparency(image: pygame.Surface, factor):
     """
-    Set the transparency of an image.
+    Get a new copy of the image with the transparency applied.
 
     Parameters
     ----------
@@ -481,7 +481,7 @@ def set_transparency(image: pygame.Surface, factor):
 
 def adjust_brightness(image, factor):
     """
-    Adjust the brightness of an image.
+    Get a new copy of the image with the brightness changes applied.
     
     THIS FUNCTION IS WRITTEN BY AN AI. 
 
