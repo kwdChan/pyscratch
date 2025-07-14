@@ -173,7 +173,8 @@ nav_order: 1
   </div>
   <div class="col">
         {%include new_tab_hyperlink.html
-          url="../../pdoc/pyscratch/sprite.html#Sprite.if_on_edge_bounce" content="<code>my_sprite.if_on_edge_bounce()</code>" 
+          url="../../pdoc/pyscratch/sprite.html#Sprite.if_on_edge_bounce" 
+          content="<code>my_sprite.if_on_edge_bounce()</code> (An approximation implementation)" 
         %}
   </div>
 </div>

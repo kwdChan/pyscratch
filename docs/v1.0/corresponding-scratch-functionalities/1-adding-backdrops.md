@@ -54,7 +54,7 @@ pysc.game.switch_backdrop(0)
 background_image = pysc.helper.load_image('assets/my_background.jpg')
 
 screen_size = SCREEN_WIDTH, SCREEN_HEIGHT
-background_image = pysc.helper.scale_to_fill_screen(background_image, screen_size)
+background_image = pysc.helper.scale_to_fill(background_image, screen_size)
 # background_image = pysc.helper.scale_to_fit_aspect(background_image, screen_size)
 # background_image = pysc.helper.scale_and_tile(background_image, screen_size)
 ```
@@ -67,7 +67,7 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 
 background_image = pysc.helper.load_image('assets/my_background.jpg')
-# background_image = pysc.helper.scale_to_fill_screen(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+# background_image = pysc.helper.scale_to_fill(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 pysc.game.set_backdrops([background_image])
 pysc.game.switch_backdrop(0)
