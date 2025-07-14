@@ -26,7 +26,7 @@ The more advance capabilities are provided by:
 ## Asset Processing and Other Development Aids 
 Before coding happens, the sprites first need to be created. On Scratch, the users have an GUI to edit the sprites, backdrops and sound. This part of the library aids this process. The currently implemented features include: 
 - One-line functions to load the assets 
-- A experimental sprite editing tool for cutting irregular sprite sheets and animation preview 
+- An experimental sprite editing tool for cutting irregular sprite sheets and animation preview 
 - Sprite locations can be saved and reloaded in one line for scene assembling
 - Grid lines and mouse coordinates on the default background 
 
