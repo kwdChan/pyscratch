@@ -10,9 +10,9 @@ In scratch, every stack of code blocks start from an event. An event happens, an
 In python, the stack of code blocks under the event is put inside a function: 
 ```python
 def my_code_block():
-	my_sprite.move_indir(10)
-	my_sprite.add_rotation(10)
-	pysc.game.play_sound('sound1', volume=0.7)
+    my_sprite.move_indir(10)
+    my_sprite.add_rotation(10)
+    pysc.game.play_sound('sound1', volume=0.7)
 ```
 This function is known as a event handler. A handler is any function that are meant to be run by an event. Just like in scratch, the code will not run without having event that triggers the code. This is how you add code to the event in python:
 ```python
@@ -31,10 +31,10 @@ Unlike scratch, some events in python pass on values to the code it triggers. In
 # - key: the key that is being passed
 # - updown: key down or key up
 def on_key_press(key, updown):
-	if key == 'a' and updown == 'down':
-		sprite.move_indir(-10)
-	if key == 'd' and updown == 'down':
-		sprite.move_indir(10)
+    if key == 'a' and updown == 'down':
+        sprite.move_indir(-10)
+    if key == 'd' and updown == 'down':
+        sprite.move_indir(10)
 
 keypress_event = sprite.when_any_key_pressed()
 keypress_event.add_handler(on_key_press)
