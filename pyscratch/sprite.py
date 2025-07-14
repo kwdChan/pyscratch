@@ -577,8 +577,8 @@ class Sprite(pygame.sprite.Sprite):
         ):
         """
         You might not need to create the sprite from this constructor function. 
-        Consider functions like `create_single_costume_sprite` or `create_animated_sprite`
-        as they would be easier to work with. 
+        **Consider functions like `create_single_costume_sprite` or `create_animated_sprite`
+        as they would be easier to work with.**
 
         Example:
         ```python
@@ -606,16 +606,22 @@ class Sprite(pygame.sprite.Sprite):
             as the starting frame mode.
 
         position: Tuple[float, float]
+            The starting position of the sprite.
 
         identifier: Optional[str]
             Used for identifying the sprite for loading sprite states (position and direction).
-            Put to None for automatic assignment based on the file name and the order of creation.
+            Each sprite should have unique identifier.
+            Put to None for automatic assignment based on the file name and the order of creation. 
 
-        shape_type: ShapeType 
+        ~~shape_type: ShapeType~~
+            *FEATRUE UNDER DEVELOPMENT. LEAVE AS DEFAULT.*  
             The collision shape. See `set_shape` for more details.
-        shape_size_factor: float 
 
-        body_type: int 
+        ~~shape_size_factor: float~~
+            *FEATRUE UNDER DEVELOPMENT. LEAVE AS DEFAULT.*   
+
+        ~~body_type: int~~
+            *FEATRUE UNDER DEVELOPMENT. LEAVE AS DEFAULT.*  
             The pymunk body type. Leave out the parameter if unsure. 
             Can be `pymunk.Body.KINEMATIC`, `pymunk.Body.DYNAMIC` or `pymunk.Body.STATIC` 
             - Use kinematic if you want the sprite to move when when you tell it to. 
@@ -641,7 +647,7 @@ class Sprite(pygame.sprite.Sprite):
         A dictionary similar to `game.shared_data`. 
 
         The access of the items can be done directly through the sprite object. 
-        For example, `my_sprite['my_data'] = "hello"` is the same as `my_sprite.sprite_data['my_data'] = "hello"` 
+        For example, `my_sprite['my_data'] = "hello"` is just an alias of `my_sprite.sprite_data['my_data'] = "hello"` 
         
         You can put any data or variable that should belong to the individuals sprite. 
         A good example would be the health point of a charactor. 
@@ -669,7 +675,7 @@ class Sprite(pygame.sprite.Sprite):
 
         self._mouse_selected = False
         self.__is_dragging = False
-        self.draggable = False
+        self.draggable:bool = False
         """Whether or not this sprite is draggable."""
 
 
@@ -685,8 +691,7 @@ class Sprite(pygame.sprite.Sprite):
         self.__direction: pymunk.Vec2d = self._body.rotation_vector     
         self.__rotation_style = _RotationStyle.ALL_AROUND
 
-        self.removed = False
-        """Indicates whether or not this sprite has been removed."""
+        self.__removed:bool = False
 
 
 
@@ -708,7 +713,13 @@ class Sprite(pygame.sprite.Sprite):
                 break
 
         count = game._add_sprite(self, caller_file=caller_file)
-
+        self.identifier: str
+        """
+        An identifier of the sprite for loading sprite states (position and direction).
+        Each sprite should have unique identifier.
+        Put to None for automatic assignment based on the file name and the order of creation.  
+        
+        """
 
         if not identifier: 
 
@@ -760,7 +771,11 @@ class Sprite(pygame.sprite.Sprite):
         # TODO: why did i do this 
         return self._mouse_selected
     
-
+    @property
+    def removed(self,) -> bool:
+        """Indicates whether or not this sprite has been removed. """
+        return self.__removed
+    
     
     def set_draggable(self, draggable):
         """
@@ -1034,7 +1049,28 @@ class Sprite(pygame.sprite.Sprite):
         if changed: 
             self.direction = pymunk.Vec2d(x, y).angle_degrees
 
-    def retrieve_saved_state(self, not_exist_ok=True):
+    def retrieve_saved_state(self, not_exist_ok=True) -> bool:
+        """
+        *EXTENDED FEATURE, EXPERIMENTAL*
+
+        Retrieve the states of the sprites saved at the end of the previous run.
+        Only the x,y,direction can be saved.
+        The `identifier` is used to identifier which sprite is which. 
+
+        To save the states of the sprites, refer to [`save_sprite_states`](./game_module#Game.save_sprite_states)
+
+        Returns True if the states are loaded and False if not.
+
+        Example:
+        ```python
+        my_sprite = pysc.create_circle_sprite((255,255,255), 5)
+
+        def on_game_start():
+            my_sprite.retrieve_saved_state()
+
+        my_sprite.when_game_start().add_handler(on_game_start)
+        ``` 
+        """
 
         result = game._get_saved_state(self.identifier)
         if result:
@@ -1042,6 +1078,7 @@ class Sprite(pygame.sprite.Sprite):
             self.y = result['y']
             self.direction = result['direction']
             return True
+        
         if not_exist_ok:
             return False
         
@@ -1055,7 +1092,7 @@ class Sprite(pygame.sprite.Sprite):
         so the sprite will always be in the same location relative to the other sprite.  
         This method only need to run once (instead of continuously in a loop)
 
-        KNOWN ISSUE: Dragging a locked sprite will cause the sprite to go unpredictably. (It's unlikely that you would need to do so anyway.)
+        KNOWN ISSUE: Dragging a locked sprite will cause the sprite to go unpredictably. (It's unlikely that you would need to do that anyway.)
 
         Example: 
         ```python
@@ -1230,11 +1267,16 @@ class Sprite(pygame.sprite.Sprite):
         """ 
         self._drawing_manager.set_brightness(factor)
 
-    def set_transparency(self, factor):
+    def set_transparency(self, factor:float):
         """
         *EXPERIMENTAL*
 
         Changes the transparency of the sprite. 
+
+        Parameters
+        ---
+        factor : float
+            Transparency level from 0.0 (fully transparent) to 1.0 (fully opaque).
         """ 
         self._drawing_manager.set_transparency(factor)
 
@@ -1307,7 +1349,14 @@ class Sprite(pygame.sprite.Sprite):
     ## other blocks
     def is_touching(self, other_sprite) -> bool:
         """
-        Returns whether or not this sprite is touching another sprite
+        Returns whether or not this sprite is touching another sprite. 
+        A hidden sprite cannot be touched for the consistency with Scratch. 
+
+        This function detects whether there is any overlapping of the pixels of the two sprites that are not *fully transparent*
+
+        Note that the detection is done on the original image before the effect of `set_transparency` is applied. 
+        Therefore, the touching can still be detected even if you set the transparency to 1.0. 
+
         ```python
         if this_sprite.is_touching(another_sprite):
             print('hi')
@@ -1381,7 +1430,7 @@ class Sprite(pygame.sprite.Sprite):
         ```
         """
         game._remove_sprite(self)
-        self.removed = True
+        self.__removed = True
 
 
     def create_clone(self):
@@ -1688,9 +1737,9 @@ class Sprite(pygame.sprite.Sprite):
         return game.start_handler(handler, associated_sprites)
     
     
-    
     def create_specific_collision_trigger(self, other_sprite: Sprite, other_associated_sprites: Iterable[Sprite]=[]):
         """
+        @private
         *EXTENDED FEATURE, EXPERIMENTAL*
 
         DOCUMENTATION NOT COMPLETED
@@ -1707,6 +1756,7 @@ class Sprite(pygame.sprite.Sprite):
 
     def set_shape(self, shape_type: ShapeType=ShapeType.BOX):
         """
+        @private
         *EXTENDED FEATURE, EXPERIMENTAL*
         
         Sets the collision shape of the sprite. The shape type can be one of the followings
@@ -1725,9 +1775,11 @@ class Sprite(pygame.sprite.Sprite):
         ```
         """
         self._physics_manager.set_shape_type(shape_type)
-
+    
     def set_shape_size_factor(self, factor=0.8):
         """
+        @private
+
         *EXTENDED FEATURE, EXPERIMENTAL*
 
         Changes the size of the collision shape relative to the size of the image of the sprite. 
@@ -1738,9 +1790,10 @@ class Sprite(pygame.sprite.Sprite):
         
         """
         self._physics_manager.set_shape_size_factor(factor)
-
+    
     def set_collision_type(self, value: int=0):
         """
+        @private
         *EXTENDED FEATURE, EXPERIMENTAL*
 
         Set the collision type of the sprite for detection purposes.
@@ -1754,6 +1807,7 @@ class Sprite(pygame.sprite.Sprite):
     @property
     def mass(self):
         """
+        @private
         *EXTENDED FEATURE*
 
         The mass of the collision shape. 
@@ -1766,6 +1820,7 @@ class Sprite(pygame.sprite.Sprite):
     @property
     def moment(self):
         """
+        @private
         *EXTENDED FEATURE*
 
         The moment of the collision shape. 
@@ -1779,6 +1834,7 @@ class Sprite(pygame.sprite.Sprite):
     @property
     def elasticity(self):
         """
+        @private
         *EXTENDED FEATURE*
 
         The elasticity of the collision shape. 
@@ -1791,6 +1847,7 @@ class Sprite(pygame.sprite.Sprite):
     @property
     def friction(self):
         """
+        @private
         *EXTENDED FEATURE*
 
         The friction of the collision shape. 
