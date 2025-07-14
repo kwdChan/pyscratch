@@ -30,6 +30,14 @@ One is to draw the arts on your own, another one is to use the artwork created b
     - Quite a bit harder to use compared to those above
     - Might be good for stick man animation?
 
+**A colour picker:** 
+1. <a target="_blank" href="https://imagecolorpicker.com/color-code/ad8446">imagecolorpicker.com</a> 
+    - A colour picker that helps you find the RGB values for your desired colour
+    - This particular colour picker shows you some recommended colour combinations and the name of the colour (that helps you conceptualise the colour)
+    - Useful for sprites creation 
+
+    
+
 If you are ready to spend a significant amount of time on learning and creating the art, you are advised to search for drawing tutorials on YouTube. 
 
 ## Option 2: Find good images online
@@ -55,3 +63,8 @@ There are many asset libraries that include artwork created by other creators. B
     - No login required for the downloads
     - The free assets will prompt you to give donation and make the download link grey and very small
     - You can filter by paid/free
+
+1. <a target="_blank" href="https://www.spriters-resource.com/">The Spriters Resource</a>
+    - An excellent library if you want assets from well-known or classic games
+    - No login required for the downloads and everything is free 
+    - For copyright reasons, you probably shouldn't use these assets for a game you wish to publish 
