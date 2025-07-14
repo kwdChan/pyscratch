@@ -390,23 +390,23 @@ def scale_and_tile(image, screen_size, scale_factor):
     return tiled_surface
 
 
-def scale_to_fill_screen(image, screen_size):
+def scale_to_fill(image:pygame.Surface, new_size:Tuple[int, int]):
     """
-    Scale an image to fill the screen without preserving aspect ratio.
+    Scale an image to a new size without preserving aspect ratio.
 
     Parameters
     ----------
     image : pygame.Surface
         The image to scale.
-    screen_size : tuple of int
-        Target width and height of the screen.
+    size : tuple of int
+        Target width and height of the image.
     """
-    return pygame.transform.smoothscale(image, screen_size)
+    return pygame.transform.smoothscale(image, new_size)
 
 
-def scale_to_fit_aspect(image, screen_size, fit='horizontal'):
+def scale_to_fit_aspect(image:pygame.Surface, new_size:Tuple[int, int], fit='horizontal'):
     """
-    Scale an image to fit the screen while preserving aspect ratio.
+    Scale an image to fit a rect while preserving aspect ratio.
     
     THIS FUNCTION IS WRITTEN BY AN AI. 
 
@@ -414,13 +414,13 @@ def scale_to_fit_aspect(image, screen_size, fit='horizontal'):
     ----------
     image : pygame.Surface
         The image to scale.
-    screen_size : tuple of int
-        The width and height of the target screen.
+    new_size : tuple of int
+        The width and height of the target rect.
     fit : {'horizontal', 'vertical'}, optional
         Axis to fit the image against. Default is 'horizontal'.
     """
     img_rect = image.get_rect()
-    screen_w, screen_h = screen_size
+    screen_w, screen_h = new_size
     img_w, img_h = img_rect.size
 
     if fit == 'horizontal':
@@ -428,7 +428,7 @@ def scale_to_fit_aspect(image, screen_size, fit='horizontal'):
     elif fit == 'vertical':
         scale_factor = screen_h / img_h
     else:
-        raise ValueError("fit must be 'horizontal' or 'vertical'")
+        raise ValueError("fit must be either 'horizontal' or 'vertical'")
 
     new_size = (int(img_w * scale_factor), int(img_h * scale_factor))
     return pygame.transform.smoothscale(image, new_size)
