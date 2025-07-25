@@ -463,6 +463,7 @@ class _DrawingManager:
         return img, rect, mask 
 
 class ShapeType(Enum):
+    """@private"""
     BOX = 'box'
     CIRCLE = 'circle'
     CIRCLE_WIDTH = 'circle_width'
@@ -1687,15 +1688,38 @@ class Sprite(pygame.sprite.Sprite):
     ## additional events
     def when_condition_met(self, checker=lambda: False, repeats: Optional[int]=None, other_associated_sprites: Iterable[Sprite]=[]):
         """
-        *EXTENDED FEATURE, EXPERIMENTAL*
+        *EXTENDED FEATURE*
 
-        DOCUMENTATION NOT COMPLETED
+        For every frame, if a condition is met, the event is triggered. Repeated up to `repeats` times. 
 
+        The condition is provided by a function that takes no argument and returns a boolean. 
+        
+        ```python
+        def slowly_move_sprite_out_of_edge(n):
+            my_sprite.x += 1
+            
+        my_sprite.when_condition_met(lambda: (my_sprite.x<0), None).add_handler(slowly_move_sprite_out_of_edge)
+        ```
+
+        The event handler have to take one parameter:
+        - **n** (int): The number of remaining repeats
+
+        Parameters
+        ---
+        checker: Callable[[], bool] 
+            A function that takes no argument and returns a boolean. 
+            The checker is run one every frame. If it returns true, the handler is called. 
+
+        repeats: int or None
+            How many times to repeat. Set to None for infinite repeats. 
+
+                    
         Parameters
         ---
         associated_sprites: List[Sprite]
             A list of sprites that this event depends on. Removal of any of these sprites leads to the removal of the event. 
         """
+
         associated_sprites = list(other_associated_sprites) + [self]
 
         return game.when_condition_met(checker, repeats, associated_sprites)
@@ -1705,7 +1729,11 @@ class Sprite(pygame.sprite.Sprite):
         """
         *EXTENDED FEATURE, EXPERIMENTAL*
 
-        DOCUMENTATION NOT COMPLETED
+        Returns a `Condition` that is triggered after the game have started for `t` seconds.
+        A `Condition` works the same way an `Event` does. 
+
+        The event handler have to take one parameter:
+        - **n** (int): This value will always be zero
 
         Parameters
         ---
