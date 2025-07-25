@@ -221,9 +221,16 @@ class Game:
         The access of the items can be done directly through the game object. 
         For example, `game['my_data'] = "hello"` is just an alias of `game.shared_data['my_data'] = "hello"` 
         
+        Bare in mind that the order of executions of different events and different files is arbitrary. 
+        Therefore if variable is defined in one event and accessed in another, 
+        a KeyError may be raised because variables are only accessible after the definition. 
+
+        Instead, the all the variable should be defined outside the event (before the game start),
+        and variables should be accessed only within events to guarantee its definition. 
+
+
         Example:
         ```python
-        # for convenience so you don't have type pysc.game everytime. 
         from pyscratch import game 
 
         # same as `game.shared_data['score_left'] = 0`
@@ -334,7 +341,7 @@ class Game:
         self._specific_backdrop_event_emitter: _SpecificEventEmitter[[]] = _SpecificEventEmitter()
 
         self.max_number_sprite = 1000
-        """The maximum number of sprites in the game. Adding more than this will lead to an error."""
+        """The maximum number of sprites in the game. Adding more sprites will lead to an error to prevent freezing. Default to 1000."""
         
         self._sprite_count_per_file: Dict[str, int] = {}
 
@@ -428,12 +435,12 @@ class Game:
         
     @property
     def screen_width(self):
-        """The width of the screen. Not available until the game is started"""
+        """The width of the screen. Not available until the game is started (should not be referenced outside events)."""
         return self.__screen_width
     
     @property
     def screen_height(self):
-        """The height of the screen. Not available until the game is started"""
+        """The height of the screen. Not available until the game is started (should not referenced outside events)."""
         return self.__screen_height
     
     @property
@@ -470,7 +477,8 @@ class Game:
 
     def start_interactive(self, *args, sprite_removal_key='backspace', **kwargs):
         """
-        Start the game on another thread 
+        @private
+        Start the game on another thread for jupyter notebook (experimental)
         """ 
         if self.__started_interactive: 
             raise RuntimeError("The game must not be restarted. Please restart the kernal. ")
@@ -490,6 +498,9 @@ class Game:
         return t
     
     def stop(self):
+        """
+        @private
+        """
         self.__start = False
         if self.__started_interactive:
             #self.__started_interactive = False
@@ -645,7 +656,24 @@ class Game:
 
     def save_sprite_states(self):
         """
-        Save the x, y & direction of the sprites. 
+        *EXTENDED FEATURE, EXPERIMENTAL*
+
+        Save the x, y & direction of the sprites.
+
+        To retrieve the states of the sprites, refer to [`retrieve_saved_state`](./sprite#Sprite.retrieve_saved_state)
+
+
+        Usage:
+        ```python
+        from pyscratch import game
+
+        # Start the game. The program stays in this line until the game window is closed. 
+        game.start(60)
+
+        # The program will get to this line when the game window is closed normally (not due to an error). 
+        game.save_sprite_states()
+        ```
+
         """
         self._saved_states_manager.save_sprite_states(self._all_sprites)
 
@@ -687,6 +715,7 @@ class Game:
 
     def set_gravity(self, xy: Tuple[float, float]):
         """
+        @private
         *EXTENDED FEATURE*
         
         Change the gravity of the space. Works for sprites with dynamic body type only, which is not the default.
@@ -1162,6 +1191,8 @@ class Game:
 
     def start_handler(self, handler:Optional[Callable[[], Any]]=None, associated_sprites: Iterable[Sprite]=[]):
         """
+        *EXTENDED FEATURE*
+
         It is recommended to use the `Sprite.start_handler` alias instead of this method, 
         so you don't need to specify the `associated_sprites` in every event.  
 
