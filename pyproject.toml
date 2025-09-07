@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyscratch-pysc"
+version = "1.0.3"
+description = "A Python game development framework designed to provide an easy transitioning from Scratch to Python"
+readme = "readme.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+
+authors = [
+  { name = "Daniel Ka-Wa Chan", email = "kwdaniel525@protonmail.com" }
+]
+
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+dependencies = [
+  "pymunk<7",
+  "pygame<3",
+  "numpy<3",
+  "typing_extensions",
+  "pillow<12"
+]
+
+[project.urls]
+Homepage = "https://kwdchan.github.io/pyscratch/"
+Repository = "https://github.com/kwdChan/pyscratch"
+
+[tool.setuptools.packages.find]
+where = ["."]
