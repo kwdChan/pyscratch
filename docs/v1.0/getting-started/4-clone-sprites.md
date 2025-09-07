@@ -72,11 +72,11 @@ def clone_every_2_sec():
         enemy.create_clone() # analogous to `create clone of [enemy]` in scratch
         yield 2
 
-enemy.when_game_start().add_handler(create_enemy)
+enemy.when_game_start().add_handler(clone_every_2_sec)
 
 # the above is the same as: 
 # game_start_event = enemy.when_game_start()
-# game_start_event.add_handler(create_enemy)
+# game_start_event.add_handler(clone_every_2_sec)
 
 ```
 

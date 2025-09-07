@@ -16,21 +16,21 @@ def movement():
 
     while True:
 
-        if pysc.sensing.is_key_pressed('w'):
+        if pysc.is_key_pressed('w'):
             speed_y = -4
 
-        elif pysc.sensing.is_key_pressed('s'):
+        elif pysc.is_key_pressed('s'):
             speed_y = 4
 
         else:
             # reduce the speed if neither up nor down was pressed
             speed_y = speed_y*0.9
 
-        if pysc.sensing.is_key_pressed('a'):
+        if pysc.is_key_pressed('a'):
             player.direction = 180
             speed_x = -4
             
-        elif pysc.sensing.is_key_pressed('d'):
+        elif pysc.is_key_pressed('d'):
             player.direction = 0
             speed_x = 4
         else:
