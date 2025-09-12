@@ -724,6 +724,9 @@ class Game:
         self._space.gravity = xy
 
     def _new_sprite_of_file(self, caller_file):
+        """
+        return a index of the sprite created in the file
+        """
         if not caller_file in self._sprite_count_per_file:
             self._sprite_count_per_file[caller_file] = 0
         else: 
@@ -732,15 +735,16 @@ class Game:
         return self._sprite_count_per_file[caller_file]
 
 
-    def _add_sprite(self, sprite: Sprite, to_show=True, caller_file=None):
+    def _add_sprite(self, sprite: Sprite, caller_file=None):
 
         self._all_sprites.add(sprite)
         if len(self._all_sprites) > self.max_number_sprite:
             raise RuntimeError('Reached the maximum number sprite. ')
         #self._space.add(sprite.body, sprite.shape)
         self._sprite_click_trigger[sprite] = []
-        if to_show:
-            self._all_sprites_to_show.add(sprite)
+        # if to_show:
+        #     sprite.show()
+            #self._all_sprites_to_show.add(sprite)
         sprite.update()
 
         if self.__started_interactive:
@@ -784,16 +788,12 @@ class Game:
     def _show_sprite(self, sprite: Sprite):
         """
         Show the sprite. 
-        
-        You can use the alias `sprite.show()` to do the same. 
         """
         self._all_sprites_to_show.add(sprite)
 
     def _hide_sprite(self, sprite: Sprite):
         """
         Hide the sprite. 
-        
-        You can use the alias `sprite.hide()` to do the same. 
         """
         self._all_sprites_to_show.remove(sprite)
 

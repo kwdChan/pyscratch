@@ -713,7 +713,14 @@ class Sprite(pygame.sprite.Sprite):
             if not caller_file == this_file:
                 break
 
+
+        self._intend_to_show = True
+        self._shown = False
+        self.show()
+        
         count = game._add_sprite(self, caller_file=caller_file)
+        
+
         self.identifier: str
         """
         An identifier of the sprite for loading sprite states (position and direction).
@@ -760,8 +767,10 @@ class Sprite(pygame.sprite.Sprite):
 
         x, y = self._body.position
         self.image, self.rect, self.mask = self._drawing_manager.on_update(x, y, self.__direction.angle_degrees)
-        
+        self._shown = self._intend_to_show
+
         self._physics_manager.on_update(self.image)
+
         
         if self.__is_dragging:
             self._body.velocity=0,0 
@@ -1364,12 +1373,17 @@ class Sprite(pygame.sprite.Sprite):
         ```
         """
         
-        if not self in game._all_sprites_to_show: 
-            return False
+        # if not self in game._all_sprites_to_show: 
+        #     return False
         
-        if not other_sprite in game._all_sprites_to_show:
+        # if not other_sprite in game._all_sprites_to_show:
+        #     return False
+        
+        if not self._shown: 
             return False
-            
+
+        if not other_sprite._shown:
+            return False
         
         if not pygame.sprite.collide_rect(self, other_sprite): 
             return False
@@ -1380,6 +1394,9 @@ class Sprite(pygame.sprite.Sprite):
         """
         Returns whether or not this sprite is touching the mouse
         """
+        if not self._shown:
+            return False
+        
         mos_x, mos_y = pygame.mouse.get_pos()
 
         if not self.rect.collidepoint((mos_x, mos_y)): 
@@ -1411,12 +1428,17 @@ class Sprite(pygame.sprite.Sprite):
         The hidden sprite is still in the space but it cannot touch another sprites
         """
         game._hide_sprite(self)
+        self._shown = False
+        self._intend_to_show = False
 
     def show(self):
         """
         Shows the sprite.
         """        
         game._show_sprite(self)
+        self._intend_to_show = True
+        # self._shown is set to True only during the update 
+        
 
     @override
     def remove(self, *_):
@@ -1455,8 +1477,10 @@ class Sprite(pygame.sprite.Sprite):
             shape_size_factor = self._physics_manager.shape_size_factor, 
             body_type = self._body.body_type, 
         )
-        if not self in game._all_sprites_to_show:
-            game._hide_sprite(sprite)
+        if not self._intend_to_show:
+            sprite.hide()
+        else: 
+            sprite.show()
 
         if self.__rotation_style == _RotationStyle.LEFTRIGHT:
             sprite.set_rotation_style_left_right()
