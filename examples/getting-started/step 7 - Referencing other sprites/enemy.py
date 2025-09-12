@@ -12,11 +12,6 @@ def enemy_on_game_start():
     # hide the parent
     enemy.hide() 
 
-    # the clone appear in the same location as the parent very briefly
-    # when it's created before we set it to a random location. 
-    enemy.set_xy((-200, -200))  
-
-
     # clone itself very 2 seconds
     while True: 
         enemy.create_clone()
@@ -29,7 +24,7 @@ enemy.when_game_start().add_handler(enemy_on_game_start)
 #def on_clone(clone_sprite): 
 def on_clone(clone_sprite: pysc.Sprite): 
 
-
+    #clone_sprite.hide()
     # random height
     clone_sprite.y = pysc.random_number(0, 720)
 
