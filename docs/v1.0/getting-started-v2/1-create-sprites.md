@@ -116,6 +116,7 @@ pysc.game.start(framerate)
     When you run main.py
   </summary>
   <img src="{{ site.cdn_url }}img/screenshot-sprite-creation.png" alt="img/screenshot-sprite-creation.png" width="700"/>
+  
   You can also drag the sprite around. 
 </details>
 
@@ -141,3 +142,6 @@ You can use any image you like. Remember the three-step process:
     ├─ player.py
     ├─ enemy.py
 ```
+
+{: .text-right}
+[Next Step](./2-basic-events){: .btn .btn-purple }
