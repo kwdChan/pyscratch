@@ -745,7 +745,7 @@ class Game:
         # if to_show:
         #     sprite.show()
             #self._all_sprites_to_show.add(sprite)
-        sprite.update()
+        #sprite.update()
 
         if self.__started_interactive:
             sprite.set_draggable(True)

@@ -165,7 +165,7 @@ def create_single_costume_sprite(image_path, *args, **kwargs):
     return Sprite(frame_dict, "always", *args, **kwargs)
 
 
-def create_shared_data_display_sprite(key, font, size = (150, 50), bg_colour=(127, 127, 127), text_colour=(255,255,255), position: Optional[Tuple[float, float]]=None, update_period=0.1, **kwargs):
+def create_shared_data_display_sprite(key, font:Optional[pygame.font.Font]=None, size = (150, 50), bg_colour=(127, 127, 127), text_colour=(255,255,255), position: Optional[Tuple[float, float]]=None, update_period=0.1, **kwargs):
     """
     Create a display for a variable inside shared_data given the dictionary key (i.e. the name of the variable). 
     The variable display will update every `update_period` seconds.
@@ -191,8 +191,9 @@ def create_shared_data_display_sprite(key, font, size = (150, 50), bg_colour=(12
     ---
     key: str
         The dictionary key of the variable in `game.shared_data` that you want to display.
-    font: pygame.font.Font
+    font: None or pygame.font.Font
         The pygame font object. Refer to the website of pygame for more details.
+        If None, a default font will be used. 
     size: Tuple[float, float]
         The size of the display panel
     bg_colour: Tuple[int, int, int] or Tuple[int, int, int, int] 
@@ -206,6 +207,9 @@ def create_shared_data_display_sprite(key, font, size = (150, 50), bg_colour=(12
     \\*\\*kwargs: Optional
         Whatever the `Sprite` constructor takes, except `frame_dict`,`starting_animation` & `position`
     """
+
+    if font is None:
+        font = pygame.font.Font(None, 36)
 
     w, h = size
     if position is None:
@@ -716,10 +720,13 @@ class Sprite(pygame.sprite.Sprite):
 
         self._intend_to_show = True
         self._shown = False
-        self.show()
+        self.hide()
         
         count = game._add_sprite(self, caller_file=caller_file)
         
+        self.update()
+        self.show()
+
 
         self.identifier: str
         """
