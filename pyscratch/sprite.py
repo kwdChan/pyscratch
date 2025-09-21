@@ -1459,7 +1459,8 @@ class Sprite(pygame.sprite.Sprite):
         my_sprite.remove()
         ```
         """
-        game._remove_sprite(self)
+        self.hide() # prevent collision
+        game._remove_sprite(self) 
         self.__removed = True
 
 
