@@ -1,6 +1,6 @@
 ---
 title: Loops & Conditions (if/else)
-parent: Getting Started (New)
+parent: Day 1 - Basics
 nav_order: 3
 ---
 
@@ -17,7 +17,7 @@ nav_order: 3
 {:toc}
 </details>
 
-I assume you already know the basics of [loops](https://www.w3schools.com/python/ref_keyword_for.asp) and [conditions(if/else)](https://www.w3schools.com/python/python_conditions.asp). 
+I assume you already know the basics of [loops](https://www.w3schools.com/python/ref_keyword_for.asp) and [conditions (if/else)](https://www.w3schools.com/python/python_conditions.asp). 
 
 ## Using the Forever Loop and the If Condition
 
@@ -59,15 +59,29 @@ game_start.add_handler(move)
 ```
 </details>
 
-### Remember to Wait (`yield`) in the Loop! 
+### 1. Wait (`yield`) in the Loop
 
 {: .highlight-title }
-> Remember to Wait (yield) in the Loop! 
+> It is essential to wait (yield) in the loop!
 > 
-> **Python will put everything aside to run the loop as quickly as possible, unless you ask it to wait**. Without waiting, a repeat loop (`for` loop) for 1000 times will be finished almost instantly and a forever loop (`while True`) without waiting **will get the program stucked forever**.
+> **Python will put everything aside to run the loop as quickly as possible, unless you ask it to wait**. Without waiting, a repeat loop (`for` loop) for 1000 times will be finished almost instantly and a forever loop (`while True`) without waiting will get the program stucked forever.
 > 
-> In this library, **we use yield as as the wait block in Scratch**. For example, `yield 0.5` means wait for 0.5 second. 
+> In this library, **we use yield as the wait block in Scratch**. For example, `yield 0.5` means wait for 0.5 second. 
 
+### 2. Hexagon Slots
+In Scratch, the IF block would have a hexagon slot that only takes in the hexagon blocks. 
+
+<details open markdown="block">
+  <summary>
+    PLACEHOLDER
+  </summary>
+
+  PLACEHOLDER
+</details>
+
+These hexagon blocks are always some sorts of a condition, that can only be one of the two states: True or False. In Python, this is known as a boolean variable. 
+
+The `if` keyword always expect a boolean variable to follow. 
 
 ## It's Now Your Turn!
 ### Task 1: Use the repeat loop (`for` loop)
@@ -139,3 +153,9 @@ print("the_condition_variable: " + str(the_condition_variable))
 ```
 
 </details>
+
+
+{: .text-right}
+[Next Step](./4-variables){: .btn .btn-purple }
+
+

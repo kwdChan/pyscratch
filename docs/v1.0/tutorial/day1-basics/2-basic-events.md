@@ -1,6 +1,6 @@
 ---
 title: Basic Events
-parent: Getting Started (New)
+parent: Day 1 - Basics
 nav_order: 2
 ---
 
@@ -97,6 +97,6 @@ There are other events as well, but you need to make a small tweak to make them 
 - Remember to wait in the loop! 
 
 {: .text-right}
-[Next Step](./3-flow-control.md){: .btn .btn-purple }
+[Next Step](./3-flow-control){: .btn .btn-purple }
 
 

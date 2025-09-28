@@ -1,6 +1,6 @@
 ---
 title: Adding Sprites
-parent: Getting Started (New)
+parent: Day 1 - Basics
 nav_order: 1
 ---
 
@@ -36,6 +36,8 @@ Your project file should now look like this.
 Now we are ready to add new sprites in. 
 
 ## 1. Put the sprite image to the asset folder
+{: .no_toc }
+
 **Find an image you like and put it to the folder `assets`.**
 
 This time, let's choose the `fish_brown_outline.png` inside the tutorial pack. 
@@ -50,6 +52,8 @@ Now the project folder look like this.
 ```
 
 ## 2. Open a new file for the sprite
+{: .no_toc }
+
 In Pyscratch, each sprite should have its own python file that contains the codes controlling the sprite. This is analogous to Scratch having different tabs for different sprites. 
 
 **We open a new file called `player.py`, put these lines in, and then save it**.
@@ -87,6 +91,7 @@ player.set_draggable(True) # optional: make the sprite draggable
 
 
 ## 3. Import the sprite to `main.py`
+{: .no_toc }
 
 Firstly, **main.py is always where you start your game program**. If you run `player.py`, **nothing will happen**.
 
@@ -122,11 +127,11 @@ pysc.game.start(framerate)
 
 
 ## It's Now Your Turn!
-### Your task is simple: create another sprite called "enemy". 
+### Task: create another sprite called "enemy". 
 You can use any image you like. Remember the three-step process: 
 1. Put the image to `assets`
-2. Open a new python file with [those lines](#2-open-a-new-file-for-the-sprite)
-3. Import to `main.py`
+2. Open a new python file and put in [those lines](#2-open-a-new-file-for-the-sprite)
+3. Import the script to `main.py`
 
 ### Tips
 1. Remember to save your sprite files before running `main.py`  

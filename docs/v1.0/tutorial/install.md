@@ -1,13 +1,14 @@
 ---
-title: Getting Started (New)
-nav_order: 1
+title: Installation
+nav_order: 0
+parent: Tutorial
 ---
-# Getting Started 
+# Installation
 {: .no_toc }
 
 ---
 
-This section shows you how to create your first example game using python. 
+This section shows you how to install PyScratch on your computer.
 
 <details open markdown="block">
   <summary>
@@ -18,7 +19,7 @@ This section shows you how to create your first example game using python.
 {:toc}
 </details>
 
-## Setup 
+## Installation 
 ### 1. Install Python and <a href="https://code.visualstudio.com/download" target="_blank">VSCode</a>
 {: .no_toc }
 
@@ -49,11 +50,8 @@ Note that this library is `pyscratch-pysc` on pip instead of `pyscratch`. `pyscr
 {: .no_toc }
 
 
-
-
-
 ## Start the game with an empty scene
-Create a new file in the folder called `main.py`. 
+Create a new file in the project folder called `main.py`. 
 **This script is where you start the game.**
 
 Put in these lines below and run the script `main.py`. 
