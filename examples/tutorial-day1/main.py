@@ -1,6 +1,6 @@
 import pyscratch as pysc
 import pygame
-import target, enemy, chest, food#, text
+import target, enemy, chest, friend#, text
 
 game = pysc.game
 

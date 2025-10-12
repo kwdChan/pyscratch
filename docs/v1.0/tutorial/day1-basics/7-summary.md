@@ -1,7 +1,7 @@
 ---
 title: Summary
 parent: Day 1 - Basics
-nav_order: 6
+nav_order: 7
 ---
 # Summary
 

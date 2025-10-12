@@ -19,112 +19,74 @@ nav_order: 4
 </details>
 
 
-## Sharing Variable Across Scripts 
+## Create a Shared Variable  
+Let's add a score for this game by creating a shared variable. 
 
-Variables created in `player.py` are not accessible in `enemy.py` and vice versa.  
+This can be done by putting the value in this dictionary-like object `pyscratch.game`. In this example, we put these lines in the beginning of `chest.py`, but you can put them anywhere in any file.  
 
-To make the variables available across different scripts, you can put the variable inside a special dictionary-like object, `pyscratch.game`. Doing so is similar to creating a variable in Scratch in the variable tab.  
+<details open markdown="block">
+  <summary>
+    chest.py
+  </summary>
 
-```python 
+```python
+import pyscratch as pysc
 from pyscratch import game
 
-# create the shared variable 
 game['score'] = 0
-
-# read/write access
-def event_handler(): 
-    print(game['score'])
-    game['score'] = game['score'] + 1
-
-game.when_game_start().add_handler(event_handler)
+# only include this line if you want display for this variable
+score_display = pysc.create_shared_data_display_sprite('score') 
+# note that the score display is also a sprite and you can control it if you want. For example, to make it draggable: 
+score_display.set_draggable(True)
 ```
+This is similar to creating a variable in Scratch under the variable tab with the display enabled. 
 
+</details>
 
-The access of these shared variables are guaranteed only inside the events. 
-
-However, if you try to access the shared variables from outside the events, you may or may not encounter an error, depending on some arbitrary factors. 
-
-
-
-
-
-{: .highlight-title }
-> Key takeaway
-> 1. **Variables only used within a function**: You can create it inside the function. 
->     - *In most cases, you cannot access the variables created inside a function from the outside.* 
-> 2. **Variables used within a script**: You can create it outside the functions. 
->     - For example, the sprite objects (`player1` or `player2`) are typically created outside the functions.  
-> 3. **Variables used across scripts**: You have to put it in side the `game` object. 
-
-
-## Challenge
-You need to know the scope of the variables very well. To test your understanding, see this example:
-
-### Problem: *Predict* what will happen without running the script.
-
-**Answer the following:**
-- What lines will lead to errors? Remove these lines.  
-- After the fix, what numbers will be printed out? 
-- After the fix, in what sequence will the numbers be printed out? 
+## Change the Variable
+Let's increase the score by one when the enemy is clicked. 
 
 <details open markdown="block">
   <summary>
-    Code
+    enemy.py
   </summary>
 
-```python 
-x = 10
+```python
+# make sure this line exists on the top of the script
+from pyscratch import game
 
-def my_function1():
-    x = 5
-    y = 20
-    print("x from my_function1: ", x)
-    print("y from my_function1: ", y)
-
-def my_function2():
-    print("x from my_function2: ", x)
-    print("y from my_function2: ", y) 
+def clicked():
+    """
+    when the enemy is clicked: 
+    change the enemy location with a fade out effect and increment the score
+    """
+    game['score'] += 10 # same as the Scratch block "change 'my variable' by 10"
     
-print("x from outside: ", x)
-my_function1()
-my_function2()
-print("x from outside: ", x)
-print("y from outside: ", y)
+    # the logic to make the enemy fade out and reappear
+    ...
+    
+enemy.when_this_sprite_clicked().add_handler(clicked)
 ```
+
 </details>
 
-<details markdown="block">
-  <summary>
-    Answer
-  </summary>
-
-<details open markdown="block">
-  <summary>
-    The lines causing errors
-  </summary>
-
-```python 
-print("y from my_function2: ", y) 
-# and 
-print("y from outside: ", y)
-```
-</details>
-<details open markdown="block">
-  <summary>
-    Expected Output
-  </summary>
+{: .highlight-title}
+>Caveat!
+>
+>The access of these shared variables are guaranteed only inside the events. 
+>
+>If you try to access (or change) a shared variable from outside the events, you may or may not encounter an error, depending on many arbitrary factors. 
 
 
-```
-x from outside: 10
-x from my_function1: 5
-y from my_function1: 20
-x from my_function2: 10
-x from outside: 10
-```
-</details>
-</details>
+## It's Now Your Turn!
+### Task 1: Increase the score by 10 when the friend fish arrives at the chest 
+- Increase the score before the friend fish reappears after arriving the chest (the centre of the window)
 
-If you get it right, great. Go to the next section. Otherwise, 
- see <a href="https://www.w3schools.com/python/python_scope.asp" target="_blank">this external tutorial </a>. 
+### Task 2: Continuously reduce the score when the enemy is at the chest  
+- Create a new event, inside a forever loop, check if the enemy is within a certain distance to the centre of the window
+- If so, reduce the score by 1.
+- Yield for 0.1 second (so the score decreases by 10 for each second the enemy is in the centre)
 
+### Task 3: Make the enemy moves faster when the score is higher
+- For example, make the speed a constant plus a percentage of the score
+  - `speed = 5 + game['score']*0.1`

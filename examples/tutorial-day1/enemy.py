@@ -22,17 +22,17 @@ def movement():
     while True:
         yield 1/game.framerate
 
-        ## variable
+        ## 4. Variable
         if (score_cool_down>0):
             score_cool_down -= 1/game.framerate
-        
-        speed = max(1, (game['score']))
 
-        
-        centre = (game.screen_width/2, game.screen_height/2)
         if game['clicked']:
             continue 
+    
+        speed = max(1, (game['score']))
+        centre = (game.screen_width/2, game.screen_height/2)
 
+        ## 3. Flow Control
         mouse_x, mouse_y = pysc.get_mouse_pos()
         if enemy.distance_to((mouse_x, mouse_y)) < 200:
             enemy.point_towards_mouse()
@@ -43,6 +43,7 @@ def movement():
             enemy.point_towards(centre)
             enemy.move_indir(speed)
 
+        ## 4. Variable
         if enemy.distance_to(centre) < 50 and (score_cool_down<=0):
             score_cool_down = .05
             game['score'] -= 1
@@ -57,7 +58,7 @@ enemy.when_game_start().add_handler(movement)
 def clicked():
     """
     when the enemy is clicked: 
-    spin it and make it disappear. 
+    spin and reappear
     """
 
     ##
