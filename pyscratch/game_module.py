@@ -12,6 +12,7 @@ from pathlib import Path
 import threading
 import time
 import json, inspect
+from typing_extensions import deprecated
 
 import numpy as np
 import pygame
@@ -309,16 +310,23 @@ class Game:
         self._mouse_drag_trigger = self.create_pygame_event([pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION])
         self._mouse_drag_trigger.add_handler(self.__mouse_drag_handler)
 
-        ## Backdrops
-        self.backdrops: List[pygame.Surface] = []
-        """A list of all the loaded backdrop images. You will not need to interact with this property directly."""
+        # Backdrops
+        self.backdrops_by_key: Dict[str, pygame.Surface] = {}
+        self.backdrop_indices_by_key: Dict[str, int] = {}
+        self.backdrop_keys: List[str] = []
+
+# TODO: testing needed
 
         self.__screen_width: int = 0
         self.__screen_height: int = 0
         self.__framerate: float = 0
 
-
+        # TODO index and key need to be changed together 
+        # the index is remained for the next_backdrop function
         self.__backdrop_index = None
+        self.__backdrop_key = None
+
+        # TODO: the event is now triggered by the name not the index
         self._backdrop_change_triggers: List[Event] = []
 
         self._top_edge: Sprite
@@ -627,8 +635,8 @@ class Game:
             # Drawing
 
             #self._screen.fill((30, 30, 30))
-            if not (self.__backdrop_index is None): 
-                self._screen.blit(self.backdrops[self.__backdrop_index], (0, 0))
+            if not (self.__backdrop_key is None): 
+                self._screen.blit(self.backdrops_by_key[self.__backdrop_key], (0, 0))
             else:
                 self._screen.fill((255,255,255))
                 helper._draw_guide_lines(self._screen, guide_lines_font, 100, 500)
@@ -831,6 +839,7 @@ class Game:
         """
         self._all_sprites_to_show.get_layer_of_sprite(sprite)
 
+    @deprecated("use add_backdrop")
     def set_backdrops(self, images: List[pygame.Surface]):
         """
         Set the list of all available backdrops. This function is meant to be run before the game start. 
@@ -849,32 +858,63 @@ class Game:
         pysc.game.switch_backdrop(1) 
         ```
         """
-        self.backdrops = images
-    
+        for idx, img in enumerate(images):
+            self.add_backdrop(str(idx), img)
+
+    def add_backdrop(self, key, image: pygame.Surface):
+        """
+        Add the image as a backdrop, and index it with the key so it can be switched to using switch_backdrop 
+
+        Example:
+        ```python
+        bg0 = pysc.load_image("assets/undersea_bg.png")'
+
+        game.add_backdrop('background0', bg0)
+        game.switch_backdrop('background0')
+        ```
+
+        """
+        assert not key in self.backdrops_by_key, f"the name '{key}' is already in used"
+        self.backdrop_keys.append(key)
+        self.backdrops_by_key[key] = image
+        self.backdrop_indices_by_key[key] = len(self.backdrop_keys) - 1 # minus one since the new one is added in the previous line
+        
+
     @property
     def backdrop_index(self):
         """
-        The index of the current backdrops. For example, if you do `game.switch_backdrop(0)`, `game.backdrop_index` would be `0`.
+        The index of the current backdrops. 
         """
         return self.__backdrop_index
+    
 
-    def switch_backdrop(self, index:Optional[int]=None):
+    @property
+    def backdrop_key(self):
+        """
+        The key (i.e. name) of the current backdrops.
+        """
+        return self.__backdrop_key
+    
+    def switch_backdrop(self, key:Optional[str]=None):
         """
         Change the backdrop by specifying the index of the backdrop.  
         """
 
-        if index != self.__backdrop_index:
-            self.__backdrop_index = index
+        if key != self.__backdrop_key:
+            self.__backdrop_key = key
+            self.__backdrop_index = None if key is None else self.backdrop_indices_by_key[key] 
             for t in self._backdrop_change_triggers:
-                t.trigger(index)
-            self._specific_backdrop_event_emitter.on_event(self.__backdrop_index)
+                t.trigger(key)
+            self._specific_backdrop_event_emitter.on_event(key)
 
+    # TODO: testing needed
     def next_backdrop(self):
         """
         Switch to the next backdrop. 
         """
         if not self.__backdrop_index is None: 
-            self.switch_backdrop((self.__backdrop_index+1) % len(self.backdrops))
+            idx = (self.__backdrop_index+1) % len(self.backdrops_by_key)
+            self.switch_backdrop(self.backdrop_keys[idx])
         
     # all events 
 
@@ -1026,19 +1066,19 @@ class Game:
             t = _declare_callback_type(t, sample_callback)
         return t
 
-
-    def when_backdrop_switched(self, backdrop_index, associated_sprites : Iterable[Sprite]=[]) -> Event[[]]:
+    # TODO: testing needed
+    def when_backdrop_switched(self, backdrop_key: str, associated_sprites : Iterable[Sprite]=[]) -> Event[[]]:
         """
         It is recommended to use the `Sprite.when_backdrop_switched` alias instead of this method, 
         so you don't need to specify the `associated_sprites` in every event.  
 
-        Returns an `Event` that is triggered when the game is switched to a backdrop at `backdrop_index`.
+        Returns an `Event` that is triggered when the game is switched to a backdrop with the key `backdrop_key`.
 
         The event handler does not take in any parameter.
 
         Parameters
         ---
-        backdrop_index: int
+        backdrop_key: str
             The index of the backdrop  
 
         associated_sprites: List[Sprite]
@@ -1053,10 +1093,11 @@ class Game:
                 return
             t = _declare_callback_type(t, sample_callback)
 
-        self._specific_backdrop_event_emitter.add_event(backdrop_index, t)
+        self._specific_backdrop_event_emitter.add_event(backdrop_key, t)
         return t
- 
-    def when_any_backdrop_switched(self, associated_sprites : Iterable[Sprite]=[]) -> Event[[int]]:
+    
+    # TODO: testing needed
+    def when_any_backdrop_switched(self, associated_sprites : Iterable[Sprite]=[]) -> Event[[Union[str,None]]]:
         """
         It is recommended to use the `Sprite.when_any_backdrop_switched` alias instead of this method, 
         so you don't need to specify the `associated_sprites` in every event.  
@@ -1064,7 +1105,7 @@ class Game:
         Returns an `Event` that is triggered when the backdrop is switched. 
 
         The event handler have to take one parameter:
-        - **idx** (int): The index of the new backdrop  
+        - **str** (str): The key of the new backdrop  
         
         Parameters
         ---
@@ -1075,7 +1116,7 @@ class Game:
         t = self._create_event(associated_sprites)
         self._backdrop_change_triggers.append(t)
         if TYPE_CHECKING:
-            def sample_callback(idx: int)-> Any:
+            def sample_callback(key: Union[str, None])-> Any:
                 return
             t = _declare_callback_type(t, sample_callback)
 

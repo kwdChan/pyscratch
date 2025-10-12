@@ -25,7 +25,7 @@ For example, "move 10 steps" on Scratch would be `player.move_indir(10)` in PySc
 **You can find the corresponding functions of the Scratch blocks side-by-side on [this page](../corresponding-scratch-functionalities/corresponding-scratch-blocks/1-motion.md).** In a lot of the cases, you will need to replace `my_sprite` with the sprite you want to control. 
 
 
-## Basic Events
+## Demo: Creating a Basic Event
 For example, we want to change the size and position of the chest when it is clicked. 
 <details open markdown="block">
   <summary>
