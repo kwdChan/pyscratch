@@ -5,6 +5,9 @@ For more information, see: https://kwdchan.github.io/pyscratch/
 
 ## Change History
 ### 12 Oct 2025
+**v2.0.1**
+Backward compatiblity for the integer-indexed backdrop in v1
+
 **v2.0.0**
 The backdrops are now indexed by keys instead of integers
 

@@ -843,7 +843,7 @@ class Game:
     def set_backdrops(self, images: List[pygame.Surface]):
         """
         Set the list of all available backdrops. This function is meant to be run before the game start. 
-
+        
         Example: 
         ```python
         # load the image into python 
@@ -899,7 +899,9 @@ class Game:
         """
         Change the backdrop by specifying the index of the backdrop.  
         """
-
+        # backward compatibilty for v1
+        if isinstance(key, int):
+            key = str(key)
         if key != self.__backdrop_key:
             self.__backdrop_key = key
             self.__backdrop_index = None if key is None else self.backdrop_indices_by_key[key] 
