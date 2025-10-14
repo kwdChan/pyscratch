@@ -1,11 +1,11 @@
 import pyscratch as pysc
 game = pysc.game
 
-chest = pysc.create_single_costume_sprite("assets/chatgpt-chest-open.png")
+chest = pysc.create_single_costume_sprite("assets/chest-open.png")
 
 # 2. Basic Event
 def game_start(): 
-    chest.set_scale(0.15)
+    chest.set_scale(0.5)
     chest.x = game.screen_width/2
     chest.y = game.screen_height/2
     game.move_to_back(chest)

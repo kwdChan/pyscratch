@@ -13,7 +13,7 @@ score_display.set_draggable(True)
 
 
 
-chest = pysc.create_single_costume_sprite("assets/chatgpt-chest-open.png")
+chest = pysc.create_single_costume_sprite("assets/chest-open.png")
 
 # 1. Create a function that does the thing (any function name is fine)
 def set_size_position(): 
@@ -21,7 +21,7 @@ def set_size_position():
     when game start:
     set the initial position of the chest
     """
-    chest.set_scale(0.15)
+    chest.set_scale(0.5)
     chest.x = game.screen_width/2
     chest.y = game.screen_height/2
     game.move_to_back(chest)
@@ -35,3 +35,15 @@ def set_size_position():
 # Or step 2 and 3 together in one line
 #chest.when_this_sprite_clicked().add_handler(set_size_position)
 chest.when_game_start().add_handler(set_size_position)
+
+
+
+def disappear_when_lose():
+    """
+    when_backdrop_switched("lose"): 
+    disappear
+    """
+    chest.hide()
+
+
+chest.when_backdrop_switched("lose").add_handler(disappear_when_lose)

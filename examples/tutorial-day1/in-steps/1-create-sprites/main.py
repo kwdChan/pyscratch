@@ -1,5 +1,5 @@
 import pyscratch as pysc
-import chest, enemy
+import enemy, chest
 game = pysc.game
 
         
