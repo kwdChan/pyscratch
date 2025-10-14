@@ -897,7 +897,7 @@ class Game:
     
     def switch_backdrop(self, key:Optional[str]=None):
         """
-        Change the backdrop by specifying the index of the backdrop.  
+        Change the backdrop by specifying the key of the backdrop.  
         """
         # backward compatibilty for v1
         if isinstance(key, int):
