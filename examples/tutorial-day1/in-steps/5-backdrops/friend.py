@@ -47,3 +47,13 @@ friend.when_game_start().add_handler(check_if_centred)
         
 
 
+
+def disappear_when_lose():
+    """
+    when_backdrop_switched("lose"): 
+    disappear
+    """
+    friend.hide()
+
+
+friend.when_backdrop_switched("lose").add_handler(disappear_when_lose)

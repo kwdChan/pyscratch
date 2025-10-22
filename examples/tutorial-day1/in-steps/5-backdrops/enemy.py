@@ -74,3 +74,15 @@ def reduce_score():
             game['score'] -= 1
 
 enemy.when_game_start().add_handler(reduce_score)
+
+
+
+def disappear_when_lose():
+    """
+    when_backdrop_switched("lose"): 
+    disappear
+    """
+    enemy.hide()
+
+
+enemy.when_backdrop_switched("lose").add_handler(disappear_when_lose)

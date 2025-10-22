@@ -1,0 +1,47 @@
+import pyscratch as pysc
+from pyscratch import game
+
+# import pygame
+# font = pygame.font.Font('assets/Kenney Future.ttf', size=18)
+# score_display = pysc.create_shared_data_display_sprite('score', font)
+
+game['score'] = 0
+
+# note that the score display is also a sprite 
+score_display = pysc.create_shared_data_display_sprite('score')
+score_display.set_draggable(True)
+
+
+
+chest = pysc.create_single_costume_sprite("assets/chest-open.png")
+
+# 1. Create a function that does the thing (any function name is fine)
+def set_size_position(): 
+    """
+    when game start:
+    set the initial position of the chest
+    """
+    chest.set_scale(0.5)
+    chest.x = game.screen_width/2
+    chest.y = game.screen_height/2
+    game.move_to_back(chest)
+
+# 2. Create an event object (any event name is fine)
+#click_event = chest.when_this_sprite_clicked() 
+
+# 3. Attach the function to the event block
+#click_event.add_handler(set_size_position) 
+
+# Or step 2 and 3 together in one line
+#chest.when_this_sprite_clicked().add_handler(set_size_position)
+chest.when_game_start().add_handler(set_size_position)
+
+
+
+def lose():
+    """
+    hide when lose
+    """
+    chest.hide()
+
+chest.when_backdrop_switched("lose").add_handler(lose)
