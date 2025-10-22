@@ -1,8 +1,9 @@
 ---
-title: Getting Started
+title: Getting Started (Outdated)
+parent: Archived Pages
 nav_order: 1
 ---
-# Getting Started 
+# Getting Started (Outdated)
 {: .no_toc }
 
 ---

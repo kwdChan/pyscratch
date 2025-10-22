@@ -1,6 +1,6 @@
 ---
 title: Graphic Asset Preparation
-nav_order: 4
+nav_order: 3
 ---
 # Graphic Asset Preparation
 This guide shows you how to prepare the graphic assets before loading them as backdrops or sprites. 
