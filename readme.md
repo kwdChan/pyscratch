@@ -4,6 +4,10 @@ For more information, see: https://kwdchan.github.io/pyscratch/
 
 
 ## Change History
+### 22 Oct 2025
+**v2.0.2**
+Fixed the issue that the layering reset after hide and show. 
+
 ### 12 Oct 2025
 **v2.0.1**
 Backward compatiblity for the integer-indexed backdrop in v1

@@ -697,6 +697,7 @@ class Sprite(pygame.sprite.Sprite):
         self.__rotation_style = _RotationStyle.ALL_AROUND
 
         self.__removed:bool = False
+        self._layer = 1
 
 
 
@@ -905,6 +906,10 @@ class Sprite(pygame.sprite.Sprite):
 
         self.__direction = pymunk.Vec2d.from_polar(1, degree/180*np.pi) 
         #print(self.__direction)
+
+
+    def _assign_layer(self, layer):
+        self._layer = layer
 
 
     def move_indir(self, steps: float, offset_degrees=0):

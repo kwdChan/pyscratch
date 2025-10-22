@@ -278,7 +278,7 @@ class Game:
         # sprites updating and drawing
         self._all_sprites = pygame.sprite.Group()
 
-        self._all_sprites_to_show = pygame.sprite.LayeredUpdates()
+        self._all_sprites_to_show = pygame.sprite.LayeredUpdates(default_layer=1)
 
 
         # # scheduled jobs
@@ -810,7 +810,10 @@ class Game:
         Bring the sprite to the front. 
         Analogous to the "go to [front] layer" block in Scratch
         """
-        self._all_sprites_to_show.move_to_front(sprite)
+        #self._all_sprites_to_show.move_to_front(sprite)
+        new_top_layer = self._all_sprites_to_show.get_top_layer()+1
+        self.change_layer(sprite, new_top_layer)
+
 
     def move_to_back(self, sprite: Sprite):
         """
@@ -818,12 +821,14 @@ class Game:
         Analogous to the "go to [back] layer" block in Scratch
         """        
         self._all_sprites_to_show.move_to_back(sprite)
+        sprite._assign_layer(0)
 
     def change_layer(self, sprite: Sprite, layer: int):
         """
         Bring the sprite to a specific layer. 
         """              
         self._all_sprites_to_show.change_layer(sprite, layer)
+        sprite._assign_layer(layer)
 
 
     def change_layer_by(self, sprite: Sprite, by: int):
@@ -832,6 +837,8 @@ class Game:
         """           
         layer = self._all_sprites_to_show.get_layer_of_sprite(sprite)
         self._all_sprites_to_show.change_layer(sprite, layer + by)
+        sprite._assign_layer(layer + by)
+
 
     def get_layer_of_sprite(self, sprite: Sprite):
         """
