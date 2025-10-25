@@ -76,7 +76,7 @@ nav_order: 2
   </div>
   <div class="col">
     <a target="_blank" href="../../pdoc/pyscratch/game_module.html#Game.switch_backdrop">
-    <code>pysc.game.switch_backdrop(1)</code>
+    <code>pysc.game.switch_backdrop("backdrop1")</code>
     </a>
   </div>
 </div>
