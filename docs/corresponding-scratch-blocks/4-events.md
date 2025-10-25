@@ -1,7 +1,7 @@
 ---
-title: Corresponding Blocks
-parent: Events
-nav_order: 1
+title: Events
+parent: Corresponding Scratch Blocks
+nav_order: 4
 ---
 # Events
 ---

@@ -1,6 +1,6 @@
 ---
 title: Events
-parent: Corresponding Scratch Blocks
+parent: Archived Pages
 nav_order: 4
 ---
 # Events
