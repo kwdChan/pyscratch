@@ -4,6 +4,11 @@ For more information, see: https://kwdchan.github.io/pyscratch/
 
 
 ## Change History
+### v2.1.0 (release pending)
+**25 Oct 2025** 
+Events and conditions can be used as a decorator (the event or condition can now be directly called as a shortcut for the add_handler method) 
+
+
 ### 22 Oct 2025
 **v2.0.2**
 Fixed the issue that the layering reset after hide and show. 

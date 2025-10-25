@@ -51,6 +51,11 @@ class Event(Generic[P]):
         self.__callbacks.append(func)
         return self
 
+    def __call__(self, func: Callable[P, Any]):
+        return self.add_handler(func)
+            
+    
+
 
     def remove(self):
         """Schedule this event to be removed."""
@@ -113,7 +118,6 @@ class Event(Generic[P]):
         self.__generators = {g:t for g, t in self.__generators.items() if not g in to_remove}
         if not len(self.__generators) and self.__to_soft_remove:
             self.remove()
-            
 
 
 
@@ -157,6 +161,9 @@ class Condition(_ConditionInterface):
         self.trigger.add_handler(callback)
         return self
     
+    def __call__(self, callback: Callable[[int], Any]):
+        return self.add_handler(callback)
+                
     def remove(self):
         self.__stay_active = False
         self.trigger.remove()
@@ -197,7 +204,10 @@ class TimerCondition(_ConditionInterface):
     def add_handler(self, callback: Callable[[int], Any]):
         self.trigger.add_handler(callback)
         return self
-
+    
+    def __call__(self, callback: Callable[[int], Any]):
+        return self.add_handler(callback)
+                
     def remove(self):
         self.__stay_active = False
         self.trigger.remove()
