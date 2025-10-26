@@ -160,11 +160,11 @@ nav_order: 5
   </div>
   <div class="col">
     Remove specific sprites:<br>
-    <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.remove">
+    <a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.remove">
     <code>my_sprite.remove()</code>
     </a> 
     <br>
-    <a target="_blank" href="../../pdoc/pyscratch/event.html#Event.remove">Remove specific events:</a><br>
+    <a target="_blank" href="../pdoc/pyscratch/event.html#Event.remove">Remove specific events:</a><br>
     {% highlight python %}
     my_event = my_sprite.when_game_start()
     my_event.add_handler(my_handler)
@@ -181,7 +181,7 @@ nav_order: 5
     <img class="bigger" src="{{ site.cdn_url }}img/control/block_07.png"/>
   </div>
   <div class="col">
-    <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.when_started_as_clone">
+    <a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.when_started_as_clone">
     <code>my_sprite.when_started_as_clone()</code>
     </a>
   </div>
@@ -194,7 +194,7 @@ nav_order: 5
     <img  src="{{ site.cdn_url }}img/control/block_08.png"/>
   </div>
   <div class="col">
-    <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.create_clone">
+    <a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.create_clone">
     <code>my_sprite.create_clone()</code>
     </a>  
 </div>
@@ -207,7 +207,7 @@ nav_order: 5
     <img src="{{ site.cdn_url }}img/control/block_09.png"/>
   </div>
   <div class="col">
-    <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.remove">
+    <a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.remove">
     <code>clone_sprite.remove()</code>
     </a>     
   </div>

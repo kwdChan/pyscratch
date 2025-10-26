@@ -11,8 +11,8 @@ nav_order: 6
     <img src="{{ site.cdn_url }}img/sensing/block_00.png"/>
   </div>
   <div class="col">
-    <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.is_touching_mouse"><code>my_sprite.is_touching_mouse()</code></a> 
-    <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.is_touching"><code>my_sprite.is_touching(another_sprite)</code></a> 
+    <a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.is_touching_mouse"><code>my_sprite.is_touching_mouse()</code></a> 
+    <a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.is_touching"><code>my_sprite.is_touching(another_sprite)</code></a> 
   </div>
 </div>
 
@@ -34,7 +34,7 @@ nav_order: 6
     <img src="{{ site.cdn_url }}img/sensing/block_03.png"/>
   </div>
   <div class="col">
-    <p> For the distance to mouse, use <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.distance_to"><code>my_sprite.distance_to</code></a> </p>
+    <p> For the distance to mouse, use <a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.distance_to"><code>my_sprite.distance_to</code></a> </p>
     {% highlight python %}
     mos_x, mos_y = pysc.get_mouse_pos()
     my_sprite.distance_to((mos_x, mos_y))
@@ -42,7 +42,7 @@ nav_order: 6
     OR
     <br>
     <br>
-    <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.distance_to_sprite"><code>my_sprite.distance_to_sprite(another_sprite)</code></a> 
+    <a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.distance_to_sprite"><code>my_sprite.distance_to_sprite(another_sprite)</code></a> 
 
   </div>
 </div>
@@ -68,7 +68,7 @@ nav_order: 6
     <img src="{{ site.cdn_url }}img/sensing/block_06.png"/>
   </div>
   <div class="col">
-    <a target="_blank" href="../../pdoc/pyscratch/game_module.html#is_key_pressed"><code>pysc.is_key_pressed("space")</code></a>   </div>
+    <a target="_blank" href="../pdoc/pyscratch/game_module.html#is_key_pressed"><code>pysc.is_key_pressed("space")</code></a>   </div>
 </div>
 
 
@@ -78,7 +78,7 @@ nav_order: 6
     <img src="{{ site.cdn_url }}img/sensing/block_07.png"/>
   </div>
   <div class="col">
-    <a target="_blank" href="../../pdoc/pyscratch/game_module.html#get_mouse_presses"><pre><code>left, middle, right = pysc.get_mouse_presses()</code></pre></a>   
+    <a target="_blank" href="../pdoc/pyscratch/game_module.html#get_mouse_presses"><pre><code>left, middle, right = pysc.get_mouse_presses()</code></pre></a>   
     </div>
 </div>
 
@@ -89,7 +89,7 @@ nav_order: 6
     <img src="{{ site.cdn_url }}img/sensing/block_09.png"/>
   </div>
   <div class="col">
-    <a target="_blank" href="../../pdoc/pyscratch/game_module.html#get_mouse_pos"><pre><code>mouse_x, mouse_y = pysc.get_mouse_pos()</code></pre></a>   </div>
+    <a target="_blank" href="../pdoc/pyscratch/game_module.html#get_mouse_pos"><pre><code>mouse_x, mouse_y = pysc.get_mouse_pos()</code></pre></a>   </div>
 </div>
 
 
@@ -98,7 +98,7 @@ nav_order: 6
     <img src="{{ site.cdn_url }}img/sensing/block_10.png"/>
   </div>
   <div class="col">
-    <a target="_blank" href="../../pdoc/pyscratch/sprite.html#Sprite.set_draggable"><code>my_sprite.set_draggable(True) </code></a>   
+    <a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.set_draggable"><code>my_sprite.set_draggable(True) </code></a>   
     </div>
 </div>
 
@@ -140,7 +140,7 @@ nav_order: 6
     <img src="{{ site.cdn_url }}img/sensing/block_14.png"/>
   </div>
   <div class="col">
-    <a target="_blank" href="../../pdoc/pyscratch/game_module.html#Game.backdrop_index">
+    <a target="_blank" href="../pdoc/pyscratch/game_module.html#Game.backdrop_index">
     <code>
     pysc.game.backdrop_index</code>
     </a>

@@ -10,7 +10,7 @@ nav_order: 4
 	<img class="bigger" src="{{ site.cdn_url }}img/events/block_03.png" height="10"/>
   </div>
   <div class="col">
-	<a target="_blank" href="../../../pdoc/pyscratch/sprite.html#Sprite.when_game_start">
+	<a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.when_game_start">
 	<code>my_sprite.when_game_start()</code>
 	</a>  
 	</div>
@@ -21,7 +21,7 @@ nav_order: 4
 	<img class="bigger" src="{{ site.cdn_url }}img/events/block_04.png" height="10"/>
   </div>
   <div class="col">
-	<a target="_blank" href="../../../pdoc/pyscratch/sprite.html#Sprite.when_key_pressed">
+	<a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.when_key_pressed">
 	<code>my_sprite.when_key_pressed("space")</code>
 	</a>  
 	</div>
@@ -33,7 +33,7 @@ nav_order: 4
 	<img class="bigger" src="{{ site.cdn_url }}img/events/block_05.png" height="10"/>
   </div>
   <div class="col">
-	<a target="_blank" href="../../../pdoc/pyscratch/sprite.html#Sprite.when_this_sprite_clicked">
+	<a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.when_this_sprite_clicked">
 	<code>my_sprite.when_this_sprite_clicked()</code>
 	</a>  
 	</div>
@@ -44,7 +44,7 @@ nav_order: 4
 	<img class="bigger" src="{{ site.cdn_url }}img/events/block_06.png" height="10"/>
   </div>
   <div class="col">
-	<a target="_blank" href="../../../pdoc/pyscratch/sprite.html#Sprite.when_backdrop_switched">
+	<a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.when_backdrop_switched">
 	<code>my_sprite.when_backdrop_switched(1)</code>
 	</a>
 	</div>
@@ -58,7 +58,7 @@ nav_order: 4
   </div>
   <div class="col">
 	Loudness: Not implemented
-	<a target="_blank" href="../../../pdoc/pyscratch/sprite.html#Sprite.when_timer_above">
+	<a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.when_timer_above">
 	<code>my_sprite.when_timer_above(10)</code>
 	</a>  
 	</div>
@@ -70,7 +70,7 @@ nav_order: 4
 	<img  class="bigger" class="bigger" src="{{ site.cdn_url }}img/events/block_08.png" height="10"/>
   </div>
   <div class="col">
-	<a target="_blank" href="../../../pdoc/pyscratch/sprite.html#Sprite.when_receive_message">
+	<a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.when_receive_message">
 	<code>my_sprite.when_receive_message("my_message1")</code>
 	</a>  
 	</div>
@@ -81,7 +81,7 @@ nav_order: 4
 	<img  src="{{ site.cdn_url }}img/events/block_09.png" height="10"/>
   </div>
   <div class="col">
-	<a target="_blank" href="../../../pdoc/pyscratch/sprite.html#Sprite.broadcast_message">
+	<a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.broadcast_message">
 	<code>my_sprite.broadcast_message("my_message1")</code>
 	</a>  
 	</div>

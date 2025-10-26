@@ -10,7 +10,7 @@ nav_order: 3
     <img src="{{ site.cdn_url }}img/sound/block_10.png" height="10"/>
   </div>
   <div class="col">
-    <a target="_blank" href="../../pdoc/pyscratch/game_module.html#Game.play_sound"><pre><code>pysc.game.play_sound("meow", volume=0.7)</code></pre></a> 
+    <a target="_blank" href="../pdoc/pyscratch/game_module.html#Game.play_sound"><pre><code>pysc.game.play_sound("meow", volume=0.7)</code></pre></a> 
   </div>
 </div>
 
