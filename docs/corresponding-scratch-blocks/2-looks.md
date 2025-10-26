@@ -232,9 +232,9 @@ nav_order: 2
     <img src="{{ site.cdn_url }}img/looks/block_22.png" height="10"/>
   </div>
   <div class="col">
-    <a target="_blank" href="../pdoc/pyscratch/game_module.html#Game.backdrop_index">
+    <a target="_blank" href="../pdoc/pyscratch/game_module.html#Game.backdrop_key">
     <code>
-    pysc.game.backdrop_index</code>
+    pysc.game.backdrop_key</code>
     </a>
   </div>
 </div>
