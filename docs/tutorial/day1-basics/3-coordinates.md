@@ -101,18 +101,18 @@ def set_size_position():
     chest.x = game.screen_width/2 
     chest.y = game.screen_height/2 
 ```
-<details markdown="block">
+</details>
+
+
+<details open markdown="block">
   <summary>
-    Explanation for the functions used
+    Explanation for the features used
   </summary>
 
 - **chest.set_scale(0.5)**: set the size of the chest to be 50% of the original
 - **game.screen_width**: this gives you the width of the game window (1024 in this case)
 - **game.screen_height**: this gives you the height of the game window (576 in this case)
 - A half of the width and height would be around the centre of the window ((512, 288) in this case)
-
-</details>
-
 
 </details>
 
@@ -171,13 +171,6 @@ print(my_number) # my_number will be a random number between 0 and 100
 
 {: .highlight }
 > Remember to save the files before you run `main.py`!
-
-
-
-
-### General Tips
-- Checkout <a href="../../corresponding-scratch-blocks/1-motion" target="_blank">this page</a> for the corresponding blocks and functions. 
-- Remember the function is just like a stack of Scratch blocks without the event at the top.
 
 {: .text-right}
 [Next Step](./4-flow-control){: .btn .btn-purple }

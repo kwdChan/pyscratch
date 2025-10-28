@@ -64,10 +64,11 @@ def clicked():
     enemy.set_transparency(1)
     enemy.set_scale(1)
 ```
+</details>
 
 <details open markdown="block">
   <summary>
-    Explanation for the functions used
+    Explanation for the features used
   </summary>
 
 - **for i in range(10)**: a repeat loop of 10 times
@@ -75,16 +76,8 @@ def clicked():
 - **enemy.scale_by(0.9)**: 
   - change the size to be 90% of the current size. 
   - very similar to "change scale by -10"
-- **pysc.random_number(0, game.screen_width)**: 
-  - generate a random number between 0 and `game.screen_width`.
-  - used for setting a random coordinate to `enemy.x`
-- **pysc.random_number(0, game.screen_height)**: 
-  - generate a random number between 0 and `game.screen_height`.
-  - used for setting a random coordinate to `enemy.y`
 - **enemy.set_transparency(1-i/10)**: 
-  - the ghost effect 
-  - 0 is completely transparent
-  - 1 is completely non-transparent
+  - the ghost effect, with 0 being completely transparent, 1 be completely opaque. 
   - `i` increases by 1 in each iteration, so to transparency would decrease like this:
       - 1-0/10 = 1
       - 1-1/10 = 0.9
@@ -95,7 +88,6 @@ def clicked():
 </details>
 
 
-</details>
 
 
 When directly translated back to Scratch, this would be similar to: 
@@ -171,10 +163,11 @@ def movement():
             enemy.point_towards(centre)
             enemy.move_indir(speed)
 ```
+</details>
 
 <details open markdown="block">
   <summary>
-    Explanation for the functions used
+    Explanation for the features used
   </summary>
 
 - **pysc.get_mouse_pos()**: returns the mouse coordinate 
@@ -184,10 +177,9 @@ def movement():
 - **enemy.point_towards(centre)** 
   - this is evaluated to `enemy.point_towards((game.screen_width/2, game.screen_height/2))`
   - rotate the enemy towards the centre of the window
-- **enemy.direction += 180**: rotate the enemy 180 degrees (so the enemy face away from the mouse)
+- **enemy.direction += 180**: rotate the enemy 180 degrees 
 - **enemy.move_indir(5)**: move the enemy 5 pixels in the direction of the sprite
 
-</details>
 
 </details>
 
@@ -273,7 +265,7 @@ You might want to create the fade out effect for the friend fish as well.
 
 ### Tips
 - If you find it hard, think about how you would do it if it is on Scratch. 
-- Remember to wait in the loop! 
+- Remember to wait (`yield`) in the loop! 
 - Remember to save the files before you run. 
 
 
