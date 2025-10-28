@@ -1,10 +1,10 @@
 ---
-title: 2. Basic Events
+title: 3. Screen Coordinates
 parent: Day 1 - Basics
-nav_order: 2
+nav_order: 3
 ---
 
-# 2. Control the Sprite with Basic Events
+# 3. Screen Coordinates
 {: .no_toc }
 
 ---
@@ -17,12 +17,66 @@ nav_order: 2
 {:toc}
 </details>
 
+{: .highlight }
+> This tutorial requires PyScratch version 2.1.0 or above. 
 
 ## Scratch-Block Corresponding Functions
 Most of the Scratch blocks has a corresponding function in PyScratch. <b>You can find the corresponding functions of the Scratch blocks side-by-side on <a href="../../corresponding-scratch-blocks/1-motion" target="_blank">this page</a>. </b>
 
+Let say we want to move the chest to coordinate (200, 300) when it is clicked. 
 
-## Demo: Creating a Basic Event
+From <a href="../../corresponding-scratch-blocks/1-motion" target="_blank">this page</a>, we can see this is what we do: 
+```python
+@chest.when_this_sprite_clicked()
+def chest_click_event():
+    chest.x = 200
+    chest.y = 300
+    # or chest.set_xy((200, 300))
+```
+
+But where is coordinate (200, 300) in the game? 
+
+
+## Screen Coordinates
+
+
+<details open markdown="block">
+  <summary>
+    How to find the coordinates
+  </summary>
+  1. The bottom-right corner shows the coordinate of the mouse pointer
+  2. The gridlines have a spacing of 100
+
+  <img src="temp/motion-2.png" alt="TODO" width="500"/>  
+
+</details>
+
+Regardless of the window size:
+- The top-left corner is always (0, 0)  
+- As x increases, the coordinate goes to the right 
+- As y increases, the coordinate goes to down
+
+The window size in this photo is (1024, 576), so
+- x=1023 would be the right edge
+- y=575 would be the buttom edge
+- (1023, 575) woudlbe the the buttom-right corner
+
+<details markdown="block">
+  <summary>
+    Why is the bottom-right corner is one pixel off? 
+  </summary>
+
+  Let say the window size is (100,100). This means there's 100 pixels in the x direction (horizontal) and 100 pixels in the y direction (vertical). 
+
+  Counting from the 0th pixel to the 99th pixel, including the 0th pixel, there'd be 100 pixels. Therefore the last pixel would be the 99th pixel. 
+
+</details>
+
+
+
+
+## Demo: Move the chest to the center of the window when clicked
+
 For example, we want to change the size and position of the chest when it is clicked. 
 <details open markdown="block">
   <summary>
@@ -35,32 +89,33 @@ from pyscratch import game
 
 chest = pysc.create_single_costume_sprite("assets/chest-open.png")
 
-# 1. Create a function that does the thing (any function name is fine)
+@chest.when_this_sprite_clicked()
 def set_size_position(): 
     """
-    when the chest is clicked:
-    set the size and position of the chest
-
-    Put your own description of this event here to make the code more readable
-    """ 
+    Put a description of this event here for readability
+    """
     # make it smaller
     chest.set_scale(0.5)
     
     # put to the middle of the screen
     chest.x = game.screen_width/2 
     chest.y = game.screen_height/2 
-
-
-# 2. Create an event object (any event name is fine)
-click_event = chest.when_this_sprite_clicked() 
-
-# 3. Attach the function to the event block
-click_event.add_handler(set_size_position) 
-
-# Or step 2 and 3 together in one line
-#chest.when_this_sprite_clicked().add_handler(set_size_position) 
 ```
+<details markdown="block">
+  <summary>
+    Explanation for the functions used
+  </summary>
+
+- **chest.set_scale(0.5)**: set the size of the chest to be 50% of the original
+- **game.screen_width**: this gives you the width of the game window (1024 in this case)
+- **game.screen_height**: this gives you the height of the game window (576 in this case)
+- A half of the width and height would be around the centre of the window ((512, 288) in this case)
+
 </details>
+
+
+</details>
+
 
 Now **save it** and run the game (by running `main.py`)!
 
@@ -78,32 +133,10 @@ Now **save it** and run the game (by running `main.py`)!
 
 
 
-### Creating an Event is a Mini Three-Step Process
-{: .no_toc }
-
-| |PyScratch|Scratch|
-|-|-------|---------|
-|**Step 1**|Create the function|Create the stack of blocks except the event block|
-|**Step 2**|Create an event object (`when_this_sprite_clicked`)|Drag the event block out to the coding space|
-|**Step 3**|Attach the function to the event (`add_handler`)|Attach the event block to the top of the Scratch blocks|
-
-{: .highlight }
-**The function is similar to a stack of scratch blocks without the event block at the top.** You need to attach the event block otherwise it will have no effect!
-
-
-### For now, you will be able to use these two events:
-{: .no_toc }
-1. `when_game_start`
-1. `when_this_sprite_clicked`
-
-There are other events as well, but you need to make a small tweak to make them work. We will come to that later. 
-
-
 ## It's Now Your Turn!
 
 ### Task 1: Set the size and position of the chest when the game start
-- Keep the same function from the example, but use `when_game_start` instead of `when_this_sprite_clicked` in step 2. 
-- No change is needed in step 1 & 3. 
+- Keep the same function from the example, but use `when_game_start` instead of `when_this_sprite_clicked`. 
 
 {: .highlight }
 > Remember to save the sprite files before running `main.py`!

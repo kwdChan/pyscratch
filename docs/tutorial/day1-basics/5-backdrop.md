@@ -18,7 +18,7 @@ nav_order: 5
 </details>
 
 {: .highlight}
-> Please update PyScratch by running `pip install pyscratch-pysc` on the terminal to make sure the version is at least 2.0.
+> Please update PyScratch to make sure the version is at least 2.0.
 
 
 ## Demo 1: Adding a Backdrop
@@ -134,14 +134,13 @@ Make the chest disappear when the backdrop is switched to `"lose"`.
   </summary>
 
 ```python
+@chest.when_backdrop_switched("lose")
 def disappear_when_lose():
     """
     when_backdrop_switched("lose"): 
     disappear
     """
     chest.hide()
-
-chest.when_backdrop_switched("lose").add_handler(disappear_when_lose)
 ```
 </details>
 

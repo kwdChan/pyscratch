@@ -164,5 +164,5 @@ You can use any image you like. Remember the three-step process:
 
 
 {: .text-right}
-[Next Step](./2-basic-events){: .btn .btn-purple }
+[Next Step](./2-event-basics){: .btn .btn-purple }
 

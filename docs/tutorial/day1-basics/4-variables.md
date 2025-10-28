@@ -76,9 +76,9 @@ Let's increase the score by one when the enemy is clicked.
 # make sure this line exists on the top of the script
 from pyscratch import game
 
+@enemy.when_this_sprite_clicked()
 def clicked():
     """
-    when the enemy is clicked: 
     change the enemy location with a fade out effect and increment the score
     """
     game['score'] += 10 # same as the Scratch block "change 'my variable' by 10"
@@ -86,7 +86,6 @@ def clicked():
     # the logic to make the enemy fade out and reappear
     ...
     
-enemy.when_this_sprite_clicked().add_handler(clicked)
 ```
 
 </details>

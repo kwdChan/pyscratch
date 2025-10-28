@@ -73,14 +73,13 @@ Use `game.play_sound("hit")` to play the sound.
   </summary>
 
 ```python
-
+@enemy.when_this_sprite_clicked()
 def play_sound_when_clicked():
     """
     when_this_sprite_clicked:
     play a sound
     """
     game.play_sound("hit")
-enemy.when_this_sprite_clicked().add_handler(play_sound_when_clicked)
 ```
 </details>
 
@@ -98,7 +97,7 @@ Since the sound track is 2 minutes and 31 seconds long, we wait for 2*60+31 seco
 ```python
 
 # background music
-
+@game.when_game_start()
 def play_loop():
     """
     when_game_start:
@@ -107,7 +106,6 @@ def play_loop():
     while True:
         game.play_sound("background", volume=0.3)
         yield 2*60+31 + 2 # or you can just put 153 
-game.when_game_start().add_handler(play_loop)
 
 # starting the game
 ...
