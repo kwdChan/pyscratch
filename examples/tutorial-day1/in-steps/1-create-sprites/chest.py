@@ -1,5 +1,11 @@
 import pyscratch as pysc
-game = pysc.game
+from pyscratch import game
 
 chest = pysc.create_single_costume_sprite("assets/chest-open.png")
-chest.set_draggable(True)
+
+@chest.when_this_sprite_clicked()
+def my_click_event():
+    message = "I am a chest! "
+    n_repeat = 4
+    repeated_message = message * n_repeat
+    print(repeated_message)
