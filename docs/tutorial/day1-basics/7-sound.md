@@ -1,10 +1,10 @@
 ---
-title: 6. Sound
+title: 7. Sound
 parent: Day 1 - Basics
-nav_order: 6
+nav_order: 7 
 ---
 
-# 6. Adding a Sound
+# 7. Adding a Sound
 {: .no_toc }
 
 ---

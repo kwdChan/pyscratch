@@ -1,10 +1,10 @@
 ---
-title: 4. Shared Variables 
+title: 5. Shared Variables 
 parent: Day 1 - Basics
-nav_order: 4
+nav_order: 5
 ---
 
-# 4. Shared Variables
+# 5. Shared Variables
 {: .no_toc }
 
 ---

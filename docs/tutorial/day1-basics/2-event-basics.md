@@ -87,11 +87,6 @@ We just add this line on top of the function `@<sprite>.when_this_sprite_clicked
 {: .highlight }
 > Requires PyScratch version 2.1.0 or above. 
 
-<details open markdown="block">
-  <summary>
-    Put the function in chest.py
-  </summary>
-
 ```python
 @chest.when_this_sprite_clicked()
 def my_click_event():
@@ -100,19 +95,21 @@ def my_click_event():
     repeated_message = message * n_repeat
     print(repeated_message)
 ```
-</details>
 
-Now save the `chest.py` and run `main.py`. 
+Now put in `chest.py`, save it, and run `main.py`. 
 
 <details open markdown="block">
   <summary>
     The game running your function
   </summary>
+  <video autoplay loop muted controls playsinline style="max-width: 100%"  width="500">
+    <source src="temp/event-1.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+    </video> </details>
 
-  VIDEO
-</details>
 
-When you have multiple events, just out the events one after the other. 
+### Multiple events
+When you have multiple events, just out the events one after another. 
 The order of the events does not matter. 
 
 <details open markdown="block">
@@ -127,15 +124,15 @@ from pyscratch import game
 chest = pysc.create_single_costume_sprite("assets/chest-open.png")
 
 @chest.when_this_sprite_clicked()
-def my_click_event2():
+def click_event1():
     pass
 
 @chest.when_this_sprite_clicked()
-def my_click_event2():
+def cick_event2():
     pass
 
 @chest.when_game_start()
-def game_start_event():
+def game_start_event1():
     pass
 ```
 </details>

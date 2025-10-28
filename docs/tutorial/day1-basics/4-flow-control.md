@@ -65,7 +65,7 @@ def clicked():
     enemy.set_scale(1)
 ```
 
-<details markdown="block">
+<details open markdown="block">
   <summary>
     Explanation for the functions used
   </summary>

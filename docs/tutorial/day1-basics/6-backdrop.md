@@ -1,9 +1,9 @@
 ---
-title: 5. Backdrop
+title: 6. Backdrop
 parent: Day 1 - Basics
-nav_order: 5
+nav_order: 6
 ---
-# 5. Adding a Backdrop
+# 6. Adding a Backdrop
 {: .no_toc }
 
 ---
@@ -107,6 +107,7 @@ Put this event before the game start or in any sprite file.
   </summary>
 
 ```python
+@game.when_game_start()
 def background():
     """
     when_game_start: 
@@ -116,7 +117,6 @@ def background():
         yield 1/game.framerate
         if game['score'] < 0: 
             game.switch_backdrop('lose')
-game.when_game_start().add_handler(background)
 
 # starting the game
 game.update_screen_mode((1024, 576))
