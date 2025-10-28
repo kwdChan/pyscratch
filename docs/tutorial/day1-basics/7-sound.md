@@ -126,5 +126,5 @@ def play_loop():
 </details>
 
 {: .text-right}
-[Next Step](./7-summary){: .btn .btn-purple }
+[Next Step](./8-summary){: .btn .btn-purple }
 

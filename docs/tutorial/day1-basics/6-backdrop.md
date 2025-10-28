@@ -159,5 +159,5 @@ def disappear_when_lose():
 
 
 {: .text-right}
-[Next Step](./6-sound){: .btn .btn-purple }
+[Next Step](./7-sound){: .btn .btn-purple }
 

@@ -180,6 +180,6 @@ print(my_number) # my_number will be a random number between 0 and 100
 - Remember the function is just like a stack of Scratch blocks without the event at the top.
 
 {: .text-right}
-[Next Step](./3-flow-control){: .btn .btn-purple }
+[Next Step](./4-flow-control){: .btn .btn-purple }
 
 

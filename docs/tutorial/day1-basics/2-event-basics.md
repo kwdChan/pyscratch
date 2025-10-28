@@ -146,5 +146,5 @@ For now, we focus only on these two events
 The other events take in parameters and will thus be introduced in the future. 
 
 {: .text-right}
-[Next Step](./3-motion){: .btn .btn-purple }
+[Next Step](./3-coordinates){: .btn .btn-purple }
 

@@ -278,6 +278,6 @@ You might want to create the fade out effect for the friend fish as well.
 
 
 {: .text-right}
-[Next Step](./4-variables){: .btn .btn-purple }
+[Next Step](./5-variables){: .btn .btn-purple }
 
 
