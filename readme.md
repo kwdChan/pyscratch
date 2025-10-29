@@ -4,7 +4,7 @@ For more information, see: https://kwdchan.github.io/pyscratch/
 
 
 ## Change History
-### v2.1.0 (release pending)
+### v2.1.0
 **25 Oct 2025** 
 Events and conditions can be used as a decorator (the event or condition can now be directly called as a shortcut for the add_handler method) 
 
