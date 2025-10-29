@@ -103,7 +103,7 @@ Now put in `chest.py`, save it, and run `main.py`.
     The game running your function
   </summary>
   <video autoplay loop muted controls playsinline style="max-width: 100%"  width="500">
-    <source src="temp/event-1.mp4" type="video/mp4">
+    <source src="{{ site.cdn_url }}tut-day1/event-1.mp4" type="video/mp4">
     Your browser does not support the video tag.
     </video> </details>
 

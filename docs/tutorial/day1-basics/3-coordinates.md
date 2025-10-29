@@ -47,7 +47,7 @@ But where is coordinate (200, 300) in the game?
   1. The bottom-right corner shows the coordinate of the mouse pointer
   2. The gridlines have a spacing of 100
 
-  <img src="temp/motion-2.png" alt="TODO" width="500"/>  
+  <img src="{{ site.cdn_url }}tut-day1/motion-2.png" alt="TODO" width="500"/>  
 
 </details>
 
