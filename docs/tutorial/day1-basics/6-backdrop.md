@@ -125,6 +125,10 @@ game.start(show_mouse_position=True)
 </details>
 
 
+{: .highlight}
+> If an event does not involve any sprite, you can create the event from `game`. 
+> For example, in this case, we see `@game.when_game_start()`
+
 ##  Demo 3: Event `when_backdrop_switched`
 Make the chest disappear when the backdrop is switched to `"lose"`. 
 
