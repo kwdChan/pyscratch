@@ -17,8 +17,8 @@ nav_order: 6
 {:toc}
 </details>
 
-{: .highlight}
-> Please update PyScratch to make sure the version is at least 2.0.
+{: .highlight }
+> This tutorial requires PyScratch version 2.1.0 or above. 
 
 
 ## Demo 1: Adding a Backdrop

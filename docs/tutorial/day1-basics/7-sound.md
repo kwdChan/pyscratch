@@ -17,6 +17,9 @@ nav_order: 7
 {:toc}
 </details>
 
+{: .highlight }
+> This tutorial requires PyScratch version 2.1.0 or above. 
+
 
 ## Demo 1: Loading the Sounds
 **1. Add these two sound files `Circus-Theme-Entry-of-the-Gladiators-Ragtime-Version(chosic.com).mp3` and `impactMetal_light_004.ogg` into the asset folder**

@@ -18,6 +18,8 @@ nav_order: 5
 {:toc}
 </details>
 
+{: .highlight }
+> This tutorial requires PyScratch version 2.1.0 or above. 
 
 ## Demo 1: Create a Shared Variable  
 Let's add a score for this game by creating a shared variable. 
