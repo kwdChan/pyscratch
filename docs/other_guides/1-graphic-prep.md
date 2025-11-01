@@ -1,6 +1,7 @@
 ---
 title: Graphic Asset Preparation
-nav_order: 3
+parent: Other Gudies
+nav_order: 1
 ---
 # Graphic Asset Preparation
 This guide shows you how to prepare the graphic assets before loading them as backdrops or sprites. 
@@ -42,10 +43,8 @@ If you are ready to spend a significant amount of time on learning and creating 
 
 ## Option 2: Find good images online
 There are many asset libraries that include artwork created by other creators. But note that:
-- Each image often contains multiple costumes and you will need to cut the image before you can use it. 
 - Some of them is free but for some of them you need to pay. You will find more than enough of free assets and thus paying for assets is not recommended. 
 
-***If you are creating your first game in PyScratch, your best choice would be to use the stock images in <a target="_blank" href="https://sketch.io/sketchpad/">sketch.io</a> mentioned above.***
 
 
 **Some of the asset libraries:**

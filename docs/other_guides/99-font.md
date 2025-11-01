@@ -1,12 +1,12 @@
 ---
 title: Font
-parent: Extended Functionalities
+parent: Other Gudies
 nav_order: 99
 ---
 # Font
 
 Fonts are used to render text. As of version 1.0, fonts are only used by
-<a target="_blank" href="pdoc/pyscratch/sprite.html#Sprite.write_text">Sprite.write_text</a>. 
+<a target="_blank" href="../pdoc/pyscratch/sprite.html#Sprite.write_text">Sprite.write_text</a>. 
 
 To write any text in the game, you will need to create a pygame font object and pass it to Sprite.write_text. 
 ```python

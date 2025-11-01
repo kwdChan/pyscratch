@@ -1,6 +1,6 @@
 ---
-title: Handling Sprite Sheet
-parent: Graphic Asset Preparation
+title: Cutting Sprite Sheets
+parent: Other Gudies
 nav_order: 2
 ---
 

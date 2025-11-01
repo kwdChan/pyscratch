@@ -1,7 +1,7 @@
 ---
 title: Exporting Animation from Piskel
-parent: Graphic Asset Preparation
-nav_order: 1
+parent: Other Gudies
+nav_order: 2
 ---
 # Exporting Animation from Piskel
 
