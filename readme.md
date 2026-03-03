@@ -4,22 +4,8 @@ PyScratch is a Python game development framework built on top of `pygame` and `p
 
 Most Scratch programs can be “translated” into PyScratch with minimal structural changes, making it ideal for teaching, learning, and prototyping games and interactive animations.
 
-For full documentation and examples, see the project website:  
-https://kwdchan.github.io/pyscratch/
-
----
-
-## Video Showcase
-
-**Basic example** — tutorial-style getting started:
-
-<video src="https://pub-c2a3ea7135244e11ad43c1591d006cf0.r2.dev/showcase-video/getting-started.mp4" controls autoplay loop muted width="300"></video>
-
-**Advanced example** — perspective background (scale and move by depth for a 3D-like effect):
-
-<video src="https://pub-c2a3ea7135244e11ad43c1591d006cf0.r2.dev/showcase-video/perspective_background.mp4" controls autoplay loop muted width="300"></video>
-
-For more examples (Pong, Bullet Hell, Doodle Jump, and others), see the [PyScratch documentation site](https://kwdchan.github.io/pyscratch/).
+For full documentation, examples and video showcases, see the project website:  
+https://kwdchan.github.io/pyscratch/#showcase
 
 ---
 
