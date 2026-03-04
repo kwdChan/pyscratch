@@ -38,7 +38,7 @@ Before coding happens, the sprites first need to be created. On Scratch, the use
 
   {% include card.html 
     video_path = "showcase-video/getting-started.mp4" 
-    url = "./getting-started" 
+    url = "./tutorial" 
     title = "Tutorial" 
     description = "An example game used in the getting-started tutorial. " 
   %}
